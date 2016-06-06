@@ -49,7 +49,8 @@ Typically the logical path of unrelated packages do not overlap. Multiplicity:
 
 ## keyword
 
-free text, but there should be an effort to eliminate duplication.
+Free text, but there should be an effort to eliminate duplication.
+Multiplicity: 0 or more
 
 ## category
 
@@ -102,6 +103,8 @@ List of currently used categories (shortened as above)
  - Misc/Extracted/Hardware
  - Misc/Extracted/Type checking unification and normalization
  - Misc/Logical Puzzles and Entertainment
+
+Multiplicity: 0 or more
 
 # Status quo
 

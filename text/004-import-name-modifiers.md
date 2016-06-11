@@ -121,4 +121,5 @@ If hints are made to follow `Import` rather than `Require`, then
 the dbs in this module.
 
 ## Changes
-* 2016-07-06, first draft
+* 2016-06-07, first draft
+* 2016-06-10, correct the date of the first change

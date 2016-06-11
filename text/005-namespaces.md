@@ -60,7 +60,7 @@ Namespace Coq.Init.
   End C.
 End Coq.Init.
 ```
-- Nesting global `Namespace`s shall emit a warning like `Warning: Namespaces declare absolute prefixes.  The innermost namespace dominates any outer namespace.  Use Local Namespace to nest namespaces, or use Global Namespace to surpress this warning.`
+- Nesting global `Namespace`s shall emit a warning like `Warning: Namespaces declare absolute prefixes.  The innermost namespace dominates any outer namespace.  Use Local Namespace to nest namespaces, or use Global Namespace to suppress this warning.`
 - It shall be an error to use a `Namespace` inside a Functor, a `Module Type`, a `Section`, or a `Proof`.  It shall not be an error to use `Namespace` inside an unparameterized `Module`.
 - At the disgression of the implementor, objects inside `Namespace`s may be restricted to `Module`s, or to any set of objects which include `Module`s.
 

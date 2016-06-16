@@ -114,7 +114,7 @@ Typical questions are:
 
 3. How to refer to names?
 
-   In 8.4, `instantiate (n:=t)`, `Show Existentials`, `[n]:` are different ways to refer to evars.
+   In 8.4, `instantiate (n:=t)` is a way to refer to a dependent evar and `n:` to refer to an evar set a goal.
 
    Coq 8.4' `instantiate` has a couple of flaws:
 
@@ -122,9 +122,9 @@ Typical questions are:
    * incidentally, it numbers evars from left-to-right which is not very natural
    * also, references are dependent on the current goal, not global over goals; for instance, instantiating the same evar `?n` may require `instantiate (2:=t)` in some goal, but `instantiate (3:=t)` in some other goal
 
-   In 8.5, `instantiate (x:=0)` works and solves all these issues (when `x` has been explicitly named).
+   In 8.5, `instantiate (x:=0)` works and solves all these issues (when `x` has been explicitly named). The notation `[n]:` is also provided for selecting a goal.
 
-   We need to find a good syntax for focussing on a named goal (in the spirit of Cyprien's `n:`). The top-level `[n]:` notation does not work after a `;`.
+   We need to find a more scalable syntax for selecting a named goal (in the spirit of Cyprien's `n:`). The top-level `[n]:` notation does not work after a `;`.
 
 4. Longer term brainstorming: using algebraic names, reflecting branching?
 
@@ -132,9 +132,9 @@ Typical questions are:
 
    For instance, `destruct n` on goal `qualid` could produce goals algebraically named `qualid:Case 0` and `qualid:Case S`, and referred to by `Case 0` and `Case S` if there is no ambiguity.
 
-   As another example, `assert foo` on goal `qualid:basename` could produce goal `qualid:basename:Side` and `qualid:basename:Main` with short names
+   As another example, `assert foo` on goal `qualid:basename` could produce goal `qualid:basename:Side` and `qualid:basename:Main` with short names `Side` and `Main` respectively.
 
-   So, an idea could be to superpose a scheme for absolute naming (paths from the root) with a scheme for short names.
+   So, an idea could be to superimpose a scheme for absolute naming (paths from the root) with a scheme for short names.
  
 # Proposal for sharing
 
@@ -153,7 +153,7 @@ refine (fun (H : x<y \/ y<x) => match H with inl H1 => ?G@{y:=x;x:=y;H2:=H1} | i
 
 This would conservatively extend the existing mechanism. Two occurrences of ?[id] would be shareable if they have the same signature (same name and type of hypotheses).
 
-As for '?[?id]', it does not seem reasonable to accept it for cross-referencing (as it is now).
+As for `?[?id]`, it does not seem reasonable to accept it for cross-referencing (as it is in 8.5 and 8.5pl1).
 
 That's it at this time, so that to hear about how to improve this further.
 

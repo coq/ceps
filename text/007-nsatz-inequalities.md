@@ -32,7 +32,7 @@ thus enhansing `nsatz`:
   conservative (does not turn solvable goals into unsolvable ones).
 * if our goal is an inequality `p ≠ q`, we can introduce the hypothesis `p = q`
   and reduce our goal to `False`
-* if we have one inequality `p ≠ q` in the context and our goal is of the form `p = q`,
+* if we have one inequality `p ≠ q` in the context and our goal is of the form `p' = q'`,
   we can reduce our goal to `(p - q) * (p' - q') = 0`.
 
 ## Open Questions

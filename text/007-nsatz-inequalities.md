@@ -32,12 +32,8 @@ thus enhansing `nsatz`:
   conservative (does not turn solvable goals into unsolvable ones).
 * if our goal is an inequality `p ≠ q`, we can introduce the hypothesis `p = q`
   and reduce our goal to `False`
-* if we have one inequality in the context and our goal is of the form `p = q`,
-  and the equalities in the context are not enough for `nsatz` to prove `p = q`,
-  then we can reduce our goal to `p = q \/ p ≠ q`; in the left case, we are done,
-  and in the right case, we can use one of the reductions above.  This goal,
-  `p = q \/ p ≠ q`, might be provable by `decide equality`, or might be provable
-  by `trivial` (it might be in the context)
+* if we have one inequality `p ≠ q` in the context and our goal is of the form `p = q`,
+  we can reduce our goal to `(p - q) * (p' - q') = 0`.
 
 ## Open Questions
 

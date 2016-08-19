@@ -19,7 +19,24 @@ allow it to handle inequalities, and, if possible, be complete on that domain.
 
 Suppose we have a solver, `nsatz`, for polynomial equalities over an integral
 domain `F`.  We can reduce the following problems to already solved problems,
-thus enhansing `nsatz`:
+thus enhansing `nsatz` in two ways:
+
+### Multiplying inequalitites
+
+* if we have one inequality `H : p ≠ q` in the context and our goal is `False`,
+  we can `apply H` and reduce to the case where we have no inequalities in the
+  context and our goal is an equality.
+* if we have no inequalities in the context and our goal is `False`, we can pose
+  the inequality `integral_domain_one_zero : 1 ≠ 0`
+* if we have two inequalities `p ≠ q` and `r ≠ s` in the context, we can combine
+  them into a single inequality `(p - q) * (r - s) ≠ 0`.  This transformation is
+  conservative (does not turn solvable goals into unsolvable ones).
+* if our goal is an inequality `p ≠ q`, we can introduce the hypothesis `p = q`
+  and reduce our goal to `False`
+* if we have one inequality `p ≠ q` in the context and our goal is of the form `p' = q'`,
+  we can reduce our goal to `(p - q) * (p' - q') = 0`.
+
+### Inverses in the field of quotients
 
 * if the goal is an inequality, `unfold not` and introduce the contradictory
   equality into the context, leaving `False` as the goal.
@@ -40,11 +57,16 @@ thus enhansing `nsatz`:
 
 ## Open Questions
 
+* Which Implementation to use. The first requires almost no new theory,
+  the second is speculated to be more efficient.
+    - In case of the second, it would probably be best if the Ltac didn't
+      actually need to translate all equalities in the context to the field
+      of quotients, perhaps we could make this step (and everything after it)
+      reflective. Since the reflective representation of a polynomial does
+      not indicate what ring it is over, "changing" rings could be a no-op
+      (but it would require a general proof that this is always sound).
 * Should we keep `nsatz` as-is, and make a new tactic that handles more goals, or
   should we upgrade `nsatz` to handle these goals, under the same name?
-* It would probably be best if the Ltac didn't actually need to translate
-  all equalities in the context to the field of quotients, perhaps we could
-  make this step (and everything after it) reflective.
 
 ## Changes
 * 2016-07-02, first draft

@@ -28,7 +28,8 @@ that features at least the following:
 - standard programming facilities (i.e. datatypes)
 
 This CEP aims at the description of this language before implementation,
-thereafter called Ltac2.
+thereafter called Ltac2. The current implementation of Ltac will be referred
+to as Ltac1.
 
 # General design
 
@@ -54,11 +55,11 @@ The call-by-value functional language fragment is easy to implement.
 
 ## Syntax
 
-We simply elaborate on the old Ltac syntax, which is quite close to e.g. the one
+We simply elaborate on Ltac1 syntax, which is quite close to e.g. the one
 of OCaml.
 
 ```
-σ, τ := κ ∈ K | α | σ → τ | ...
+σ, τ := κ ∈ K | α | σ -> τ | ...
 
 t, u := x | n ∈ ℕ | "string" | (fun x => t) | t u | let x := t in u | ...
 ```
@@ -67,8 +68,9 @@ t, u := x | n ∈ ℕ | "string" | (fun x => t) | t u | let x := t in u | ...
 
 We use the usual ML call-by-value reduction.
 
-Note that this is already a departure from standard Ltac which uses heuristic to
-decide when evaluating an expression, e.g.
+Note that this is already a departure from Ltac1 which uses heuristic to
+decide when evaluating an expression, e.g. the following do not evaluate the
+same way.
 
 ```
 foo (idtac; let x := 0 in bar)
@@ -76,8 +78,9 @@ foo (idtac; let x := 0 in bar)
 foo (let x := 0 in bar)
 ```
 
-We would now require an explicit thunk not to compute the argument, and `foo`
-would have e.g. type `(unit -> unit) -> unit`.
+Instead of relying on the `idtac` hack, we would now require an explicit thunk
+not to compute the argument, and `foo` would have e.g. type
+`(unit -> unit) -> unit`.
 
 ```
 foo (fun () -> let x := 0 in bar)
@@ -91,25 +94,29 @@ functions. See notations though to make things more palatable. For instance,
 it would be common to use the following.
 
 ```
-val mkVar : string -> constr
-val destVar : constr -> string
+val mkVar : ident -> constr
+val destVar : constr -> ident (** may fail *)
 ```
+
+In this setting, all usual argument-free tactics have type `unit -> unit`, but
+one can return as well a value of type `τ` thanks to terms of type `unit -> τ`,
+or take additional arguments.
 
 ## Effects
 
-As for the effects, nothing involved here, except that instead of using the
+Regarding effects, nothing involved here, except that instead of using the
 standard IO monad as the ambient effectful world, Ltac2 is going to use the
 tactic monad. Monadic glue is implicit, just as in any instance of Moggi's
 metalanguage.
 
 The tactic monad is essentially a IO monad, together with backtracking state.
 See `engine/proofview.mli` for the primitive operations. It means we have
-at the level of Ltac2 some primitives as:
+at the level of Ltac2 the following primitives.
 
 ```
 
-============
-Γ ⊢ fail : A
+==============
+Γ ⊢ fail E : A
 
 
 Γ ⊢ t : A    Γ ⊢ u : A
@@ -125,15 +132,23 @@ at the level of Ltac2 some primitives as:
 The backtracking is first-class, i.e. one can write `0 + 1 : int` producing
 a backtracking integer.
 
+Alternatively, one can provide it through primitive operations and design the
+syntax using notations.
+```
+val fail : exn -> 'a
+val plus : (unit -> 'a) -> (unit -> 'a) -> 'a
+val try : (unit -> 'a) -> (exn -> 'a) -> 'a
+```
+
 We need to solve the focus-on-goal issue though. The tactic monad naturally
 operates over the whole proofview, which may represent several goals. It is
 natural to do the same here, but we must provide a way to focus and a goal
 and express that something is interpreted in a goal. Maybe the following
-primitives?
+primitives relying on a handle?
 
 ```
 val enter : (handle -> 'a) -> 'a list
-val hyp : handle -> string -> constr
+val hyp : handle -> ident -> constr
 val goal : handle -> constr
 ```
 
@@ -142,37 +157,103 @@ exactly one goal under focus.
 
 ```
 val enter : (unit -> 'a) -> 'a list
-val hyp : string -> constr (** fail if not focussed *)
+val hyp : ident -> constr (** fail if not focussed *)
 val goal : unit -> constr (** fail if not focussed *)
 ```
 
-In what context do we evaluate a term expression?
+We neeed to decide in what context we evaluate an expression...
 
 # Meta-programming
 
-One of the horrendous implementation problems of Ltac is the fact that it is
-never clear whether an object refers to the object world or the meta-world.
-This is a source of incredible slowness, as the interpretation must be
-aware of bound variables and must use heuristics to decide whether a variable
-is a proper one or referring to something in the Ltac context?
+## Overview
 
-Likewise, in current Ltac, constr parsing is implicit, so that `foo 0` is
+One of the horrendous implementation issues of Ltac is the fact that it is
+never clear whether an object refers to the object world or the meta-world.
+This is an incredible source of slowness, as the interpretation must be
+aware of bound variables and must use heuristics to decide whether a variable
+is a proper one or referring to something in the Ltac context.
+
+Likewise, in Ltac1, constr parsing is implicit, so that `foo 0` is
 not `foo` applied to the Ltac integer expression `0` (Ltac does have a
 non-first-class notion of integers), but rather the Coq term `Datatypes.O`.
 
 We should stop doing that! We need to mark when quoting and unquoting, although
 we need to do that in a short and elegant way so as not to be too cumbersome
-to the user. Suggestions include:
+to the user.
+
+## Syntax & semantics
+
+Here is a suggestive example of a reasonable syntax.
 
 ```
 let var := "H" in (* a string *)
 let c := << fun $var$ => 0 >> (* the Coq term "fun H => 0" *)
 let c' := << let x := $c$ in nat >> (* the Coq term "let x := fun H => 0 in nat" *)
 ...
-
 ```
 
-We need to decide how to handle bound variables though.
+Ltac2 should give access to the various abstract types present in the term
+ASTs. Amongst others, we should probably export the following.
+
+```
+type ident (** Identifiers *)
+type evar (** Abstract evars *)
+type constr (** Untyped constrs, corresponding to glob_constr (?) *)
+```
+
+It is better to define primitively the quoting syntax to build terms, as this
+is more robust to changes.
+
+```
+t, u ::= ... | << constr >>
+```
+
+The `constr` datatype have the same syntax as the usual Coq
+terms, except that it also allows antiquotations of the form $t$ whose type
+is statically inferred from the position, e.g.
+
+```
+<< let $t$ := $u$ >> (** [t] is an ident, [u] is a constr *)
+```
+
+As the term syntax implicitly allows to inject other classes without marking,
+antiquotations can refer explicitly to which class they belong to overcome this
+limitation.
+
+```
+<< $ident:t$ >> (** [t] is an ident, and the corresponding constr is [GVar t] *)
+<< $ref:t$ >> (** [t] is a reference, and the corresponding constr is [GRef t] *)
+```
+
+Terms can be used in pattern position just as any Ltac constructor. The accepted
+syntax is a subset of the constr syntax in Ltac term position, where
+antiquotations are variables binding in the right-hand side.
+
+Constructors and destructors can be derived from this. E.g. the previous
+var-manipulating functions can be defined as follows.
+
+```
+let mkVar : ident -> constr = fun id -> << $ident:id$ >>
+
+let destVar : constr -> ident = function
+| << $ident:x$ >> -> x
+| _ -> fail ()
+```
+
+One should be careful in patterns not to mix the syntax for evars with the one
+for bound variables.
+
+The usual match construction from Ltac1 can be derived from those primitive
+operations. We should provide syntactic sugar to do so.
+
+We need to decide how to handle bound variables in antiquotations, both in term
+and pattern position. Should they bind? Should they not? What is the semantics
+of the following snippet?
+
+```
+let foo = function << let x := t in $p$ >> -> p
+let bar p = << let x := t in $p$ >>
+```
 
 What about the various kind of constrs? Untyped vs. typed, plus caring about
 the context?

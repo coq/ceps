@@ -55,8 +55,8 @@ The call-by-value functional language fragment is easy to implement.
 
 ## Syntax
 
-We simply elaborate on Ltac1 syntax, which is quite close to e.g. the one
-of OCaml.
+At the level of terms, we simply elaborate on Ltac1 syntax, which is quite
+close to e.g. the one of OCaml. Types follow the simply-typed syntax of OCaml.
 
 ```
 σ, τ := κ ∈ K | α | σ -> τ | ...
@@ -64,9 +64,14 @@ of OCaml.
 t, u := x | n ∈ ℕ | "string" | (fun x => t) | t u | let x := t in u | ...
 ```
 
+K is a set of base types (`int`, `string`, etc.) and can be extended
+thanks to the usual ML type declarations such as algebraic datatypes and
+records.
+
 ## Reduction
 
-We use the usual ML call-by-value reduction.
+We use the usual ML call-by-value reduction, with an otherwise unspecified
+evaluation order.
 
 Note that this is already a departure from Ltac1 which uses heuristic to
 decide when evaluating an expression, e.g. the following do not evaluate the
@@ -88,10 +93,10 @@ foo (fun () -> let x := 0 in bar)
 
 ## Typing
 
-Typing is strict and follows Hindley-Milner system. We would not implement the
-current hackish subtyping semantics, and one would have to resort to conversion
+Typing is strict and follows Hindley-Milner system. We will not implement the
+current hackish subtyping semantics, and one will have to resort to conversion
 functions. See notations though to make things more palatable. For instance,
-it would be common to use the following.
+it shall be common to use the following.
 
 ```
 val mkVar : ident -> constr
@@ -107,26 +112,52 @@ or take additional arguments.
 Regarding effects, nothing involved here, except that instead of using the
 standard IO monad as the ambient effectful world, Ltac2 is going to use the
 tactic monad. Monadic glue is implicit, just as in any instance of Moggi's
-metalanguage.
+metalanguage. That is, the intended semantics of a Ltac2 term `t : σ` is an
+OCaml term `[t] : [σ] Proofview.tactic`, where the translation of the ML
+fragment of Ltac2 is inductively defined as follows.
 
-The tactic monad is essentially a IO monad, together with backtracking state.
-See `engine/proofview.mli` for the primitive operations. It means we have
-at the level of Ltac2 the following primitives.
+```
+[κ] := OCaml(κ) (for some native OCaml type)
+[σ -> τ] := [σ] -> [τ] Proofview.tactic
+
+[x] := Proofview.tclUNIT x
+
+[fun x => t] := Proofview.tclUNIT (fun x -> [t])
+
+[t u] := any of
+| Proofview.tclBIND [t] (fun f -> Proofview.tclBIND [u] (fun x -> f x))
+| Proofview.tclBIND [u] (fun x -> Proofview.tclBIND [t] (fun f -> f x))
+
+[let x := t in u] := Proofview.tclBIND [t] (fun x -> [u])
+```
+
+Note that the order of evaluation of application is *not* specified and is
+implementation-dependent, as in OCaml.
+
+We recall that the `Proofview.tactic` monad is essentially a IO monad together
+with backtracking state representing the proof state. See `engine/proofview.mli`
+for the primitive operations. 
+
+It means we have in Ltac2 the following primitives.
 
 ```
 
 ==============
-Γ ⊢ fail E : A
+Γ ⊢ fail e : A
 
+[fail e] := [e] >>= fun e -> Proofview.tclZERO e
 
 Γ ⊢ t : A    Γ ⊢ u : A
 ======================
     Γ ⊢ t + u : A
 
- Γ ⊢ t : A    Γ ⊢ u : A
+[t + u] := Proofview.tclOR [t] (fun _ -> [u])
+
+Γ ⊢ t : A    Γ ⊢ u : A
 =========================
 Γ ⊢ try t with E => u : A
 
+[try t with E => u] := Proofview.tclOR [t] (fun E -> [u])
 ```
 
 The backtracking is first-class, i.e. one can write `0 + 1 : int` producing
@@ -209,7 +240,7 @@ t, u ::= ... | << constr >>
 ```
 
 The `constr` datatype have the same syntax as the usual Coq
-terms, except that it also allows antiquotations of the form $t$ whose type
+terms, except that it also allows antiquotations of the form `$t$` whose type
 is statically inferred from the position, e.g.
 
 ```

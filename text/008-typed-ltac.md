@@ -289,6 +289,73 @@ let bar p = << let x := t in $p$ >>
 What about the various kind of constrs? Untyped vs. typed, plus caring about
 the context?
 
+### Lists and Gallina `match`
+
+It should be possible to manipulate Gallina `match` statements in a relatively
+pain-free way.  For this reason, there should be a way to match on lists:
+
+```
+let replace_args = function << $f$ $a1 .. an$ >>
+                            << $g$ $b1 .. bn$ >>
+                -> << $f$ $b1 .. bn$ >>
+let head = function << $f$ $a1 .. an$ >> -> << $f$ >>
+let args : constr -> constr list = function << $f$ $a1 .. an$ >> -> [a1 ; .. ; an]
+let apply (f : constr) : constr list -> constr = function
+| $a1 .. an$ -> << $f$ $a1 .. an$ >>
+let complicated_identity v = (let f = head v in let xs = args v in apply f xs)
+
+let open_term_under_binders = function << fun $a1 .. an$ => $body$ >> -> << $body$ >>
+let binders : constr -> ident list = function << fun $a1 .. an$ => $body$ >> -> [a1 ; .. ; an]
+let close_term (body : constr) : ident list -> constr = function $a1 .. an$ -> << fun $a1 .. an$ => $body$ >>
+let complicated_function_identity v =
+  let b  = open_term_under_binders v in
+  let xs = binders v                 in
+  close_term body xs
+```
+
+We could implement the `@?P` pattern as something like the desugaring rule:
+```
+rule
+  (match term with
+   | (@?P a1 .. an))
+  ~>
+  let P = type_check (<< fun $a1 .. an$ => $term$ >>) in ...
+```
+The call to `type_check` ensures that there are no remaining holes in the term.
+It is, perhaps, overkill.
+
+Then we could destructure a `match` via syntax like:
+```
+let match_to_eta = function
+| << match $t$ as $t'$ in $Ty$ return $P$ with
+     | $c1$ => $v1$
+     ..
+     | $cm$ => $vm$
+     end >>
+  -> << match $t$ in $Ty$ return $Ty$ with
+        | $c1$ => $c1$
+        ..
+        | $cm$ => $cm$
+        end >>
+```
+which would take something like `match b with true => 0 | false => 1 end` and
+return `match b with true => true | false => false end`.
+
+We should be able to construct the eliminators for inductive types
+in Ltac 2.0, using this syntax to generate the bodies, together with some
+primitives for acquiring the relevant types.
+
+
+**Questions**:
+- What exactly are the semantics of `..`?
+- Should it be `$a1 .. an$` or `$a1$ .. $an$`?
+- This syntax suggests that when open terms are used in binding positions,
+  unbound variables should become binding patterns.  That is, if you have
+  `v` which has been constructed as `<< @cons _ $x$ $xs$ >>`, then
+  `<< fun ls : list nat => match ls with $v$ => $v$ | _ => nil end >>` should
+  be the eta-expansion of `ls`.  Is this desired semantics?  Are there issues
+  with it?
+
 # Notations
 
 Notations are the crux of the usability of Ltac. We should be able to recover

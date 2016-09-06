@@ -110,5 +110,5 @@ Multiplicity: 0 or more
 
 All packages made from coq-constribs do carry `keyword` , `category` and `date`. 
 None carries `logpath`.   The `date` is free text, no format.  Too many values for `keyword`.
-Online [presentation](https://coq.inria.fr/opam/www/archive.html) of metadata.
+Online [presentation](https://coq.inria.fr/opam/www/) of metadata.
 

@@ -31,7 +31,7 @@ environment and optional body. Terms featuring evars have an evar normal form
 its body in the term.
 
 In theory, apart for very specific cases, evar-wearing terms should be
-considered equivalent when they have the safe ENF. We call functions that
+considered equivalent when they have the same ENF. We call functions that
 respect the equivalence insensitive. The problem is that most of the functions
 from the codebase are not insensitive, because they rely on `Constr` generic
 accessor to observe the shape of a term.

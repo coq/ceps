@@ -64,9 +64,17 @@ close to e.g. the one of OCaml. Types follow the simply-typed syntax of OCaml.
 t, u := x | n ∈ ℕ | "string" | (fun x => t) | t u | let x := t in u | ...
 ```
 
-K is a set of base types (`int`, `string`, etc.) and can be extended
-thanks to the usual ML type declarations such as algebraic datatypes and
-records.
+K is a set of base types and can be extended thanks to the usual ML type
+declarations such as algebraic datatypes and records.
+
+Built-in types include:
+- `int`, machine integers
+- `string`, mutable strings
+- `α array`, mutable arrays
+- `exn`, exceptions
+- `constr`, kernel-side terms
+- `pattern`, term patterns
+- `ident`, well-formed identifiers
 
 ## Reduction
 
@@ -138,61 +146,81 @@ We recall that the `Proofview.tactic` monad is essentially a IO monad together
 with backtracking state representing the proof state. See `engine/proofview.mli`
 for the primitive operations. 
 
-It means we have in Ltac2 the following primitives.
+### Backtrack
+
+In Ltac2, we have the following primitives.
 
 ```
-
-==============
-Γ ⊢ fail e : A
-
-[fail e] := [e] >>= fun e -> Proofview.tclZERO e
-
-Γ ⊢ t : A    Γ ⊢ u : A
-======================
-    Γ ⊢ t + u : A
-
-[t + u] := Proofview.tclOR [t] (fun _ -> [u])
-
-Γ ⊢ t : A    Γ ⊢ u : A
-=========================
-Γ ⊢ try t with E => u : A
-
-[try t with E => u] := Proofview.tclOR [t] (fun E -> [u])
+val fail : exn -> 'a (** See Proofview.tclZERO *)
+val try : (unit -> 'a) -> (exn -> 'a) -> 'a (** See Proofview.tclOR *)
 ```
 
-The backtracking is first-class, i.e. one can write `0 + 1 : int` producing
-a backtracking integer.
+The backtracking is first-class, i.e. one can write `try 0 (fun _ -> 1) : int`
+producing a backtracking integer.
 
-Alternatively, one can provide it through primitive operations and design the
-syntax using notations.
-```
-val fail : exn -> 'a
-val plus : (unit -> 'a) -> (unit -> 'a) -> 'a
-val try : (unit -> 'a) -> (exn -> 'a) -> 'a
-```
-
-We need to solve the focus-on-goal issue though. The tactic monad naturally
-operates over the whole proofview, which may represent several goals. It is
-natural to do the same here, but we must provide a way to focus and a goal
-and express that something is interpreted in a goal. Maybe the following
-primitives relying on a handle?
+We should provide a more palatable syntax for these primitives, using notations.
 
 ```
-val enter : (handle -> 'a) -> 'a list
-val hyp : handle -> ident -> constr
-val goal : handle -> constr
+[t + u] := try (fun () => t) (fun _ => u)
+[try t with Eᵢ => uᵢ] := try (fun () => t) (fun Eᵢ => uᵢ)
 ```
 
-An alternative would be to do this implicitly and fail whenever there is not
-exactly one goal under focus.
+### Goals
+
+A goal is given by the data of its conclusion and hypotheses, i.e. it can be
+represented as `[Γ ⊢ A]`.
+
+The tactic monad naturally operates over the whole proofview, which may
+represent several goals, including none. Thus, there is no such thing as
+*the current goal*. Goals are naturally ordered, though.
+
+It is natural to do the same in Ltac2, but we must provide a way to get access
+to a given goal. This is the role of the `enter` primitive, that applies a
+tactic to each currently focussed goal in turn.
 
 ```
-val enter : (unit -> 'a) -> 'a list
-val hyp : ident -> constr (** fail if not focussed *)
-val goal : unit -> constr (** fail if not focussed *)
+val enter : (unit -> unit) -> unit
 ```
 
-We neeed to decide in what context we evaluate an expression...
+It is guaranteed that when evaluating `enter f`, `f` is called with exactly one
+goal under focus. Note that `f` may be called several times, or never, depending
+on the number of goals under focus before the call to `enter`.
+
+A more expressive primitive allows to retrieve the data returned by each tactic
+and store it in a list.
+
+```
+val enter_val : (unit -> 'a) -> 'a list
+```
+
+Accessing the goal data is then implicit in the Ltac2 primitives, and may fail
+if the invariants are not respected. The two essential functions for observing
+goals are given below.
+
+```
+val hyp : ident -> constr
+val goal : unit -> constr
+```
+
+The two above functions fail if there is not exactly one goal under focus.
+In addition, `hyp` may also fail if there is no hypothesis with the
+corresponding name.
+
+### Global environment
+
+There is a notion of global environment of a proof, containing global
+declarations and section variables. It is easy to provide the corresponding
+primitives to access it.
+
+```
+val var : ident -> constr
+val global : global -> constr
+```
+
+### IO
+
+The Ltac2 language features non-backtracking IO, notably mutable data and
+printing operations.
 
 # Meta-programming
 
@@ -212,7 +240,7 @@ We should stop doing that! We need to mark when quoting and unquoting, although
 we need to do that in a short and elegant way so as not to be too cumbersome
 to the user.
 
-## Syntax & semantics
+## Syntax example
 
 Here is a suggestive example of a reasonable syntax.
 
@@ -223,14 +251,9 @@ let c' := << let x := $c$ in nat >> (* the Coq term "let x := fun H => 0 in nat"
 ...
 ```
 
-Ltac2 should give access to the various abstract types present in the term
-ASTs. Amongst others, we should probably export the following.
+## Term quotation
 
-```
-type ident (** Identifiers *)
-type evar (** Abstract evars *)
-type constr (** Untyped constrs, corresponding to glob_constr (?) *)
-```
+### Syntax
 
 It is better to define primitively the quoting syntax to build terms, as this
 is more robust to changes.
@@ -255,6 +278,67 @@ limitation.
 << $ident:t$ >> (** [t] is an ident, and the corresponding constr is [GVar t] *)
 << $ref:t$ >> (** [t] is a reference, and the corresponding constr is [GRef t] *)
 ```
+
+### Semantics
+
+Interpretation of a quoted constr is done in two phases, internalization and
+evaluation.
+- During internalization, variables are resolved and antiquotations are typed,
+  effectively producing a `glob_constr` in Coq implementation terminology,
+  potentially ill-typed.
+- During evaluation, a quoted term is fully evaluated to a kernel term, and is
+  in particular type-checked.
+
+Internalization is part of the static semantics, i.e. it is done at typing
+time, while evaluation is part of the dynamic semantics, i.e. it is done when
+a term gets effectively computed.
+
+#### Static semantics
+
+The typing rule of a quoted constr is given below, where the `eᵢ` refer to
+antiquoted terms.
+
+```
+ Γ ⊢ e₁ : constr    Γ ⊢ eₙ : constr
+====================================
+  Γ ⊢ << c{$e₁$, ..., $eₙ$} >> : constr
+```
+
+Note that the **static** environment of typing of antiquotations is **not**
+expanded by the binders from the term. Namely, it means that the following
+expression will **not** type-check.
+```
+<< fun x : nat => $exact x$ >>
+```
+
+There is a simple reason for that, which is that the following expression would
+not make sense in general.
+```
+<< fun x : nat => $clear x; exact x$ >>
+```
+
+Rather, the tactic writer has to resort to the **dynamic** environment, and must
+write instead something that amounts to the following.
+```
+<< fun x : nat => $exact (hyp "x")$ >>
+```
+
+Obviously, we need to provide syntactic sugar to make this tractable. See the
+corresponding section for more details.
+
+#### Dynamic semantics
+
+Evaluation of a quoted term is described below.
+- The quoted term is evaluated by the pretyper.
+- Antiquotations are evaluated in a context where there is exactly one goal
+under focus, with the hypotheses coming from the current environment extended
+with the bound variables of the term, and the resulting term is fed into the
+quoted term.
+
+Relative orders of evaluation of antiquotations and quoted term is not
+specified.
+
+## Patterns
 
 Terms can be used in pattern position just as any Ltac constructor. The accepted
 syntax is a subset of the constr syntax in Ltac term position, where
@@ -363,6 +447,8 @@ a feeling similar to the old implementation by using and abusing notations.
 This would be done at at level totally different from the semantics, which
 is not what is happening as of today.
 
+## Scopes
+
 We would like to attach some scopes to identifiers, so that it could be possible
 to write e.g.
 
@@ -412,6 +498,22 @@ that parses an identifier s.t. `legacy_constr(H)` elaborates to
 One should be able to define new scopes, by giving them a qualified name,
 a old scope used for the parsing rule, and an expansion macro. We can maybe
 unify such a scope creation process with the tactic notation one?
+
+## Syntactic sugar
+
+A few dedicated syntaxes should be built-in into Ltac2 for easy manipulation
+of Coq-specific data.
+
+### Identifiers
+
+We need to write identifiers as easily as strings. What about `#foo` standing
+for the identifier `foo`?
+
+### Hypotheses
+
+We need to be able to access easily a hypothesis from its name. What about
+`` `foo `` being a shorthand for `hyp "foo"`? This needs to be accessible inside
+terms as well.
 
 # Transition path
 

@@ -158,6 +158,18 @@ val try : (unit -> 'a) -> (exn -> 'a) -> 'a (** See Proofview.tclOR *)
 The backtracking is first-class, i.e. one can write `try 0 (fun _ -> 1) : int`
 producing a backtracking integer.
 
+These operations are expected to satisfy a few equations, most notably that they
+form a monoid compatible with sequentialization.
+
+```
+try t fail ≡ t ()
+try (fun () -> fail e) f ≡ f e
+try (try t f) g ≡ try t (fun e -> try (f e) g)
+
+let x := fail e in u ≡ fail e
+let x := try t f in u ≡ try (fun () -> let x := t in u) (fun e -> let x := f e in u)
+```
+
 We should provide a more palatable syntax for these primitives, using notations.
 
 ```
@@ -215,6 +227,28 @@ primitives to access it.
 ```
 val var : ident -> constr
 val global : global -> constr
+```
+
+### Errors
+
+The Ltac2 language also provides non-backtracking exceptions through the
+following primitives.
+
+```
+val throw : exn -> 'a
+val catch : (unit -> 'a) -> (exn -> 'a) -> 'a
+```
+
+Contrarily to backtracking exceptions, this kind of error is never caught by
+backtracking primitives, that is, throwing an exception destroys the stack.
+Exceptions can be caught using the `catch` primitive, though. This is
+materialized by the following equations, where `V` is a value.
+
+```
+let x := throw e in u ≡ throw e
+catch (fun () -> throw e) f ≡ f e
+catch (fun () -> V) f ≡ V
+try (fun () -> throw e) f ≡ throw e
 ```
 
 ### IO
@@ -283,11 +317,11 @@ limitation.
 
 Interpretation of a quoted constr is done in two phases, internalization and
 evaluation.
-- During internalization, variables are resolved and antiquotations are typed,
-  effectively producing a `glob_constr` in Coq implementation terminology,
-  potentially ill-typed.
+- During internalization, variables are resolved and antiquotations are
+  type-checked as Ltac2 terms, effectively producing a `glob_constr` in Coq
+  implementation terminology, potentially ill-typed as a Coq term.
 - During evaluation, a quoted term is fully evaluated to a kernel term, and is
-  in particular type-checked.
+  in particular type-checked in the current environment.
 
 Internalization is part of the static semantics, i.e. it is done at typing
 time, while evaluation is part of the dynamic semantics, i.e. it is done when
@@ -299,7 +333,7 @@ The typing rule of a quoted constr is given below, where the `eᵢ` refer to
 antiquoted terms.
 
 ```
- Γ ⊢ e₁ : constr    Γ ⊢ eₙ : constr
+  Γ ⊢ e₁ : unit     Γ ⊢ eₙ : unit
 ====================================
   Γ ⊢ << c{$e₁$, ..., $eₙ$} >> : constr
 ```

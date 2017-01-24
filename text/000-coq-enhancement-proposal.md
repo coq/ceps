@@ -31,16 +31,17 @@ a CEP may become irrelevant, obsoleted by the circumstances.
 
 Then start implementing it, or find someone that does it.
 
-## What should a driver do
-* write the draft
-* drive the discussions around it
-* summarize the outcome in the CEP, and keep the document updated
-* defend it at the working group
-* eventually write code or find someone that does it
+## More concretely, what should a driver do
+1. write the draft, make a PR on https://github.com/coq/ceps
+1. drive the discussions around it (on coq-club, coqdev, on the PR itself)
+1. summarize the outcome in the CEP, and keep the document updated
+1. defend it at the working group
+1. eventually write code or find someone that does it
 
 ## FAQ
-* Why not a pull request? A CEP is about the design, and has to happen before code is written
-* Why not a bug tracker entry? Why not a mailing list thread? A CEP can be related to a bug number and discussion can happen on a mailing list.  A CEP summarizes the discussion into a more accessible document
+* *Why not a pull request (to https://github.com/coq/coq with the code)?* A CEP is about the design, and has to happen before code is written. A proof of concept (a toy implementation) is perfectly fine and may help the discussion. Still, pull requests on https://github.com/coq/coq are meant for code to be integrated, not for ideas to be discussed.
+* *Why not a bug tracker entry? Why not a mailing list thread?* A CEP can be related to a bug number and discussion can happen on a mailing list.  A CEP summarizes the discussion into a more accessible document.  If you want to bring someone in the discussion a CEP is a single pointer to give to him.
 
 ## Changes
 * 14/4/2016, first draft
+* 24/1/2017, more details on the workflow

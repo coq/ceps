@@ -85,7 +85,17 @@ proof modes coexisting in a modular way (i.e. without syntactic or semantic conf
 
 ## Proposal
 
+Each proof mode installs all its grammar in a dedicated non-terminal `mode-root`.
+Such non-terminal is installed as the main entry (today the one for `tactic-expr`)
+in one of the following ways:
+- `Set Default Proof Mode "mode1".` (TODO: disable inside proof?)
+- `begin mode1. .... end.` within a proof.
+- `mode1:: ... .` within a proof, changes mode for 1 statement only
+- `Proof .... mode mode1 ... using ... .` (Useful?)
 
+Also fix the token gluing problem (proposal https://coq.inria.fr/bugs/show_bug.cgi?id=4867 )
+to make it simpler to reuse non-terminals of other modes inside the grammar of a
+mode if one likes to.
 
 ## Bugs
 

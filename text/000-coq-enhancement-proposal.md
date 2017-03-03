@@ -16,7 +16,7 @@ A CEP is a document like this one.
 Useful sections are
 - title: a catchy title is key to success ;-)
 - driver: your name/contact
-- summary: from reading this part one should understand if he is interested and/or competent on the subject of the CEP
+- summary: from reading this part one should understand if she is interested and/or competent on the subject of the CEP
 - motivation: it is important to explain which problem the CEP is trying to solve or which use case it covers
 - detailed design: explain how the problem is solved by the CEP, provide a mock up, examples.
 - drawbacks: is the proposed change affecting any other component of the system? how?

@@ -6,7 +6,7 @@
 
 # Summary
 
-From reading this part one should understand if he is interested and/or
+From reading this part one should understand if she is interested and/or
 competent on the subject of the CEP.
 
 # Motivation

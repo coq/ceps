@@ -4,7 +4,7 @@
   _co-drivers proposed by Emilio_: Hugo Herbelin (@herbelin), Pierre-Marie Pédrot (@ppedrot), Clément Pit--Claudel (@cpitclaudel), Enrico Tassi (@gares), Yann Régis-Gianas (@yurug)
   (_this document is based on many discussions with them_)
 
-- Status: Request For Comments, Partial Prototype Implementation
+- Status: Request For Comments, End of CEP, Implementation Ready to Merge
 
 ----
 
@@ -13,51 +13,59 @@
 Coq pretty printing was designed for a console-based setup, however
 the situation these years has much changed and rich layout formats are
 the norm, with limitations inherent to console printing still present
-in Coq.
+in Coq. `Pp.std_cmdpps`, the primary document representation in Coq is
+opaque from the point of view of the clients, thus Coq's output is
+seen as strings.
 
 For 8.5, a first attempt to address this shortcoming came was made
 with the introduction of `Richpp.richpp`. This is marked improvement
-from the previous situation. However, the current `richpp` format
-loses some important information in its generation, and it is still to
-tied to console-based concepts, such as printing width. Once a message
-is transformed into a `richpp` format, there is no way to recover the
-original box-based layout.
+from the previous situation, as clients now can inspect `richpp`
+documents and see tags, and structure. However, the current output is
+still tied to console-based concepts, such as printing width, and once
+a message is transformed into a `richpp` format, there is no way to
+recover the original box-based layout.
 
-Thus, some use case overlapping is happening between `richpp` and
-`Pp.std_cmdpps`, the legacy document representation in Coq. For
-instance, it is convenient to be able to concatenate two `richpp`
-documents, etc... this leads to a duplication of code and primitives
-and in effect, with the non-optimal situation of having two notions of
-printing document inside Coq.
+The overlap in functionality between `richpp` and `Pp.std_cmdpps` is
+problematic. For instance, it is necessary to concatenate and
+manipulate `richpp` documents, which leads to a duplication of code
+and primitives. In effect, we currently have two notions of "printing
+document" in Coq, which is far from optimal, and doesn't bring any
+other functionality beyond serialization.
 
-This CEP proposes to enrich and consolidate the current `Pp.std_cmdpps` data
-type into a more general document type. In particular we propose:
+This CEP proposes to consolidate and enrich the current
+`Pp.std_cmdpps` data type into a more general document type. In
+particular we propose:
 
 - To make `Pp.std_cmdpps` serializable, allowing User Interfaces to
   render it in a way better adapted to their particular backends. This
   allows for client-side reflowing and line-breaking.
 - To merge "rich" printing into the `Pp` datatype, leading to the
   deprecation of `Richpp.richpp`.
-- To enrich `Pp.std_cmdpps` with Coq-specific capabilities. For instance,
-  define tags to mark implicit arguments, notation boxes, making the features of
-  `Ppextend` standard, etc...
+- To enrich `Pp.std_cmdpps` with Coq-specific capabilities. For
+  instance, define tags to mark implicit arguments, notation boxes,
+  making the features of `Ppextend` standard, etc...
 - To replace the current tagging system by a canonical, serializable one.
 - To deprecate console specific commands such as `Set Printing Width`,
   `Set Printing Implicits`, etc...
 
-This proposal provides a cleanup of the code base. Current stats for
-the patch is 1000 additions vs 1500 deletions, making a the codebase
-500 lines smaller.
-
-For instance, serialization of `Pp.std_cmdpps` has allowed to
-implement `coqtop` as a feedback client, has removed any dependency on
-console code from the core of Coq, and generally improved the
-modularity of the system.
-
-We aim to preserve byte-identical output. This means that some more
+These goals are ambitious, and we propose a first step implementing the
+features while preserving byte-identical output. This means that some
 advanced features, such as conditional printers or layout-based
-notation, will be implemented separately, as I don't see a way to
-preserve compatibility.
+notation, are refereed to further discussion to a different CEP and to
+be implemented separately, as they will likely break compatibility
+with tools parsing Coq ouptut for humans.
+
+This proposal provides a cleanup of the code base. Current stats for
+the patch is 1305 insertions and 1901 deletions, making the code base
+600 lines smaller.
+
+Serialization of `Pp.std_cmdpps` has allowed to implement `coqtop` as
+a feedback client, removed any dependency on console code from the
+core of Coq, and generally improved the modularity of the system.
+
+The advanced features, such as conditional printers or layout-based
+notation, are deferred to later PR, as I don't see a way to preserve
+identical output compatibility.
 
 **the current printing path**
 
@@ -119,16 +127,16 @@ We detail some concrete use cases to illustrate the approach:
 
 - **Accurate term location**: Every box can contain a path on the term.
 
-- **Rich document types**: We can easily support tables, paragraphs,
-  emphasis on text, math, etc...
+- **Rich document types**: We can extend `Pp.std_cmdpps` to support
+  tables, paragraphs, emphasis on text, math, etc...
 
 ### A hard problem:
 
 _Mapping terms to documents and viceversa_
 
-Indeed, the ideas in `Ppannotation` is right, however, I the
-implementation seems quite difficult to use, in particular because the
-content of the tags must be serialized again.
+The idea in `Ppannotation` is right, however, the implementation seems
+difficult to use, in particular because the content of the tags must
+be serialized again to be useful for clients.
 
 SerAPI can indeed display the full annotated output, I recommend doing
 it and observing what you get. Go to https://x80.org/rhino-hawk/, wait for the libraries to load, then type:
@@ -201,7 +209,7 @@ ENotation sum := "mathML stuff".
 Implementation of the plan has started, current code passes the test
 suite and can be found at:
 
-https://github.com/ejgallego/coq/tree/pp_new
+https://github.com/ejgallego/coq/tree/pp_new_part1
 
 Already in the tree are:
 

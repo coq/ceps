@@ -56,15 +56,30 @@ probably not be buggy and thus patch level versions should be quite rare.
 There is one branch per released major version (the stable branches, which
 are named v1, v2, v3...) plus the master branch.
 
-Breaking changes are always done on the master branch only.
+Breaking changes are *always* done on the master branch only.
+When maintainers agree that it is time, the development version (master
+branch) can become the new stable version: a new branch is created
+to track this stable version; while breaking changes continue to happen
+only on master.
 
-Non-breaking changes are always done on the latest stable branch, then
-merged into the master branch.
+Non-breaking changes are *always* done on the latest stable branch, then
+merged into the master branch. Minor and patch level releases can happen
+much more often than major releases and would consist in tagging a
+specific commit on the latest stable branch and creating an OPAM package.
 
 All the supported versions of the library (the development version, the
 stable version and possibly a few legacy versions, i.e. older stable
-versions) are checked to compile with all the supported versions of Coq
-(thanks to automatic testing jobs).
+versions) are checked to compile with all the supported, *more recent*,
+versions of Coq (thanks to automatic testing jobs).
+
+This means that newer versions of the library can use newly introduced
+features of Coq, but that new versions of Coq cannot break compatibility
+with supported versions of the library.
+
+There would not be any fixed release schedule to start with: if this is
+seen like something useful to have, it would have to be discussed and
+decided by the maintainers once the new development practices are well
+established.
 
 ## Distribution
 

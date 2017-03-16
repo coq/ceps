@@ -30,10 +30,9 @@ without changing their version of Coq.
 # Detailed design
 
 A new repository coq/lib is created which contains the current state of
-the `theories/` files (except those which are absolutely necessary for
-building Coq).
+the `theories/` files.
 
-The development of the library continues in this repository and respects
+The development of the library continues in this repository and follows
 semantic versioning.
 
 ## Semantic versioning means:
@@ -94,11 +93,8 @@ of Isabelle (and contribution models of other provers, e.g. Mizar, ACL2...).
 The main drawback is that the split makes it harder to continue compiling
 Coq and its library. We discuss the proposed solution here.
 
-Expect the `Init/` sub-directory, everything in `theories/` would be
-ignored by git. This can be achieved by adding to `.gitignore`:
-
-    theories/*
-    !theories/Init/
+We make git ignore the `theories/` directory. This folder will continue
+to serve the purpose of developing and building the library.
 
 Calling a special make target would look for a git repository at `theories/dev/`.
 If it exists, it would fetch and checkout the latest changes from the master
@@ -147,11 +143,15 @@ times in the past. To me this question should be postponed until the new
 development model is well tested. Then this question can be asked again
 with more confidence (if it still seems to be relevant).
 
-- There might be technical problems doing the split. I don't have enough
-knowledge to gauge the difficulty of having Coq compile without most of
-its `theories/` files. Some plugins in particular might be very dependent
-on part of the standard library (e.g. nsatz). Can we keep them in the main
-repository at first? It would reduce the level of changes needed.
+- Some plugins (omega, nsatz...) depend on the library. There are two
+solutions here: either move them to the new repository, or keep them
+where they are for now and make the efforts so that plugins continue
+to be compatible with the various versions of the library.
+The second solution has the advantage to reduce the amount of changes
+required by the move, but it can turn out to be more complicated to
+manage in the long run.
+Keeping them where they are at the beginning does not prevent to move
+them later though.
 
 # Perspectives
 

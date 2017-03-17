@@ -91,6 +91,12 @@ All the other versions, including the development version, are accessible
 through OPAM packages, or by manually downloading and compiling the
 corresponding archives.
 
+More precisely, the OPAM package for Coq would not include the standard
+library nor the plugins anymore. There would be additional packages for
+those. External developments distributed through OPAM would specify the
+version (or version range) of Coq they depend on, but also the version
+(or version range) of the library they require.
+
 ## Call for contributors
 
 Once the split is done, it would be a good thing for the library to have
@@ -167,6 +173,15 @@ required by the move, but it can turn out to be more complicated to
 manage in the long run.
 Keeping them where they are at the beginning does not prevent to move
 them later though.
+
+- Since several versions of the library may be installed in parallel, we
+need to be able to tell Coq which version (or version range) of the library
+to use. This could be achieved with an option of coqtop / coqc (thus it
+would be specified in `_CoqProject`) or with a new command (then it would
+be set inside the document). The first solution is probably better because
+with the second, what to do in case of conflicting such commands? In any
+case, we probably want (if no such option / command is used) the default to
+be the latest stable version available.
 
 # Perspectives
 

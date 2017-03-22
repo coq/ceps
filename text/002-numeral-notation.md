@@ -117,12 +117,8 @@ Numeral Notation nat nat_of_Z' Z'_of_nat : nat_scope
 
    * These Coq proofs aren't needed by the runtime mechanism, they could be kept anywhere in the standard library, as a kind of safety check. On the opposite, the runtime functions require very little (an euclidean division function, mostly) and can come very early in the stdlib.
 
-   * The same mechanism could also provide constants in hexadecimal notation :-), see [HexaProofs.v](https://github.com/letouzey/baseconv/blob/master/Hexa.v|Hexa.v]] and [[https://github.com/letouzey/baseconv/blob/master/HexaProofs.v).
+   * The same mechanism could also provide constants in hexadecimal notation :-), see [Hexa.v](https://github.com/letouzey/baseconv/blob/master/Hexa.v) and [HexaProofs.v](https://github.com/letouzey/baseconv/blob/master/HexaProofs.v).
 
   * Cons : Possible slow-up due to these conversions done via vm_compute (but preliminary tests looks promising, even between base10 and nat, see [Tests.v](https://github.com/letouzey/baseconv/blob/master/Tests.v)).
 
-  * Todo :
-   * Integrate with Daniel's mechanism
-   * In particular extend to signed integers (i.e. add a boolean flag coding the sign)
-   * Continue the speed tests
-   * Many proofs to cleanup, this is a proof-of-concept, remember ;-)
+  * My proposal about base-10 is now [PR#496](https://github.com/coq/coq/pull/496).

@@ -8,8 +8,7 @@ Coq's toplevel declarations.
 
 ### Acknowledgment ###
 
-Original idea from Pierre-Marie Pédrot. Concrete syntax inspired by a
-proposal from Hugo Herbelin.
+Original idea from Pierre-Marie Pédrot.
 
 Why?
 ----
@@ -66,9 +65,8 @@ which this proposal is largely inspired).
 
 ### Syntax ###
 
-We propose the following syntax, following a
-[suggestion from Hugo Herbelin](https://github.com/coq/coq/pull/79#issuecomment-144537239)
-which is inspired from existing the syntax of notations as well as the
+We propose the following syntax which is inspired from existing the
+syntax of notations as well as the
 [equations](https://www.irif.univ-paris-diderot.fr/~sozeau/research/coq/equations.en.html)
 plugin.
 

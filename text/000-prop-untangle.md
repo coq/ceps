@@ -1,4 +1,4 @@
-- Title: Disentangling the 3 roles of `Prop`
+- Title: Disentangling erasure and proof irrelevance
 
 - Drivers: Abhishek Anand
 
@@ -51,21 +51,22 @@ Fixpoint expDenote t (e : exp t) : typeDenote t :=
  ```
 
 In this example, the elements of the type `ty` are only used for specifying properties (return type) of the function `expDenote`.
-Many users wish that elements of type `ty` were erased during extraction to OCaml.
+Many users wish that elements of type `ty` get erased during extraction to OCaml.
 Note that types are computationally irrelevant in Coq: one cannot do a pattern match on something of type Type or Prop.
 Thus, even though in `typeDenote`, a `ty` is eliminated to produce a type, the result is not computationally relevant.
 
 One cannot change the type of `ty` from `Set` to `Prop`. That would make `typeDenote` ill-typed.
 Also, there is no need for `ty` to be proof irrelevant.
 
-Currently, one can use `Extraction Implicit ty` to members of `ty` erased, but Coq's typesystem cannot prevent the user from using members of `ty` in computationally relevant ways. In such cases, `Extraction Implicit ty` can fail.
+Currently, one can use `Extraction Implicit ty` to request the extractor to erase terms of type `ty`. However, Coq's typesystem cannot prevent the user from unintentionally using members of `ty` in computationally relevant ways. In such cases, `Extraction Implicit ty` can fail.
 
 This problem was pointed out to me by Greg Morrisett.
 
 # Detailed design
 
-In the new Coq, `ty` would have type `ESet`. Just like inductives in `Prop`, there are restrictions on when pattern matching on `Ecoq` is allowed. 
-Here are the rules for deriving the allowed return types
+In the new Coq, `ty` would have type `ESet`. Just like inductives in `Prop`, there are restrictions on when pattern matching
+terms of inductive types in `ESet` is allowed. 
+Here are the rules for deriving the allowed return types:
 - if `P:Prop`, then `P` is allowed
 - if `P:ISet`, then `P` is allowed
 - if `P` is allowed, then so is `forall x:A,P`, for any A.
@@ -82,7 +83,7 @@ It seems the above question can be easily answered affirmatively by writing a tr
 to the old Coq. The translation is nearly the identity function, except it translates `ISet` to `Set`.
 
 ### Does the change preserve the soundness of the extraction mechanism?
-I believe that Pierre Letouzey's proofs works almost as it is, except that now maximal subterms of sort `Prop` or `ISet` are erased.
+I believe that Pierre Letouzey's proof works almost as it is, except that now maximal subterms of sort `Prop` or `ISet` are erased.
 
 # Drawbacks
 

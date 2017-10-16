@@ -14,7 +14,7 @@ Currently, Prop serves the following 3 roles:
 Sometimes, these roles conflict. For example, proof irrelevance prevents applications where specifications need to be defined by pattern matching on some "ghost data" that should be erased at runtime. An example is provided in the Motivation section.
 
 This CEP proposes to create another universe, say `ESet`, to disentangle the role of erasure from `Prop`.
-The typehood rules for `ESet` are similar for `Prop`, but more permissive: elimination to computationally irrelevant types, such as universes, is allowed.
+The typehood rules for `ESet` are partly like `Prop` (and partly like `Set`), but more permissive: elimination to computationally irrelevant types, such as universes, is allowed.
 As a result, `ESet` does not support proof irrelevance.
 ESet is tentatively predicative, because that is currently crucial for our meta-theoretic proofs, which translate away `ESet` to Set.
 
@@ -50,7 +50,7 @@ Fixpoint expDenote t (e : exp t) : typeDenote t :=
   end.
  ```
 
-The elements of the type `ty` are only used for specifying properties (return type) of the function `expDenote`.
+In this example, the elements of the type `ty` are only used for specifying properties (return type) of the function `expDenote`.
 Many users wish that elements of type `ty` were erased during extraction to OCaml.
 Note that types are computationally irrelevant in Coq: one cannot do a pattern match on something of type Type or Prop.
 Thus, even though in `typeDenote`, a `ty` is eliminated to produce a type, the result is not computationally relevant.
@@ -68,22 +68,33 @@ In the new Coq, `ty` would have type `ESet`. Just like inductives in `Prop`, the
 Here are the rules for deriving the allowed return types
 - if `P:Prop`, then `P` is allowed
 - if `P:ISet`, then `P` is allowed
-- if `P` is definitionally equal to a sort (`Type` or `Set` or `Prop`), then `P` is allowed
 - if `P` is allowed, then so is `forall x:A,P`, for any A.
+- if `P` is definitionally equal to a sort (`Type` or `Set` or `Prop`), then `P` is allowed
 
 An intuition is that we are ensuring that as a result of extraction, the bodies of the match should each become `\box`.
 Thus, the extraction can replace the whole match term with `\box`.
 
+## Soundness
+
+### Does the change preserve Coq's SN, type preservation, confluence etc.?
+(I believe the existing Coq, at least without coinductives, has all those properties.)
+It seems the above question can be easily answered affirmatively by writing a translation from the new Coq 
+to the old Coq. The translation is nearly the identity function, except it translates `ISet` to `Set`.
+
+### Does the change preserve the soundness of the extraction mechanism?
+I believe that Pierre Letouzey's proofs works almost as it is, except that now maximal subterms of sort `Prop` or `ISet` are erased.
+
 # Drawbacks
 
-Is the proposed change affecting any other component of the system? How?
+Someone can argue that this change makes Coq's meta-theory more complex.
 
 # Alternatives
 
-Yes, do the related works.  What do other systems do?
+This CEP is partially inspired partly by the following discussion I had with the F* development team:
+https://github.com/FStarLang/FStar/issues/360
+
 
 # Unresolved questions
 
-Questions about the design that could not find an answer.
-
+None yet, perhaps because I am glossing over some details.
 

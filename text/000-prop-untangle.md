@@ -93,6 +93,7 @@ Someone can argue that this change makes Coq's meta-theory more complex.
 
 This CEP is partially inspired partly by the following discussion I had with the F* development team:
 https://github.com/FStarLang/FStar/issues/360
+It seems F* now has different mechanisms (effect systems) for proofs and erasure.
 
 
 # Unresolved questions

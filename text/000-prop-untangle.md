@@ -98,5 +98,5 @@ It seems F* now has different mechanisms (effect systems) for proofs and erasure
 
 # Unresolved questions
 
-None yet, perhaps because I am glossing over some details.
+Formally write down the typing rules for `ESet`.
 

@@ -75,11 +75,15 @@ has to communicate two names to the last tactic `revert`. Also note that `revert
 twice (in this simple case the same `revert` is executed in both branches).  Remark that statically
 one does not know on how many goals `revert` will be run.  
 
+### Things can get even nastyer
+
 Finally, also think about the following more complex scenario (I name it HARD).
 If a `+` was used in *one* of the two branches of `[| n]` the temporarily 
 introduced variable to be reverted
 would only have existed in that goal, not in the other one. The best one could get is 
 `tclTHELIST [ revert $tmp as $x; try (revert $tmp1 as $x1) ]`. 
+
+## Proposal
 
 To make the compilation compositional I suggest to use
 ```ocaml
@@ -132,6 +136,10 @@ I could hardcode the state I need for SSR. But:
    state used by the tactics in the other file.  This is a good separation of concerns.
 1. there is not only SSR, the state should be extensible (see below)
 
+Given that the goal state is part of the opauqe type of tactics, it is suffient to
+fix the basic combinators to have the state flow with goals. In particular `refine`
+is in charge of attaching the state to all sub goals.
+
 # Drawbacks
 
 - The data follows the goal, not the corresponding evar. 
@@ -164,4 +172,10 @@ I could hardcode the state I need for SSR. But:
    - rules out some interesting cases, as a `//` that fails if it makes no progress (in any goal, so you really want
      a single call that sees all goals). It is not implemented yet, but it is the only advanage of the current
      multi-goal type of tactic.
+
+# Status
+
+- implemented in the old `V82` type of tactics (used in SSR for a few years, in Coq since 8.7)
+- implemented in the new type of tactic together with the port of SSR ( https://github.com/coq/coq/pull/6676 )
+- the PR is approved, but I received so many questions on this patch that I wrote the CEP to aswer
 

@@ -58,9 +58,9 @@ One can compile the ipat (by hand) to the following code
   tclTHEN (intro_tmp $tmp $x)                                     (* + *)
     (tclTHEN          
       (tclTHENS (tclTHENLIST [intro top; case top; clear top])    (* case *)
-        [ idtac; into n ])                                        (* [ | n ] *)
+        [ idtac; intro n ])                                       (* [ | n ] *)
       (tclTHEN (intro H)                                          (* H *)
-        (revert $tmp $x)…)                                    
+        (revert $tmp $x)…)                                        (* + *)                        
 ```
 
 I used `name` for names (data) that are constant, while `$tmp` for data is
@@ -75,7 +75,7 @@ has to communicate two names to the last tactic `revert` (they have to be compil
 but their position in the resulting tactic is distant). Also note that `revert` will be execued
 twice (in this simple case the same `revert` is executed in both branches).  Remark that statically
 one does not know on how many goals `revert` will be run, so the data links as `$tmp` are write once,
-read many.  
+read many, and write much take place before any read.  
 
 ### Things can get even nastyer (skip at the first reading)
 
@@ -111,12 +111,12 @@ let case hyp ((g,s) * sigma) = ..... ([ (g1,s) ; (g2, s) ], sigma)
 where `g1` is the goal for `0`, `g2` the goal for `S _`. Note that the state `s` is unchanged, and
 (most importantly) attached to both goals. In the execution above
 ```ocaml
-s = { to_revert : ("_tmp_x_", "x") :: Nil }
+s = { to_revert : [ ("_tmp_x_", "x") ] ; ... }
 ```
 The code of `revert` would then be
 ```ocaml
-let revert ((g,{ to_revert }), sigma) =
-  let g', sigma = List.fold_right ... to_revert (g,sigma) in
+let revert_all ((g,{ to_revert }), sigma) =
+  let g', sigma = List.fold_right … to_revert (g,sigma) in
   [ g', { to_revert = [] } ], sigma
 let intro_tmp ((g, { to_revert }), sigma) =
   …
@@ -128,9 +128,9 @@ with these building blocks the compilation becomes
   tclTHEN intro_tmp                                              (* + *)
     (tclTHEN
       (tclTHENS (tclTHENLIST [intro top; case top; clear top])   (* case *)
-        [ idtac; into n ])                                       (* [ | n] *)
+        [ idtac; intro n ])                                      (* [ | n] *)
       (tclTHEN (intro H)                                         (* H *)
-        revert)…)
+        revert_all)…)                                            (* + *)
 ```
 
 Note that now the complex scenario (HARD) works just fine, since `rever` is called

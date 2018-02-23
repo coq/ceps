@@ -13,7 +13,7 @@ to
 ```ocaml
 type tactic = goal_w_state * evar_map -> goal_w_state list * evar_map
 ```
-where `goal = Evar.t`, i.e. an key the `evar_map` associates to `evar_info`,
+where `goal = Evar.t`, i.e. a key the `evar_map` associates to `evar_info`,
 while `goal_w_state = (Evar.t, state)` where `state` is a data type to be discussed.
 
 This change simplifies the storage and communication of data between
@@ -24,11 +24,13 @@ implements the CEP in the current type of tactics.
 
 # Motivation
 
-In the implementaion of SSR rewrite patterns (especially the extended ones https://github.com/coq/coq/pull/6705)
+In the implementaion of SSR intro patterns (especially the extended ones https://github.com/coq/coq/pull/6705)
 I found that explicitly threading data to sub tactics is very hard.
 
 Since such data is semantically attached to a goal I used a custom tactic type (the one above) and tactic combinators.
-This simplified the code and solved a few bugs. 
+This simplified the code and solved a few bugs. To port SSR to the new type of tactics I want to use the same technique.
+
+## Example that shows the problem
 
 Example: The intro pattern `=> + [ | n] H` on goal
 ```coq
@@ -48,36 +50,36 @@ H : 0 < S n
   forall x, P x (S n)
 ```
 The intro pattern reads: temporarily introduce `x`, then destruct the first quantification (`y`) and name `n` the
-variable in the second goal, then introduce `H` (in all goal), finally revert `x`.
+variable in the second goal, then introduce `H` (in all goals), finally revert `x`.
 
-One could compile the ipat (by hand to)
+One can compile the ipat (by hand) to the following code
 
 ```ocaml
-  tclTHEN (tclTHENLIST [read_prod_name $x; intro ? as $tmp])      (* ? *)
+  tclTHEN (intro_tmp $tmp $x)                                     (* + *)
     (tclTHEN          
       (tclTHENS (tclTHENLIST [intro top; case top; clear top])    (* case *)
         [ idtac; into n ])                                        (* [ | n ] *)
       (tclTHEN (intro H)                                          (* H *)
-        (revert $tmp as $x)…)                                    
+        (revert $tmp $x)…)                                    
 ```
 
 I used `name` for names (data) that are constant, while `$tmp` for data is
-shared among tactics and (in all the cases above) se at its first occurrence,
+shared among tactics and (in all the cases above) set at its first occurrence,
 an used in its second one. Moreover.
-- `read_prod_name` saves the name of the bound variable (`x` in this case).
-- `into ? as $tmp` introduces the first hyp under a fresh name, and saves that name in $tmp.
-- `revert foo as x` reverts `foo`, clears it, and renames (for pp purposes only) the quantified variable to `x`.
+- `intro_tmp $tmp $x` saves the name of the bound variable (`x` in this case) in `$x` while the temporary, inaccessible,
+   name in `$tmp`.
+- `revert $foo $x` reverts `$foo`, clears it, and renames (for pp purposes only) the quantified variable to `$x`.
 
-Note that the compilation is non compositional. For example the first tactic `read_prod_name`
-has to communicate such name to the last tactic `revert`. Also note that `revert` will be execued
+Note that the compilation is non compositional. For example the first tactic `intro_tmp`
+has to communicate two names to the last tactic `revert`. Also note that `revert` will be execued
 twice (in this simple case the same `revert` is executed in both branches).  Remark that statically
 one does not know on how many goals `revert` will be run.  
 
-Finally, also think about the following more complex scenario (HARD). If a `+` was used 
-on *one* of the two branches of `[| n]` the temporarily 
+Finally, also think about the following more complex scenario (I name it HARD).
+If a `+` was used in *one* of the two branches of `[| n]` the temporarily 
 introduced variable to be reverted
-would only exist in that goal, not in the other one. The best one could get is 
-`tclTHELIST [ revert $tmp as $x; try (revert $tmp1 as $x1) ]`.
+would only have existed in that goal, not in the other one. The best one could get is 
+`tclTHELIST [ revert $tmp as $x; try (revert $tmp1 as $x1) ]`. 
 
 To make the compilation compositional I suggest to use
 ```ocaml
@@ -104,7 +106,7 @@ let intro_tmp ((g, { to_revert }), sigma) =
 with these building blocks the compilation becomes
 
 ```ocaml
-  tclTHEN intro_tmp                                              (* ? *)
+  tclTHEN intro_tmp                                              (* + *)
     (tclTHEN
       (tclTHENS (tclTHENLIST [intro top; case top; clear top])   (* case *)
         [ idtac; into n ])                                       (* [ | n] *)
@@ -128,7 +130,7 @@ The type `state` uses the `Store` facility.
 I could hardcode the state I need for SSR. But:
 1. such state is spread among 2 files, and tactics in one file don't need to see the
    state used by the tactics in the other file.  This is a good separation of concerns.
-1. there is not only SSR (see below)
+1. there is not only SSR, the state should be extensible (see below)
 
 # Drawbacks
 
@@ -155,4 +157,11 @@ I could hardcode the state I need for SSR. But:
     the type `state1 + state2` and inject both tactics in there.
     
     objects could solve the issue. it is unclear which static benefit one would get.
+    
+ - One could also abandon the idea and unshare the branches (distribute `intro H; revert ...` into the two branches
+   of `[|]`) but this:
+   - complicates a bit the compilation
+   - rules out some interesting cases, as a `//` that fails if it makes no progress (in any goal, so you really want
+     a single call that sees all goals). It is not implemented yet, but it is the only advanage of the current
+     multi-goal type of tactic.
 

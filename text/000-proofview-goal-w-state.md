@@ -72,8 +72,9 @@ Note that the compilation is non compositional. For example the first tactic `re
 has to communicate such name to the last tactic `revert`. Also note that `revert` will be execued
 twice (in this simple case the same `revert` is executed in both branches).  Remark that statically
 one does not know on how many goals `revert` will be run.  
+
 Finally, also think about the following more complex scenario (HARD). If a `+` was used 
-on *one* of the two branches of `[| n]` (imagine a larger goal) the temporarily 
+on *one* of the two branches of `[| n]` the temporarily 
 introduced variable to be reverted
 would only exist in that goal, not in the other one. The best one could get is 
 `tclTHELIST [ revert $tmp as $x; try (revert $tmp1 as $x1) ]`.
@@ -111,17 +112,30 @@ with these building blocks the compilation becomes
         revert)…)
 ```
 
-Note that now the comples scenarion (HARD) also works flawlessly.
+Note that now the complex scenario (HARD) works just fine, since `rever` is called
+with the correct set of hyps to be reverted.
 
 # Detailed design
 
-Explain how the problem is solved by the CEP, provide a mock up, examples.
+The current type of tactic is the opaque
+```ocaml
+type 'a tactic
+```
+The monad passes around the `evar_map` and `comb` (a list of goals).
+This list has been made a list of `goal_w_state`.
+
+The type `state` uses the `Store` facility.
+I could hardcode the state I need for SSR. But:
+1. such state is spread among 2 files, and tactics in one file don't need to see the
+   state used by the tactics in the other file.  This is a good separation of concerns.
+1. there is not only SSR (see below)
 
 # Drawbacks
 
 - The data follows the goal, not the corresponding evar. 
   If a goal is shelved/unshelved it becomes a new goal (the state is first dropped, 
   then reset to an initial, empty, state).
+  
   This is the expected semantics in all use cases I have.
 
 # Alternatives
@@ -129,19 +143,16 @@ Explain how the problem is solved by the CEP, provide a mock up, examples.
 - Use the `store` component of the `evar_info` data type. 
   + This requires the propagation of the state to happen at `Evd.define` time. 
     It seems overkilling, since one has much more evars than goals (just think at all the implicit arguments).
+    
 - make the datatype `state` visible in the type, e.g. `type 'a goal_w_state = goal * 'a`
   + breaks extensibility unless one uses objects.  It works for simple combinators that could be typed as
     ```ocaml
-    tclTHEN : ('a goal_w_state * evar_map -> ('b goal_w_state) list * evar_map) -> 
-      ('a goal_w_state * evar_map -> ('b goal_w_state) list * evar_map)
+    type ('a, 'b) tactic = 'a goal_w_state * evar_map -> ('b goal_w_state) list * evar_map
+    tclTHEN : ('a,'b) tactic -> ('a,'b) tactic
     ```
     but would not let you combine a tactic that uses `state1` as `'a` with
     another one that uses `state2` as `'a`. One would have to craft
     the type `state1 + state2` and inject both tactics in there.
+    
+    objects could solve the issue. it is unclear which static benefit one would get.
 
-# Unresolved questions
-
-Questions about the design that could not find an answer.
-
-
-https://github.com/coq/coq/pull/6676

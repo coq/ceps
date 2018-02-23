@@ -1,0 +1,147 @@
+- Title: Goal with State
+- Drivers: Enrico
+
+----
+
+# Summary
+
+We extend the type of tactics from
+```ocaml
+type tactic = goal * evar_map -> goal list * evar_map
+```
+to
+```ocaml
+type tactic = goal_w_state * evar_map -> goal_w_state list * evar_map
+```
+where `goal = Evar.t`, i.e. an key the `evar_map` associates to `evar_info`,
+while `goal_w_state = (Evar.t, state)` where `state` is a data type to be discussed.
+
+This change simplifies the storage and communication of data between
+tactics when combined together to form larger tactics (at the ML level).
+
+This CEP explains the design/motivation, while https://github.com/coq/coq/pull/6676 
+implements the CEP in the current type of tactics.
+
+# Motivation
+
+In the implementaion of SSR rewrite patterns (especially the extended ones https://github.com/coq/coq/pull/6705)
+I found that explicitly threading data to sub tactics is very hard.
+
+Since such data is semantically attached to a goal I used a custom tactic type (the one above) and tactic combinators.
+This simplified the code and solved a few bugs. 
+
+Example: The intro pattern `=> + [ | n] H` on goal
+```coq
+=====
+forall x y, 0 < y -> P x y
+```
+generates
+```coq
+H : 0 < 0
+======
+  forall x, P x 0
+
+2nd goal:
+n : nat
+H : 0 < S n 
+=======
+  forall x, P x (S n)
+```
+The intro pattern reads: temporarily introduce `x`, then destruct the first quantification (`y`) and name `n` the
+variable in the second goal, then introduce `H` (in all goal), finally revert `x`.
+
+One could compile the ipat (by hand to)
+
+```ocaml
+  tclTHEN (tclTHENLIST [read_prod_name $x; intro ? as $tmp])      (* ? *)
+    (tclTHEN          
+      (tclTHENS (tclTHENLIST [intro top; case top; clear top])    (* case *)
+        [ idtac; into n ])                                        (* [ | n ] *)
+      (tclTHEN (intro H)                                          (* H *)
+        (revert $tmp as $x)…)                                    
+```
+
+I used `name` for names (data) that are constant, while `$tmp` for data is
+shared among tactics and (in all the cases above) se at its first occurrence,
+an used in its second one. Moreover.
+- `read_prod_name` saves the name of the bound variable (`x` in this case).
+- `into ? as $tmp` introduces the first hyp under a fresh name, and saves that name in $tmp.
+- `revert foo as x` reverts `foo`, clears it, and renames (for pp purposes only) the quantified variable to `x`.
+
+Note that the compilation is non compositional. For example the first tactic `read_prod_name`
+has to communicate such name to the last tactic `revert`. Also note that `revert` will be execued
+twice (in this simple case the same `revert` is executed in both branches).  Remark that statically
+one does not know on how many goals `revert` will be run.  
+Finally, also think about the following more complex scenario (HARD). If a `+` was used 
+on *one* of the two branches of `[| n]` (imagine a larger goal) the temporarily 
+introduced variable to be reverted
+would only exist in that goal, not in the other one. The best one could get is 
+`tclTHELIST [ revert $tmp as $x; try (revert $tmp1 as $x1) ]`.
+
+To make the compilation compositional I suggest to use
+```ocaml
+type state = { to_revert : (tmp_name * orig_name) list }
+```
+such state is inherited by subgoals, for example the execution of `case`
+```ocaml
+let case hyp ((g,s) * sigma) = ..... ([ (g1,s) ; (g2, s) ], sigma)
+```
+where `g1` is the goal for `0`, `g2` the goal for `S _`. Note that the state `s` is unchanged, and
+(most importantly) attached to both goals. In the execution above
+```ocaml
+s = { to_revert : ("_tmp_x_", "x") :: Nil }
+```
+The code of `revert` would then be
+```ocaml
+let revert ((g,{ to_revert }), sigma) =
+  let g', sigma = List.fold_right ... to_revert (g,sigma) in
+  [ g', { to_revert = [] } ], sigma
+let intro_tmp ((g, { to_revert }), sigma) =
+  …
+  [ g', {to_revert = ("_tmp_x_","x") :: to_revert} ], sigma
+```
+with these building blocks the compilation becomes
+
+```ocaml
+  tclTHEN intro_tmp                                              (* ? *)
+    (tclTHEN
+      (tclTHENS (tclTHENLIST [intro top; case top; clear top])   (* case *)
+        [ idtac; into n ])                                       (* [ | n] *)
+      (tclTHEN (intro H)                                         (* H *)
+        revert)…)
+```
+
+Note that now the comples scenarion (HARD) also works flawlessly.
+
+# Detailed design
+
+Explain how the problem is solved by the CEP, provide a mock up, examples.
+
+# Drawbacks
+
+- The data follows the goal, not the corresponding evar. 
+  If a goal is shelved/unshelved it becomes a new goal (the state is first dropped, 
+  then reset to an initial, empty, state).
+  This is the expected semantics in all use cases I have.
+
+# Alternatives
+
+- Use the `store` component of the `evar_info` data type. 
+  + This requires the propagation of the state to happen at `Evd.define` time. 
+    It seems overkilling, since one has much more evars than goals (just think at all the implicit arguments).
+- make the datatype `state` visible in the type, e.g. `type 'a goal_w_state = goal * 'a`
+  + breaks extensibility unless one uses objects.  It works for simple combinators that could be typed as
+    ```ocaml
+    tclTHEN : ('a goal_w_state * evar_map -> ('b goal_w_state) list * evar_map) -> 
+      ('a goal_w_state * evar_map -> ('b goal_w_state) list * evar_map)
+    ```
+    but would not let you combine a tactic that uses `state1` as `'a` with
+    another one that uses `state2` as `'a`. One would have to craft
+    the type `state1 + state2` and inject both tactics in there.
+
+# Unresolved questions
+
+Questions about the design that could not find an answer.
+
+
+https://github.com/coq/coq/pull/6676

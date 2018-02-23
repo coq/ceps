@@ -102,7 +102,7 @@ trim it.
 
 To make the compilation compositional I suggest to use
 ```ocaml
-type state = { to_revert : (tmp_name * orig_name) list }
+type state = { to_revert : (tmp_name * orig_name) list; ... }
 ```
 such state is inherited by subgoals, for example the execution of `case`
 ```ocaml

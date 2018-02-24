@@ -16,8 +16,10 @@ type tactic = goal_w_state * evar_map -> goal_w_state list * evar_map
 where `goal = Evar.t`, i.e. a key the `evar_map` associates to `evar_info`,
 while `goal_w_state = (Evar.t, state)` where `state` is a data type to be discussed.
 
-This change simplifies the storage and communication of data between
-tactics when combined together to form larger tactics (at the ML level).
+This change simplifies the storage/update of goal related data. Tactics can
+read, write, or ignore the data associated to a goal. The lifetime of the data
+is the one of the goal: if a goal is closed, then the data is gone; if the
+goal is turned into subgoals, each subgoal inherits the data.
 
 This CEP explains the design/motivation, while https://github.com/coq/coq/pull/6676 
 implements the CEP in the current type of tactics.

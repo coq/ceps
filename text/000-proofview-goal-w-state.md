@@ -198,4 +198,5 @@ is in charge of attaching the state to all sub goals.
 - implemented in the old `V82` type of tactics (used in SSR for a few years, in Coq since 8.7)
 - implemented in the new type of tactic together with the port of SSR ( https://github.com/coq/coq/pull/6676 )
 - the PR is approved, but I received so many questions on this patch that I wrote the CEP to aswer
+- the PR was merged
 

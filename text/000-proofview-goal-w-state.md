@@ -181,7 +181,7 @@ is in charge of attaching the state to all sub goals.
     another one that uses `state2` as `'a`. One would have to craft
     the type `state1 + state2` and inject both tactics in there.
     
-    objects could solve the issue. it is unclear which static benefit one would get.
+    objects could solve the issue.
     
  - To solve (HARD1) one could also abandon the idea and unshare the branches (distribute `intro H; revert ...` into the two branches
    of `[|]`) but this:

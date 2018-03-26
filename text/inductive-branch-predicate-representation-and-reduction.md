@@ -4,6 +4,10 @@
 
 ----
 
+## Summary and motivation
+
+Regarding the branches and the return clause of a `match`, there is a discrepancy between the user-level syntax and the internal representation. This has unexpected effects on how some reduction tactics consider a `match`. This CEP is about proposing a canonical internal representation which matches the user view, as well as about clarifying the expected behavior of reduction tactics on `match`.
+
 ## Context
 
 The user view at inductive types is that of an `as x in I realargs return P` for the return predicate and of a `C vars => u` for a branch (view 1). This view matches the "pure" (dependent-product independent) proof-theoretic view at inductive types. But the implementation represents the return predicate and the branches as functions (view 2).

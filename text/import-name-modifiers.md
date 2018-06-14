@@ -83,7 +83,7 @@ be imported here.
 
 Note that `hiding` and `using ()` are equivalent, and `hiding ()` and
 `using` are equivalent.  Everything mentioned in any `using` list, or
-in the complement of any hiding list, shall be imported (made
+in the complement of all hiding lists, shall be imported (made
 available with an unqualified name).
 
 The directive `renaming (x to y)` on a module `M` shall be roughly equivalent to:
@@ -123,3 +123,4 @@ the dbs in this module.
 ## Changes
 * 2016-06-07, first draft
 * 2016-06-10, correct the date of the first change
+* 2018-06-14, change "any hiding list" to "all hiding lists" in "in the complement of any hiding list"

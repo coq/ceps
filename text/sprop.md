@@ -186,7 +186,7 @@ Inductive sbool : SProp := strue | sfalse.
 
 Inductive Pointed (A:Type) (a:A) : SProp := { point : A; eq : a = point; }.
 (* implies equality reflection: if p : x = y then
-  { point = x; eq = refl } == { point = y; eq = p } (by irrelevance)
+  { point = x; eq = refl } == { point = y; eq = p } (by irrelevance at type [Pointed _ x : SProp])
   { point = x; eq = refl }.point == { point = y; eq = p }.point (by congruence)
   x == y (by reduction) *)
 

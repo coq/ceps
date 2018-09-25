@@ -184,7 +184,7 @@ Next are some types which we have to squash:
 Inductive sbool : SProp := strue | sfalse.
 (* inconsistent theory when unsquashed *)
 
-Inductive Pointed (A:Type) (a:A) : SProp := { point : A; eq : point = x; }.
+Inductive Pointed (A:Type) (a:A) : SProp := { point : A; eq : a = point; }.
 (* implies equality reflection: if p : x = y then
   { point = x; eq = refl } == { point = y; eq = p } (by irrelevance)
   { point = x; eq = refl }.point == { point = y; eq = p }.point (by congruence)

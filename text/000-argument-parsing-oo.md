@@ -28,6 +28,8 @@ declared. The usage messages get out of sync.
 
 # Detailed design
 
+Get the [code](https://github.com/gares/ooarg)
+
 ```ocaml
 (* engine ------------------------------------------------------------ *)
 

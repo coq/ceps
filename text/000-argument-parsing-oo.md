@@ -270,3 +270,8 @@ Objects are not the most well known feature of OCaml, in spite of their beauty.
 One could use nested records. This approach has less flexibility, since
 records cannot overlap and subtyping is not available. 
 
+I have a similar file that uses functional objects, but it is more involved
+since the copying construct `{< .. >}` needs to be in a method, for good reasons,
+and this in turn makes the boilreplate to declare an option significantly longer
+and the type annotations a bit havier.
+

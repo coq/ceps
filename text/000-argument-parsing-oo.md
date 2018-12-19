@@ -23,8 +23,10 @@ Today we lack a proper infrastructure for:
 - sharing parsing options and documentation across components/tools
 - organize/structure options in coherent sets
 
-Documentation is not at the same place where the option syntax is
-declared. The usage messages get out of sync.
+As a result documentation is not at the same place where the option syntax is
+declared and hence the usage messages get out of sync. Parsin is done by
+hand in different ways depending on the tool, even if the option to be parsed
+is literally the same.
 
 # Detailed design
 

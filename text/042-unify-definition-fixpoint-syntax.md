@@ -179,6 +179,11 @@ and `opaque` attributes.  This means that when a body is provided,
 already mostly are when in proof mode because the `Qed` and `Defined`
 commands are not forced upon the user).
 
+We could also decide to implement this plan but make `Definition` and
+`Theorem` fully interchangeable.  A `Theorem` with a body would be
+transparent by default, an `opaque` attribute could be used on
+`Definition` or `Theorem` to make the body opaque.
+
 # Unresolved questions
 
 The name of attributes `opaque` and `transparent` may be confusing

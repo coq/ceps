@@ -28,10 +28,10 @@ There are several motivations to this change:
     the first chapter to be about the core language that the kernel
     understands.  We couldn't give examples using `Theorem` because
     this command always open the proof mode.  Yet, it is important to
-    be able to explain that the kernel can accept to define opaque
+    be able to explain that the kernel can define opaque
     constants, i.e. constants with a body which behave like axioms.
 
-  - Would allow deprecating the akward `Proof @term` syntax.
+  - It would allow deprecating the akward `Proof @term` syntax.
 
 - Fixing the inconsistent semantics of `Theorem` and `Theorem
   ... with`.  The first syntax form behaves like `Definition` but the
@@ -130,7 +130,7 @@ with the following newly supported attributes:
   - using the `with` variant of `Theorem` without attribute
     `recursive` or `corecursive` raises a deprecation message and is
     interpreted as if `recursive` had been used;
-  - the `@fixannot` clause is reserved to the `recursive` attribute
+  - the `@fixannot` clause requires the `recursive` attribute
     being used (or implicit in the case of `Fixpoint`).
 
 - `opaque` and `transparent` to declare an object opaque or

@@ -6,7 +6,7 @@
 
 # Motivation
 
-Currently, the use of `native_compute` in libraries involving many dependencies is [inconvenient](https://github.com/coq/coq/issues/12564#issuecomment-647546401) (so that nobody actually use this feature). Indeed, it is required to recompile all these dependencies with `-native-compiler yes` option passed to `coqc`. And this needs to be done in a specific way for each dependency, depending on the build system it uses (see e.g., [the doc of `coq_makefile`](https://coq.inria.fr/refman/practical-tools/utilities.html#precompiling-for-native-compute)), if possible at all.
+Currently, the use of `native_compute` in libraries involving many dependencies is [inconvenient](https://github.com/coq/coq/issues/12564#issuecomment-647546401) (so that nobody actually uses this feature). Indeed, all their dependencies need to be recompiled with the `-native-compiler yes` option passed to `coqc`. And this needs to be done in a specific way for each dependency, depending on the build system it uses (see e.g., [the doc of `coq_makefile`](https://coq.inria.fr/refman/practical-tools/utilities.html#precompiling-for-native-compute)), if possible at all.
 
 The overall aim of this proposal is to provide an `opam` meta-package (named e.g. `coq-native`) that users can install to automatically (re)compile everything with `native_compute` (no need for a manual `opam pin edit`).
 
@@ -14,12 +14,12 @@ The overall aim of this proposal is to provide an `opam` meta-package (named e.g
 
 This CEPS offers a new strategy for setting the default value for the `-native-compiler` option (in `coqc` and in the `opam` packaging).
 
-The proposed design tackle the following two use cases:
+The proposed design tackles the following two use cases:
 
-1. Most users (who don't even want to hear about `native_compute`) preferred behavior would be compiling Coq with `native-compiler no` by default.
-2. `native_compute` users who currently need to recompile all their libraries with environment variables (if possible) which aren't even the same across the build system used by libraries, thus making any efficient use of `native_compute` terribly unpractical.
+1. Most users' (who don't even want to hear about `native_compute`) preferred behavior would be compiling Coq with `-native-compiler no` by default.
+2. `native_compute` users' preferred behavior would be to easily recompile all their libraries with `coqc -native-compiler yes` (while doing this currently with `opam` requires passing custom environment variables (if possible) which aren't the same across the build systems used by libraries, thus making the setup for efficiently using `native_compute` terribly unpractical).
 
-Also, this proposal uniformizes the configuration across the platforms (while `native_compute` [was permanently disabled for macOS](https://github.com/ocaml/opam-repository/pull/16908) to workaround performance issues, cf. [coq/coq#11178](https://github.com/coq/coq/issues/11178)).
+Also, this proposal makes the configuration uniform across the platforms (while `native_compute` [was permanently disabled for macOS](https://github.com/ocaml/opam-repository/pull/16908) to workaround performance issues, cf. [coq/coq#11178](https://github.com/coq/coq/issues/11178)).
 
 # Detailed design
 

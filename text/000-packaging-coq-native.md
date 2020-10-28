@@ -51,7 +51,7 @@ at configure time, triggering the generation of .coq-native/* files.
 REMARKS:
 - you might face with issues installing this package flag under macOS,
   cf. <https://github.com/coq/coq/issues/11178>
-- for more details, see <the URL of this CEP>.
+- for more details, see <https://github.com/coq/ceps/pull/48>.
 """
 ```
 

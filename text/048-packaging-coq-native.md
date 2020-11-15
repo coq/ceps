@@ -25,11 +25,11 @@ Also, this proposal makes the configuration uniform across the platforms (while 
 
 The proposal is three-fold:
 
-* **item 1.** Update the `coq` packaging in `opam-repository` so that Coq's standard library is compiled with `-native-compiler no` by default, unless an additional meta-package `coq-native` has been installed by the user.
+* **item 1.** Update the `coq` packaging in [ocaml/opam-repository](https://github.com/ocaml/opam-repository) so that Coq's standard library is compiled with `-native-compiler no` by default, unless an additional meta-package `coq-native` has been installed by the user.
 * **item 2.** Extend the `./configure -native-compiler` options:
     * option `./configure -native-compiler yes` now impacts the default value of option `coqc -native-compiler` (in order to precompile both stdlib and third-party libraries with `-native-compiler yes`);
 	* option `-native-compiler ondemand` (which becomes the default when compiling coq manually) preserves the previous default behavior (modulo the stdlib that is not precompiled anymore).
-* **item 3.** Optionally: to enhance `native_compute` support with old versions of Coq (the releases of Coq before 8.13 where **item 2** is implemented), update the `opam` packacking of the considered libraries.
+* **item 3.** Optionally: to enhance `native_compute` support with old versions of Coq (the releases of Coq before 8.13 where **item 2** is implemented), update the `opam` packaging of the considered libraries.
 
 
 ## Regarding item 1:
@@ -100,7 +100,7 @@ index fdb19e9da7..3d3dee7570 100644
 
 The `coqc` option `-native-compiler ondemand` corresponds to the default behavior since [4ad6855](https://github.com/coq/coq/commit/4ad6855504db2ce15a474bd646e19151aa8142e2) (8.5beta3).
 
-The following tabular, adapted from [this coq/coq#12564 comment](https://github.com/coq/coq/issues/12564#issuecomment-647464937), summarizes all behaviors (the changes are highlighted in bold):
+The following array, adapted from [this coq/coq#12564 comment](https://github.com/coq/coq/issues/12564#issuecomment-647464937), summarizes all behaviors (the changes are highlighted in bold):
 
 | `configure (<8.13)` | `configure (>=8.13)` | `coqc` | outcome |
 | --- | --- | --- | --- |
@@ -136,7 +136,7 @@ diff --git a/packages/coq-mathcomp-ssreflect/coq-mathcomp-ssreflect.1.10.0/opam 
  depends: [ "coq" { (>= "8.7" & < "8.12~") } ]
 ```
 
-Doing this, one can notice that the appropriate `.coq-native` directory has succesfully been installed along the `.vo` of the library: 
+Doing this, one can notice that the appropriate `.coq-native` directory has successfully been installed along the `.vo` of the library: 
 
 ```bash
 find "$(opam config var lib)" -name ".coq-native" | grep ssreflect
@@ -147,13 +147,13 @@ find "$(opam config var lib)" -name ".coq-native" | grep ssreflect
 To fully benefit from `native_compute` with a library using Coq 8.5+, some (`opam`) packaging update may be required for this library's dependencies:
 
 - for `coq_makefile`: no change required for Coq 8.13+; otherwise follow **item 3** above (related to Section [Precompiling for `native_compute`](https://coq.github.io/doc/master/refman/practical-tools/utilities.html?highlight=coq_makefile#precompiling-for-native-compute) in Coq refman);
-- for `dune / coq.theory`: this will require Coq 8.12.1+ and a version of `dune` implementing [PR ocaml/dune#3210](https://github.com/ocaml/dune/pull/3210) (cf. [this comment](https://github.com/coq/ceps/pull/48#issuecomment-727020253) by **@ejgallego**)
+- for `dune / coq.theory`: this will require Coq 8.12.1+ and a version of `dune` implementing [PR ocaml/dune#3210](https://github.com/ocaml/dune/pull/3210) (cf. [this comment](https://github.com/coq/ceps/pull/48#issuecomment-727020253) by **@ejgallego**); otherwise (without native support), Dune will just ignore the native parts and no `./coq-native/*.cmxs` file will be installed.
 
 Note that these changes could be performed directly in the existing packages gathered in the [coq/opam-coq-archive](https://github.com/coq/opam-coq-archive) repository.
 
 # Alternatives
 
-* A different but related idea was mentioned in [Zulip](https://coq.zulipchat.com/#narrow/stream/237656-Coq-devs.20.26.20plugin.20devs/topic/Coq-as-compiler): "OPAM: try out coq as a compiler" ([PR coq/opam-coq-archive#595](https://github.com/coq/opam-coq-archive/issues/595)).
+* A different but related idea was mentioned in [Zulip](https://coq.zulipchat.com/#narrow/stream/237656-Coq-devs.20.26.20plugin.20devs/topic/Coq-as-compiler/near/216196895): "OPAM: try out coq as a compiler" ([PR coq/opam-coq-archive#595](https://github.com/coq/opam-coq-archive/issues/595)).
     * This would require opam 2.0 (which is not a drawback).
 	* This could be viewed as an alternative of this CEP's package flag.
 	* Unfortunately, this alternative would be even coarser than this CEP (as all opam packages, not only those of coq libraries, would be recompiled).
@@ -175,4 +175,4 @@ Note that these changes could be performed directly in the existing packages gat
 * This CEP was discussed at the 2020-11-13 weekly Coq call, in order to provide full-blown `native_compute` support for the Coq 8.13 release (cf. [PR coq/coq#13352](https://github.com/coq/coq/pull/13352)).
 * The Coq team agreed on considering this CEP for Coq 8.13, while the `split-native` strategy could be further developed for a later Coq release.
 
-*Note:* at the time this CEP is written, the Coq refman still lacks some documentation of the `-native-compiler` option; but progress on this is tracked in issue [coq/coq#12564](https://github.com/coq/coq/issues/12564).
+*Note:* at the time this CEP is written, the Coq refman still lacks some documentation of the `-native-compiler` option; but progress on this is tracked in issue [coq/coq#12564](https://github.com/coq/coq/issues/12564); and that doc might incorporate [the array above](#regarding-item-2).

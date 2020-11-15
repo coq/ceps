@@ -12,11 +12,11 @@ The overall aim of this proposal is to provide an `opam` meta-package (named e.g
 
 # Summary
 
-This CEPS offers a new strategy for setting the default value for the `-native-compiler` option (in `coqc` and in the `opam` packaging).
+This CEP offers a new strategy for setting the default value for the `-native-compiler` option (in `coqc` and in the `opam` packaging).
 
 The proposed design tackles the following two use cases:
 
-1. Most users' (who don't even want to hear about `native_compute`) preferred behavior would be compiling Coq with `-native-compiler no` by default.
+1. Most users' (who don't even want to hear about `native_compute`) preferred behavior would be compiling the stdlib **and** subsequent Coq libraries with `-native-compiler no` by default.
 2. `native_compute` users' preferred behavior would be to easily recompile all their libraries with `coqc -native-compiler yes` (while doing this currently with `opam` requires passing custom environment variables (if possible) which aren't the same across the build systems used by libraries, thus making the setup for efficiently using `native_compute` terribly unpractical).
 
 Also, this proposal makes the configuration uniform across the platforms (while `native_compute` [was permanently disabled for macOS](https://github.com/ocaml/opam-repository/pull/16908) to workaround performance issues, cf. [coq/coq#11178](https://github.com/coq/coq/issues/11178)).
@@ -25,9 +25,12 @@ Also, this proposal makes the configuration uniform across the platforms (while 
 
 The proposal is three-fold:
 
-1. Update the `coq` packaging in `opam-repository` so that Coq's standard library is compiled with `-native-compiler no` by default, unless an additional meta-package `coq-native` has been installed by the user.
-2. Change the default `coqc` option to `-native-compiler on` instead of `-native-compiler ondemand`.
-3. Optionally: to enhance `native_compute` support with old versions of Coq (the releases of Coq before the item 2. above is implemented), update the `opam` packacking of the considered libraries.
+* **item 1.** Update the `coq` packaging in `opam-repository` so that Coq's standard library is compiled with `-native-compiler no` by default, unless an additional meta-package `coq-native` has been installed by the user.
+* **item 2.** Extend the `./configure -native-compiler` options:
+    * option `./configure -native-compiler yes` now impacts the default value of option `coqc -native-compiler` (in order to precompile both stdlib and third-party libraries with `-native-compiler yes`);
+	* option `-native-compiler ondemand` (which becomes the default when compiling coq manually) preserves the previous default behavior (modulo the stdlib that is not precompiled anymore).
+* **item 3.** Optionally: to enhance `native_compute` support with old versions of Coq (the releases of Coq before 8.13 where item 2 is implemented), update the `opam` packacking of the considered libraries.
+
 
 ## Regarding item 1:
 
@@ -42,16 +45,26 @@ bug-reports: "https://github.com/coq/coq/issues"
 conflicts: [
   "coq" {< "8.5"}
 ]
-synopsis: "Dummy package enabling coq's native-compiler flag"
+synopsis: "Package flag enabling coq's native-compiler flag"
 description: """
 This package acts as a package flag for the ambient switch, taken into
 account by coq (and possibly any coq library) to enable native_compute
-at configure time, triggering the generation of .coq-native/* files.
+at configure time, triggering the installation of .coq-native/* files
+for the coq standard library and subsequent coq libraries.
 
-REMARKS:
-- you might face with issues installing this package flag under macOS,
-  cf. <https://github.com/coq/coq/issues/11178>
-- for more details, see <https://github.com/coq/ceps/pull/48>.
+This implements item 1 of CEP #48 <https://github.com/coq/ceps/pull/48>.
+
+Remarks:
+
+1. you might face with issues installing this package flag under macOS,
+   see <https://github.com/coq/coq/issues/11178>.
+2. this package is not intended to be used as a dependency of other
+   packages (notably as installing or uninstalling this package may
+   trigger a rebuild of all coq packages in the ambient switch).
+3. the option set by this package will be automatically propagated to
+   coqc for coq >= 8.13 (but the packaging of coq libraries for
+   earlier versions of coq may need an update: for details, see item 3
+   of CEP #48 <https://github.com/coq/ceps/pull/48>).
 """
 ```
 
@@ -87,13 +100,24 @@ index fdb19e9da7..3d3dee7570 100644
 
 The `coqc` option `-native-compiler ondemand` corresponds to the default behavior since [4ad6855](https://github.com/coq/coq/commit/4ad6855504db2ce15a474bd646e19151aa8142e2) (8.5beta3).
 
-See [the tabular of this coq/coq#12564 comment](https://github.com/coq/coq/issues/12564#issuecomment-647464937) for a summary of all behaviors.
+The following tabular, adapted from [this coq/coq#12564 comment](https://github.com/coq/coq/issues/12564#issuecomment-647464937), summarizes all behaviors (the changes are highlighted in bold):
 
-With the current codebase, the change will amount to replacing [this line of `toplevel/coqargs.ml`](https://github.com/coq/coq/blob/473160ebe4a835dde50d6c209ab17c7e1b84979c/toplevel/coqargs.ml#L101) with:
+| `configure (<8.13)` | `configure (>=8.13)` | `coqc` | outcome |
+| --- | --- | --- | --- |
+| *N/A* | **yes** | yes (default if omitted) | `.coq-native/*` + temporary (when calling `native_compute`) |
+| *N/A* | **yes** | ondemand | temporary |
+| *N/A* | **yes** | no | none |
+| yes | **ondemand** | yes | `.coq-native/*` + temporary (when calling `native_compute`) |
+| yes | **ondemand** | ondemand (default if omitted) | temporary |
+| yes | **ondemand** | no | none |
+| no | no | yes | none |
+| no | no | ondemand | none |
+| no | no | no | none |
 
-```ocaml
-then NativeOn {ondemand=false}
-```
+Note also that (for `coq >= 8.13`), **the stdlib is only precompiled with `./configure -native-compiler yes`**. It is not precompiled otherwise.
+  
+  
+[PR coq/coq#13352](https://github.com/coq/coq/pull/13352) implements this item.
 
 ## Regarding item 3:
 
@@ -116,7 +140,7 @@ diff --git a/packages/coq-mathcomp-ssreflect/coq-mathcomp-ssreflect.1.10.0/opam 
 Doing this, one can notice that the appropriate `.coq-native` directory has succesfully been installed along the `.vo` of the library: 
 
 ```bash
-find $(opam config var lib) -name ".coq-native" | grep ssreflect
+find "$(opam config var lib)" -name ".coq-native" | grep ssreflect
 ```
 
 # Drawbacks

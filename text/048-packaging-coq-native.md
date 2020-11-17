@@ -8,7 +8,7 @@
 
 Currently, the use of `native_compute` in libraries involving many dependencies is [inconvenient](https://github.com/coq/coq/issues/12564#issuecomment-647546401) (so that nobody actually uses this feature). Indeed, all their dependencies need to be recompiled with the `-native-compiler yes` option passed to `coqc`. And this needs to be done in a specific way for each dependency, depending on the build system it uses (see e.g., [the doc of `coq_makefile`](https://coq.inria.fr/refman/practical-tools/utilities.html#precompiling-for-native-compute)), if possible at all.
 
-The overall aim of this proposal is to provide an `opam` meta-package (named e.g. `coq-native`) that users can install to automatically (re)compile everything with `native_compute` (no need for a manual `opam pin edit`).
+The overall aim of this proposal is to provide an `opam` meta-package (named e.g. `coq-native`) that users can install to automatically (re)compile everything with `native_compute` (no need for any manual `opam pin edit`).
 
 # Summary
 
@@ -25,11 +25,11 @@ Also, this proposal makes the configuration uniform across the platforms (while 
 
 The proposal is three-fold:
 
-* **item 1.** Update the `coq` packaging in [ocaml/opam-repository](https://github.com/ocaml/opam-repository) so that Coq's standard library is compiled with `-native-compiler no` by default, unless an additional meta-package `coq-native` has been installed by the user.
+* **item 1.** Update the `coq` packaging in [ocaml/opam-repository](https://github.com/ocaml/opam-repository) so that Coq's standard library is compiled with `-native-compiler yes` only if an additional meta-package `coq-native` has been installed by the user.
 * **item 2.** Extend the `./configure -native-compiler` options:
     * option `./configure -native-compiler yes` now impacts the default value of option `coqc -native-compiler` (in order to precompile both stdlib and third-party libraries with `-native-compiler yes`);
 	* option `-native-compiler ondemand` (which becomes the default when compiling coq manually) preserves the previous default behavior (modulo the stdlib that is not precompiled anymore).
-* **item 3.** Optionally: to enhance `native_compute` support with old versions of Coq (the releases of Coq before 8.13 where **item 2** is implemented), update the `opam` packaging of the considered libraries.
+* **item 3.** Optionally: to enhance `native_compute` support with old versions of Coq (the releases of Coq before 8.13, where **item 2** was not implemented), update the `opam` packaging of the considered libraries.
 
 
 ## Regarding item 1:
@@ -100,19 +100,19 @@ index fdb19e9da7..3d3dee7570 100644
 
 The `coqc` option `-native-compiler ondemand` corresponds to the default behavior since [4ad6855](https://github.com/coq/coq/commit/4ad6855504db2ce15a474bd646e19151aa8142e2) (8.5beta3).
 
-The following array, adapted from [this coq/coq#12564 comment](https://github.com/coq/coq/issues/12564#issuecomment-647464937), summarizes all behaviors (the changes are highlighted in bold):
+The following array, adapted from [this coq/coq#12564 comment](https://github.com/coq/coq/issues/12564#issuecomment-647464937) (and [that other one](https://github.com/coq/coq/issues/12564#issuecomment-647485222)), summarizes all behaviors (the changes are highlighted in bold):
 
-| `configure (<8.13)` | `configure (>=8.13)` | `coqc` | outcome |
-| --- | --- | --- | --- |
-| *N/A* | **yes** | yes (default if omitted) | `.coq-native/*` + temporary (when calling `native_compute`) |
-| *N/A* | **yes** | ondemand | temporary |
-| *N/A* | **yes** | no | none |
-| yes | **ondemand** | yes | `.coq-native/*` + temporary (when calling `native_compute`) |
-| yes | **ondemand** | ondemand (default if omitted) | temporary |
-| yes | **ondemand** | no | none |
-| no | no | yes | none |
-| no | no | ondemand | none |
-| no | no | no | none |
+| `configure (<8.13)` | `configure (>=8.13)` | `coqc` | outcome | requirements |
+| --- | --- | --- | --- | --- |
+| *N/A* | **yes** | yes (default if omitted) | `.coq-native/*` + temporary (when calling `native_compute`) | dependencies should be compiled with the same native flags |
+| *N/A* | **yes** | ondemand | temporary | none |
+| *N/A* | **yes** | no | none | none |
+| yes | **ondemand** | yes | `.coq-native/*` + temporary (when calling `native_compute`) | dependencies should be compiled with the same native flags |
+| yes | **ondemand** | ondemand (default if omitted) | temporary | none |
+| yes | **ondemand** | no | none | none |
+| no | no | yes | none | none |
+| no | no | ondemand | none | none |
+| no | no | no | none | none |
 
 Note also that (for `coq >= 8.13`), **the stdlib is only precompiled with `./configure -native-compiler yes`**. It is not precompiled otherwise.
   
@@ -120,7 +120,7 @@ Note also that (for `coq >= 8.13`), **the stdlib is only precompiled with `./con
 
 ## Regarding item 3:
 
-Assuming we want to use `native_compute` with `coq-mathcomp-ssreflect` (or any library built with `coq_makefile`), the `opam` file has to be extended like this (see e.g. [Coq's refman](https://coq.github.io/doc/master/refman/practical-tools/utilities.html?highlight=coq_makefile#precompiling-for-native-compute)): 
+Assuming we want to use `native_compute` on Coq < 8.13 with `coq-mathcomp-ssreflect` (or any library built with `coq_makefile`), the `opam` file has to be extended like this (see e.g. [Coq's refman](https://coq.github.io/doc/master/refman/practical-tools/utilities.html?highlight=coq_makefile#precompiling-for-native-compute)): 
 
 ```diff
 diff --git a/packages/coq-mathcomp-ssreflect/coq-mathcomp-ssreflect.1.10.0/opam b/packages/coq-mathcomp-ssreflect/coq-mathcomp-ssreflect.1.10.0/opam

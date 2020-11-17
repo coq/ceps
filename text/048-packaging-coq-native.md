@@ -2,6 +2,8 @@
 
 - Drivers: Erik Martin-Dorel (**@erikmd**), Pierre Roux (**@proux01**)
 
+- URL: <https://github.com/coq/ceps/pull/48>
+
 ----
 
 # Motivation

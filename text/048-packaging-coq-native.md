@@ -114,7 +114,7 @@ The following array, adapted from [this coq/coq#12564 comment](https://github.co
 | no | no | ondemand | none | none |
 | no | no | no | none | none |
 
-Note also that (for `coq >= 8.13`), **the stdlib is only precompiled with `./configure -native-compiler yes`**. It is not precompiled otherwise.
+Note also that (for each version of coq), **the stdlib is only precompiled with `./configure -native-compiler yes`**. It is not precompiled with `./configure -native-compiler ondemand` for `coq >= 8.13`.
   
 [PR coq/coq#13352](https://github.com/coq/coq/pull/13352) implements this item.
 

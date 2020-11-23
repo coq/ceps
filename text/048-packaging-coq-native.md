@@ -10,7 +10,7 @@
 
 Currently, the use of `native_compute` in libraries involving many dependencies is [inconvenient](https://github.com/coq/coq/issues/12564#issuecomment-647546401) (so that nobody actually uses this feature). Indeed, all their dependencies need to be recompiled with the `-native-compiler yes` option passed to `coqc`. And this needs to be done in a specific way for each dependency, depending on the build system it uses (see e.g., [the doc of `coq_makefile`](https://coq.inria.fr/refman/practical-tools/utilities.html#precompiling-for-native-compute)), if possible at all.
 
-The overall aim of this proposal is to provide an `opam` meta-package (named e.g. `coq-native`) that users can install to automatically (re)compile everything with `native_compute` (no need for any manual `opam pin edit`).
+The overall aim of this proposal is to provide an `opam` virtual package (named e.g. `coq-native`) that users can install to automatically (re)compile everything with `native_compute` (no need for any manual `opam pin edit`).
 
 # Summary
 
@@ -27,7 +27,7 @@ Also, this proposal makes the configuration uniform across the platforms (while 
 
 The proposal is three-fold:
 
-* **item 1.** Update the `coq` packaging in [ocaml/opam-repository](https://github.com/ocaml/opam-repository) so that Coq's standard library is compiled with `-native-compiler yes` only if an additional meta-package `coq-native` has been installed by the user.
+* **item 1.** Update the `coq` packaging in [ocaml/opam-repository](https://github.com/ocaml/opam-repository) so that Coq's standard library is compiled with `-native-compiler yes` only if an additional virtual package `coq-native` has been installed by the user.
 * **item 2.** Extend the `./configure -native-compiler` options:
     * option `./configure -native-compiler yes` now impacts the default value of option `coqc -native-compiler` (in order to precompile both stdlib and third-party libraries with `-native-compiler yes`);
 	* option `-native-compiler ondemand` (which becomes the default when compiling coq manually) preserves the previous default behavior (modulo the stdlib that is not precompiled anymore).

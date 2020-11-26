@@ -52,9 +52,9 @@ Patterns obey the following syntax:
 ```
 p ::= ?x y₁ ... yₙ         pattern variable (applied to all bound variables)
     | C p₁ ... pₙ          constructor applied to patterns
+    | I p₁ ... pₙ          type-constructor applied to patterns
     | λ x : p₁, p₂         λ-abstraction over patterns
     | ∀ x : p₁, p₂         Π-type of patterns
-    | ...
 ```
 
 A lhs must depend on all the pattern variables in scope while the rhs can depend

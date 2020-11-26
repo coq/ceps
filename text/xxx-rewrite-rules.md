@@ -20,7 +20,7 @@ This could have various use cases:
 their eliminator (eg. quotient types or higher inductive types).
 - Defining functions using a mechanism more powerful that the usual
 pattern-matching.
-- Define extension of CIC such as Exceptional Type Theory or Setoid Type Theory
+- Define extensions of CIC such as Exceptional Type Theory or Setoid Type Theory
 
 # Detailed design
 

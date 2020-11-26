@@ -49,7 +49,7 @@ In the case of pattern-matching, all the branches are patterns as well.
 Patterns obey the following syntax:
 
 ```
-p ::= ?x                   pattern variable
+p ::= ?x y₁ ... yₙ         pattern variable (applied to all bound variables)
     | C p₁ ... pₙ          constructor applied to patterns
     | λ x : p₁, p₂         λ-abstraction over patterns
     | ∀ x : p₁, p₂         Π-type of patterns

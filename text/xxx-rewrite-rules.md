@@ -26,7 +26,6 @@ pattern-matching.
 
 Rewrite rules are mainly given by two components: a left- and a right-hand-side
 that both live in a given context (or scope) of pattern variables.
-(Rewrite rules are not typed.)
 
 Rules look like
 
@@ -55,6 +54,7 @@ p ::= ?x y₁ ... yₙ         pattern variable (applied to all bound variables)
     | I p₁ ... pₙ          type-constructor applied to patterns
     | λ x : p₁, p₂         λ-abstraction over patterns
     | ∀ x : p₁, p₂         Π-type of patterns
+    | !{t}                 forced term
 ```
 
 A lhs must depend on all the pattern variables in scope while the rhs can depend

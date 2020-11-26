@@ -20,6 +20,7 @@ This could have various use cases:
 their eliminator (eg. quotient types or higher inductive types).
 - Defining functions using a mechanism more powerful that the usual
 pattern-matching.
+- Define extension of CIC such as Exceptional Type Theory or Setoid Type Theory
 
 # Detailed design
 
@@ -71,8 +72,8 @@ More generally, rules can break confluence and result in incompleteness from
 the type checker which might reject conversion of two convertible terms in
 the extended theory.
 These drawbacks can be in part alleviated by implementing a modular confluence
-checker as advocated in the paper "The Taming of the Rew" and as is currently
-implemented in Agda by Jesper Cockx.
+checker as advocated in the paper[The Taming of the Rew](https://hal.archives-ouvertes.fr/hal-02901011)
+and as is currently implemented in Agda by Jesper Cockx.
 
 # Alternatives
 

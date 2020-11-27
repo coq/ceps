@@ -77,8 +77,10 @@ More generally, rules can break confluence and result in incompleteness from
 the type checker which might reject conversion of two convertible terms in
 the extended theory.
 These drawbacks can be in part alleviated by implementing a modular confluence
-checker as advocated in the paper [The Taming of the Rew](https://hal.archives-ouvertes.fr/hal-02901011)
-and as is currently implemented in Agda by Jesper Cockx.
+checker as advocated in the paper [The Taming of the Rew] and as is currently
+implemented in Agda by Jesper Cockx.
+
+[The Taming of the Rew]: https://hal.archives-ouvertes.fr/hal-02901011
 
 # Alternatives
 

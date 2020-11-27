@@ -60,6 +60,11 @@ p ::= ?x y₁ ... yₙ         pattern variable (applied to all bound variables)
 A lhs must depend on all the pattern variables in scope while the rhs can depend
 on a subset of those.
 
+Type-forced terms should be considered as wildcard for reduction but are there
+to ensure the pre-typer can do its work. This CEP does not propose to check that
+these are indeed forced by typing, this would be left to further extensions of
+rewrite rules.
+
 Rewrite rules are triggered when a term is stuck with respect to the regular
 rules of Coq.
 

@@ -59,6 +59,11 @@ p ::= ?x y₁ ... yₙ         pattern variable (applied to all bound variables)
 A lhs must depend on all the pattern variables in scope while the rhs can depend
 on a subset of those.
 
+Type-forced terms should be considered as wildcard for reduction but are there
+to ensure the pre-typer can do its work. This CEP does not propose to check that
+these are indeed forced by typing, this would be left to further extensions of
+rewrite rules.
+
 Rewrite rules are triggered when a term is stuck with respect to the regular
 rules of Coq.
 
@@ -71,8 +76,10 @@ More generally, rules can break confluence and result in incompleteness from
 the type checker which might reject conversion of two convertible terms in
 the extended theory.
 These drawbacks can be in part alleviated by implementing a modular confluence
-checker as advocated in the paper [The Taming of the Rew](https://hal.archives-ouvertes.fr/hal-02901011)
-and as is currently implemented in Agda by Jesper Cockx.
+checker as advocated in the paper [The Taming of the Rew] and as is currently
+implemented in Agda by Jesper Cockx.
+
+[The Taming of the Rew]: https://hal.archives-ouvertes.fr/hal-02901011
 
 # Alternatives
 

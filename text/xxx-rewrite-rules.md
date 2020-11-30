@@ -42,8 +42,7 @@ lhs ::= symbol                                   a symbol
       | match lhs with p₁ ... pₙ                 pattern-matching of a lhs
 ```
 
-Symbols are rigid terms, typically axioms. We could in principle allow for
-more terms to qualify as symbols such as definitions (constants). It is up to
+Symbols are rigid terms, typically axioms. It is up to
 the user to make sure that the rules make sense and are applicable.
 In the case of pattern-matching, all the branches are patterns as well.
 Patterns obey the following syntax:

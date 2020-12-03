@@ -24,48 +24,126 @@ pattern-matching.
 
 # Detailed design
 
-Rewrite rules are mainly given by two components: a left- and a right-hand-side
-that both live in a given context (or scope) of pattern variables.
+## Overview
 
-Rules look like
+To ensure confluence and preservation of typing (subject reduction) we enforce
+constraints on rewrite rules. As such they have to be defined by blocks
+consisting of fresh symbols (axioms) and rewrite rules involving them.
+A tentative syntax is as follows:
 
 ```coq
-?x ?y ?z ⊢ lhs ⇒ rhs
+Rewrite Block :=
+  s₁@{u₁} : T₁
+        ⋮
+  sₙ@{uₙ} : Tₙ
+with rules
+  lhs₁ := rhs₁
+        ⋮
+  lhsₙ := rhsₙ.
 ```
-
-where `lhs` obey the following syntax and `rhs` can be an arbitrary term.
-
+where terms `sᵢ` are called symbols, quantifying over universe declaration `uᵢ`
+and of type `Tᵢ`; the `rhsᵢ` are arbitrary terms and `lhsᵢ` obey the following
+syntax:
 ```
-lhs ::= symbol                                   a symbol
+lhs ::= sₖ                                       one of the symbols
       | lhs p                                    lhs applied to a pattern
       | lhs .proj                                projection of a lhs
-      | match lhs with p₁ ... pₙ                 pattern-matching of a lhs
+      | match lhs with p₁ ... pₙ end             pattern-matching of a lhs
 ```
+Note that in particular, a rewrite rule may only rewrite symbols that are
+declared together with it.
 
-Symbols are rigid terms, typically axioms. It is up to
-the user to make sure that the rules make sense and are applicable.
 In the case of pattern-matching, all the branches are patterns as well.
-Patterns obey the following syntax:
+Patterns are given by the following syntax (extending the already existing
+notion of patterns):
 
 ```
 p ::= ?x y₁ ... yₙ         pattern variable (applied to all bound variables)
-    | C p₁ ... pₙ          constructor applied to patterns
-    | I p₁ ... pₙ          Inductive type constructor applied to patterns
+    | C@{u} p₁ ... pₙ      constructor applied to patterns
+    | I@{u} p₁ ... pₙ      Inductive type constructor applied to patterns
     | λ x : p₁, p₂         λ-abstraction over patterns
     | ∀ x : p₁, p₂         Π-type of patterns
     | !{t}                 type-forced term
 ```
 
-A lhs must depend on all the pattern variables in scope while the rhs can depend
-on a subset of those.
+Here we mention pattern variables. They are implicitly quantified over when
+defining a rewrite rule. Each variable must appear exactly once on the left-hand
+side (`lhs`) and can appear on the right-hand side (`rhs`) any number of times
+(including zero).
 
-Type-forced terms should be considered as wildcard for reduction but are there
-to ensure the pre-typer can do its work. This CEP does not propose to check that
-these are indeed forced by typing, this would be left to further extensions of
-rewrite rules.
+The reduction of Coq is then extended with rules
+```
+⟦lhsᵢ⟧[σ] → rhsᵢ[σ]
+```
+where `σ` instantiates all of the pattern variables (as well as the universe
+levels) and where `⟦lhsᵢ⟧` traverses the whole `lhsᵢ` to interpret type-forced
+terms as fresh pattern variables (that are therefore unused in the rhs).
+
+Type-forced terms are there to give information to the pre-typer and to ensure
+that the rule is indeed type-preserving.
+
+Once a rewrite block is defined, a confluence checker based on parallel
+reduction and shown to be sound in MetaCoq will verify that the block
+introduction preserves confluence of the whole system, in a modular way
+(it doesn't have to recheck previously defined rewrite blocks).
 
 Rewrite rules are triggered when a term is stuck with respect to the regular
 rules of Coq.
+
+## Examples
+
+### Parallel plus
+
+One popular example is the definition of a parallel version of addition of
+natural numbers:
+
+```coq
+Rewrite Block :=
+  plus : nat -> nat -> nat ;
+with rules
+  plus 0 ?n := n ;
+  plus ?n 0 := n ;
+  plus (S ?n) ?m := S (plus n m) ;
+  plus ?n (S ?m) := S (plus n m).
+```
+
+### (Non-)linearity in practice
+
+To illustrate the use of type-forced terms (and explain why left-linearity of
+pattern variables is not such a restriction) we can show the artificial example
+of the `J`-eliminator.
+
+```coq
+Rewrite Block :=
+  J :
+    ∀ A (x : A) (P : ∀ (y : A), x = y → Type),
+      P x (eq_refl x) →
+      ∀ y (e : x = y), P y e ;
+with rules
+  J ?A ?x ?P ?p !{x} (@eq_refl !{A} !{x}) := p.
+```
+
+## Possible extensions
+
+Coq [CEP#45]'s integration might make it possible to add rewrite rules to
+already defined symbols, such as addition.
+
+[CEP#45]: https://github.com/coq/ceps/pull/45
+
+## About trusted code base
+
+The addition of rewrite rules should not make the user fear about consistency
+of the system as a whole.
+Similarly to axioms and other consistency-breaking assumptions such as
+`Type : Type`, the use of rewrite rules should be reported by the command
+```
+Print Assumptions
+```
+
+Rewrite rules are not so different from axioms in that they might break
+consistency and canonicity, except that they introduce new computation rules
+and as such might also break termination. Any proof completed without them would
+still be entirely safe.
 
 # Drawbacks
 

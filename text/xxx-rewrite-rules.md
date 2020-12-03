@@ -123,6 +123,40 @@ with rules
   J ?A ?x ?P ?p !{x} (@eq_refl !{A} !{x}) := p.
 ```
 
+### Higher-inductive types
+
+HoTT users might want to use rewrite rules to define HIT rather than use the
+current notion of private inductive types.
+
+```coq
+Rewrite Block :=
+  S¹ : Type ;
+  base : S¹ ;
+  loop : base = base ;
+  elimS¹ : ∀ (P : S¹ → Type) (b : P base) (l : loop # b = b) x, P x ;
+  elimS¹ₗₒₒₚ : ∀ (P : S¹ → Type) (b : P base) (l : loop # b = b),
+                apD (elimS¹ P b l) loop = loop
+with rules
+  elimS¹ ?P ?b ?l base := b.
+```
+
+### Quotients
+
+We can also postulate quotients with a way to lift functions to the quotient.
+This example also illustrates how we could combine this syntax with notations.
+
+```coq
+Rewrite Block :=
+  Quotient : ∀ A, (A → A → Prop) → Type ;
+  proj : A → A // R ;
+  quot : ∀ x y, R x y → proj x = proj y ;
+  rec : ∀ {A R B} (f : A → B), (∀ x y, R x y → f x = f y) → A // R → B
+with rules
+  rec ?f ?q (proj ?x) := f x
+where
+  "A // R" := (Quotient A R).
+```
+
 ## Possible extensions
 
 Coq [CEP#45]'s integration might make it possible to add rewrite rules to

@@ -104,7 +104,7 @@ Syntax mockup:
 
 Backward compatibility (compile some module commands to smaller commands)
 - Today's `Module X. ... End X.` will mean
-  ```
+  ```coq
   Module X.
   Namespace X.
   ...

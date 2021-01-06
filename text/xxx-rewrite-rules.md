@@ -15,7 +15,7 @@ using `Axiom` but they cannot assume any computational behaviour.
 With rewrite rules, users could also postulate new reduction rules.
 This could have various use cases:
 - Adding new reduction rules to neutral terms (eg. allowing both `0 + n` and
-`n + 0` to reduce to `0`).
+`n + 0` to reduce to `n`).
 - Postulating otherwise rejected inductive types with computation rules for
 their eliminator (eg. quotient types or higher inductive types).
 - Defining functions using a mechanism more powerful that the usual

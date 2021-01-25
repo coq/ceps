@@ -9,9 +9,9 @@
 We aim at a release process for Coq and the Coq platform which makes it
 easier for users to provide feedback and for developers to deliver fixes.
 
-In a nutshell the Coq "beta period" is replaced by a Coq platform "beta period".
+In a nutshell the *Coq "beta period"* is replaced by a **Coq platform "beta period"**.
 Coq devs tag an almost final version on top of which the Coq platform core is
-built. Coq point release are then used to *quickly* deliver fixes
+built. Coq point release are then used to quickly deliver fixes
 to the platform.
 
 # Motivation
@@ -43,8 +43,8 @@ that selection of Coq packages on Windows, Mac and Linux from sources
 on the user's machine, and as well binary installers (prebuilt) for users
 to quickly get a working environment.
 
-This product is what users will test in this new model; Coq is a core
-component of it.
+**The platform is the final product users will get** in this new model;
+Coq is a core component of it.
 
 # Detailed design
 
@@ -73,10 +73,10 @@ Artifacts:
 On time based schedule the RM branches vX.
 
 1. The RM shepherds the few PR which are ready and pins projects tracked by CI
-   (using commit hashes, not necessarily tags), then the TM tags VX+rc.
+   (using commit hashes, not necessarily tags), then the RM **tags VX+rc**.
    This step should take no more than 10 days (2 working week).
    No binary installers are built and published by the RM, just a git tag.
-   The RM writes an OPAM package, currently the policy is to upload it to
+   The RM writes an **OPAM package**, currently the policy is to upload it to
    `core-dev`.
    Possibly, the RM builds a docker image, so that project maintainers can use it
    in CI during (4).
@@ -97,8 +97,8 @@ When Coq VX+rc is tagged, the PRM branches vX
    platform (or its core) are pinned (in accordance with upstreams, which are
    notified about the ongoing process). Most, if not all, packages are in Coq's
    CI or the Platform's CI so there should be no surprises.
-   When done a VX.0+beta tag is done and packages made available to users.
-   A docker image with the entire platform prebuilt should be built. This
+   When done a **VX.0+beta tag** is done and **binary installers** made available to users.
+   A **docker image** with the entire platform prebuilt should be built. This
    should take 20 days.
 5. As users pick up the platform and find severe bugs in Coq, the platform picks
    up point releases of Coq containing hotfixes and eventually extends packages
@@ -143,10 +143,10 @@ of the current proposals).
 
 ## Platform CI
 
-- on branch vX it must test all packages and build installers as artifacts.
+- on branch **vX** it must test **all packages** and build **installers** as artifacts.
   This makes the platform release doable without specific hardware (e.g. a Mac
   or a PC with windows).
-- on branch master it should take Coq master and its upstream tracked branches
+- on branch **master** it should take Coq master and its **upstream tracked branches**
   (for the subset of projects part of the platform) and eventually report the
   failures upstream. Currently this activity is logged in dedicated issues.
 

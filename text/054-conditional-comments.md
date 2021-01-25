@@ -31,7 +31,7 @@ file to work in two incompatible versions of the language
 #[if("8.13" < COQ)] New Command.
 ```
 
-This would make it always possible to write backward compatible overlays for vernac files. One could also imagine a warning the user would enable when she decides to drop compatibility with a Coq version. If any condition is true (assuming a Coq version to drop) then the warning is raised and the user removed the line or tightens the bound.
+This would make it always possible to write backward compatible overlays for vernac files. One could also imagine a warning the user would enable when she decides to drop compatibility with a Coq version. If any condition is true (assuming a Coq version to drop) then the warning is raised and the user removes the line or tightens the bound.
 
 ### Code generation
 
@@ -92,7 +92,7 @@ and unfold to the former when `▷` is clicked.
 
 ### Code sharing
 
-Some users raised the need for running the same fine against a different
+Some users raised the need for running the same file against a different
 set of imports, e.g. the architecture for which one wants to verify a file.
 
 ```coq
@@ -144,7 +144,7 @@ This limitation is not imposed by an implementation difficulty, but rather to ke
 
 ## No `Require` in generated code
 
-The `Require` statement cannot occur in a generated block, in order to
+The `Require` statement cannot occur in a `#generated` block, in order to
 simplify the job of `coqdep` (see below).
 
 ## Condition variables are immutable
@@ -156,7 +156,7 @@ no `#define FOO.` and no `getenv("FOO")`.
 `coq_makefile` and Dune's `coq-lang` can use their own ways to pass options to
 the tools.
 
-`coqdep` evaluates the conditional expression in from of `Require` statements
+`coqdep` evaluates the conditional expression in front of `Require` statements
 and spits the dependency if needed. This is enough to cover `coq_makefile` and
 `dune`. 
 
@@ -171,7 +171,7 @@ This limitation is not imposed by an implementation difficulty, but rather to ke
 
 Conditional compilation is well known to be a tool which is easy to misuse,
 leading to code hard to understand. This CEP constrains it by limiting its
-application to full sentences and making the condition's value not vary across
+application to full sentences and making the condition's value not vary during
 compilation (eg no `#define FOO`).
 
 ## Long tem
@@ -193,7 +193,7 @@ sentence:
 
 Completely delegating conditional compilation to the build system is not
 really an option here, since it would limit the `#generated` use case quite a
-lot. Build systems can select a file, and a file is too coarse-grained in Coq.
+lot. Build systems can only select a file, and a file is too coarse-grained in Coq.
 
 One could see `#generated.`, `#with.` and `#end.` as floating attributes
 (attributes which are not attached to a sentence, OCaml has them and they are

@@ -50,18 +50,18 @@ Coq is a core component of it.
 
 The new process' timeline:
 ```
-                     DO+           O            O   O  O
-coq      --+---(1)---+------(2)----+-----(3)----+---+--+----
- vX branch/          |             |            |
-           VX+rc tag/              |            |
-                          VX.0 tag/             |
-                                       VX.1 tag/
-
-                                  DI                   DI
-platform  -----------+----(4)------+--------(5)---------+
-           vX branch/              |                    |
-                      VX.0+beta tag/                    |
-                                              VX.0.0 tag/
+                     DO+           O                         O   O  O
+coq      --+---(1)---+------(2)----+----------(3)------------+---+--+----
+ vX branch/          |             |                         |
+           VX+rc tag/              |                         |
+                          VX.0 tag/                          |
+                                                    VX.1 tag/
+   
+                                  DI                   DI      DI
+platform  -----------+----(4)------+--------(5)---------+-------+-------
+           vX branch/              |                    |       |
+                      VX.0+beta tag/                    |       |
+                                              VX.0.0 tag/    .../
 Artifacts:
 - D = docker image for Coq (or Coq + the platform)
 - O = OPAM package (O+ means for core-dev, otherwise it is for the main OPAM repo)

@@ -74,8 +74,8 @@ On time based schedule the RM branches vX.
 
 1. The RM shepherds the few PR which are ready and pins projects tracked by CI
    (using commit hashes, not necessarily tags), then the RM **tags VX+rc**.
-   This step should take no more than 10 days (2 working week).
-   No binary installers are built and published by the RM, just a git tag.
+   This step should take no more than 2 weeks.
+   The RM **tags**, but produces no binary installers, see the platform release.
    The RM writes an **OPAM package**, currently the policy is to upload it to
    `core-dev`.
    Possibly, the RM builds a docker image, so that project maintainers can use it
@@ -83,7 +83,7 @@ On time based schedule the RM branches vX.
    **No breaking change is allowed from now on, unless a severe problem is found.**
 2. The documentation is updated (eg. the Changes file) and eventual fixes
    required by the platform are done. Ideally no other change is done.
-   This step should take no more than 10 days.
+   This step should take no more than 2 weeks.
 3. In response to a severe bug report Coq devs make an hotfix in master which is
    backported to vX by the RM which then tags a point release, possibly as soon
    as the fix is available and merged. The RM writes an OPAM package for
@@ -97,9 +97,9 @@ When Coq VX+rc is tagged, the PRM branches vX
    platform (or its core) are pinned (in accordance with upstreams, which are
    notified about the ongoing process). Most, if not all, packages are in Coq's
    CI or the Platform's CI so there should be no surprises.
-   When done a **VX.0+beta tag** is done and **binary installers** made available to users.
-   A **docker image** with the entire platform prebuilt should be built. This
-   should take 20 days.
+   When done the PRM makes the **VX.0+beta tag** and publishes the **binary installers**.
+   The PRM may also provide a **docker image** with the entire platform prebuilt.
+   This step should not take more than one month.
 5. As users pick up the platform and find severe bugs in Coq, the platform picks
    up point releases of Coq containing hotfixes and eventually extends packages
    beyond the core set.

@@ -72,8 +72,11 @@ Artifacts:
 
 On time based schedule the RM branches vX.
 
-1. The RM shepherds the few PR which are ready, ensures blocker issues are fixed and pins projects tracked by CI
-   (using commit hashes, not necessarily tags).
+1. The RM shepherds the few PR which are ready, ensures blocker issues are fixed
+   and pins projects tracked by CI (using commit hashes, not necessarily tags).
+   The RM generates the Changelog file via the `generate-release-changelog.sh`
+   script, but leaves the release notes empty (it's the project leader which
+   fill them in before the .0 release).
    This step should take no more than 2 weeks.
    - The RM **tags** VX+rc1, but produces no binary installers, see the platform release.
    - The RM writes an **OPAM package**, currently the policy is to upload it to

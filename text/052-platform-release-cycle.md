@@ -79,7 +79,7 @@ On time based schedule the RM branches vX.
    fill them in before the .0 release).
    This step should take no more than 2 weeks.
    - The RM **tags** VX+rc1, but produces no binary installers, see the platform release.
-   - The RM writes an **OPAM package**, currently the policy is to upload it to
+   - The RM ensures an **OPAM package** is available, currently the policy is to upload it to
      `core-dev`.
    - Possibly, the RM builds a docker image, so that project maintainers can use it
      in CI during (4).
@@ -89,12 +89,12 @@ On time based schedule the RM branches vX.
    required by the platform are done. Ideally no other change is done.
    This step should take no more than 2 weeks.
    - The RM **tags** the .0 release.
-   - The RM writes an **OPAM package** for the main OPAM repository.
+   - The RM ensures an **OPAM package** is uploaded to the main OPAM repository.
 3. In response to a severe bug report Coq devs make an hotfix in master which is
    backported to vX.
    - The RM **tags** the point release, possibly as soon
     as the fix is available and merged.
-   - The RM writes an **OPAM package** for the main OPAM repository.
+   - The RM ensures an **OPAM package** is uploaded to the main OPAM repository.
 
 ## Platform
 

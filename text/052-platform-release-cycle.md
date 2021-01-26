@@ -53,7 +53,7 @@ The new process' timeline:
                      DO+           O                         O   O  O
 coq      --+---(1)---+------(2)----+----------(3)------------+---+--+----
  vX branch/          |             |                         |
-           VX+rc tag/              |                         |
+          VX+rc1 tag/              |                         |
                           VX.0 tag/                          |
                                                     VX.1 tag/
    
@@ -75,7 +75,7 @@ On time based schedule the RM branches vX.
 1. The RM shepherds the few PR which are ready, ensures blocker issues are fixed and pins projects tracked by CI
    (using commit hashes, not necessarily tags).
    This step should take no more than 2 weeks.
-   - The RM **tags** VX+rc, but produces no binary installers, see the platform release.
+   - The RM **tags** VX+rc1, but produces no binary installers, see the platform release.
    - The RM writes an **OPAM package**, currently the policy is to upload it to
      `core-dev`.
    - Possibly, the RM builds a docker image, so that project maintainers can use it
@@ -95,7 +95,7 @@ On time based schedule the RM branches vX.
 
 ## Platform
 
-When Coq VX+rc is tagged, the PRM branches vX
+When Coq VX+rc1 is tagged, the PRM branches vX
 
 4. Starting with the pins made by RM on Coq's CI all packages part of the
    platform (or its core) are pinned (in accordance with upstreams, which are

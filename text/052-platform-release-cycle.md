@@ -136,17 +136,28 @@ of the current proposals).
 
 ## Coq's CI
 
-- must test **one configuration**: it cannot use one compiler version or
-  compiler flavor to test one project, and a different one to test another one,
-  since the platform can only have one
-- must test **all platform projects with ML parts**. The platform devs must ensure
-  this invariant, since they are the ones adding packages to the platform
-- must test a **selection of platform scripts** (to test the script themselves,
-  not the build of platform packages). Currently the `-extent=i` platform flag
+For each project P included in the platform:
+
+- if P has ML code, then it must be tested using the **standard configuration**.
+  It can also be tested using another configuration.
+- if P is pure .v code we have two cases
+  - if it is a core platform component (has many users in the platform) the it
+    must be tested using the standard configuration. It can also be tested using
+    another configuration.
+  - if it is not a core component, then it can be tested with any configuration,
+    or not tested at all (it must be tested by the platform's CI anyway)
+
+The decision of which is the "standard configuration" and the switch to a new
+one is subject to discussion between the Coq developers and the platform ones,
+and the switch should happen in a coordinated way.
+
+Moreover, Coq's CI must test:
+- a **selection of platform scripts**, to test the script themselves,
+  not the build of platform packages. Currently the `-extent=i` platform flag
   makes it build only Coq+CoqIDE, that should be sufficient.
-- should test **key platform projects** (projects which are heavily depended
-  upon in the platform, even if the are "pure .v projects", e.g. mathcomp).
-- can test anything else of course, including non standard configurations
+
+Coq's CI can test anything else of course, including non standard
+configurations and projects that are no in the platform.
 
 ## Platform CI
 
@@ -167,7 +178,9 @@ of the current proposals).
 - "RM" is the release manager of Coq
 - "PRM" are the release managers of the Coq platform
 - "standard configuration" is a version of ocaml and other tools which are
-  agreed between Coq devs and the platform devs (dune, make, gmp, gtk...)
+  agreed between Coq devs and the platform devs (dune, make, gmp, gtk...) as
+  well as a set of configure options or env variables for Coq (eg enabling or
+  disabling native_compute, tuning OCaml's GC, tweaking the stack size)
 
 # Drawbacks
 

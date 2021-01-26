@@ -122,7 +122,7 @@ of the current proposals).
   previous one. Normally (2) precedes (4), but if the doc is not ready yet
   the platform can still release a beta.
 - Coq's VX.0 tag can be made as soon as the doc is clear. This will stress the
-  fact that upstreams can pin with no worries.
+  fact that upstreams can pin with no worries as soon as the rc is tagged.
 
 ## Announces
 

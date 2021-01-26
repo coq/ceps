@@ -72,7 +72,7 @@ Artifacts:
 
 On time based schedule the RM branches vX.
 
-1. The RM shepherds the few PR which are ready and pins projects tracked by CI
+1. The RM shepherds the few PR which are ready, ensures blocker issues are fixed and pins projects tracked by CI
    (using commit hashes, not necessarily tags).
    This step should take no more than 2 weeks.
    - The RM **tags** VX+rc, but produces no binary installers, see the platform release.

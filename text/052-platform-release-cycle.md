@@ -63,7 +63,7 @@ platform  -----------+----(4)------+--------(5)---------+-------+-------
                       VX.0+beta tag/                    |       |
                                               VX.0.0 tag/    .../
 Artifacts:
-- D = docker image for Coq (or Coq + the platform)
+- D = Docker image for Coq (or Coq + the platform)
 - O = OPAM package (O+ means for core-dev, otherwise it is for the main OPAM repo)
 - I = binary installers for Coq platform
 ```
@@ -81,7 +81,7 @@ On time based schedule the RM branches vX.
    - The RM **tags** VX+rc1, but produces no binary installers, see the platform release.
    - The RM ensures an **OPAM package** is available, currently the policy is to upload it to
      `core-dev`.
-   - Possibly, the RM builds a docker image, so that project maintainers can use it
+   - Subsequently, the RM ensures a **Docker image** is available, so that project maintainers can use it
      in CI during (4).
    
    **No breaking change is allowed from now on, unless a severe problem is found.**
@@ -106,7 +106,7 @@ When Coq VX+rc1 is tagged, the PRM branches vX
    CI or the Platform's CI so there should be no surprises.
    This step should not take more than one month.
    - The PRM **tags** VX.0+beta tag and publishes the **binary installers**
-   - The PRM may also provide a **docker image** with the entire platform prebuilt
+   - The PRM also ensures a **Docker image** is available with the entire platform prebuilt
 5. As users pick up the platform and find severe bugs in Coq, the platform picks
    up point releases of Coq containing hotfixes and eventually extends packages
    beyond the core set.
@@ -185,6 +185,6 @@ configurations and projects that are no in the platform.
 # Drawbacks
 
 This new process identifies 3 groups of developers which need to talk to each
-others: Coq dev, platform devs, and docker devs. This is a risk, but also an
+others: Coq dev, platform devs, and Docker devs. This is a risk, but also an
 advantage since the Coq release becomes more lightweight, leaving the RM
 more time to focus on supporting the release with hotfixes.

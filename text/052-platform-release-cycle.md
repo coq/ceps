@@ -50,18 +50,18 @@ Coq is a core component of it.
 
 The new process' timeline:
 ```
-                     DO+           O                         O   O  O
-coq      --+---(1)---+------(2)----+----------(3)------------+---+--+----
+                     DO+           O                         O      O     O
+coq      --+---(1)---+------(2)----+----------(3)------------+------+-----+-----
  vX branch/          |             |                         |
           VX+rc1 tag/              |                         |
                           VX.0 tag/                          |
                                                     VX.1 tag/
    
-                                  DI                   DI      DI
-platform  -----------+----(4)------+--------(5)---------+-------+-------
-           vX branch/              |                    |       |
-                      VX.0+beta tag/                    |       |
-                                              VX.0.0 tag/    .../
+                                  DI                   DI              DI
+platform  -----------+----(4)------+--------(5)---------+---------------+-------
+      YYYY.MM branch/              |                    |               |
+                   YYYY.MM+beta tag/                    |               |
+                                          YYYY.MM.0 tag/   YYYY.MM.1 tag/
 Artifacts:
 - D = Docker image for Coq (or Coq + the platform)
 - O = OPAM package (O+ means for core-dev, otherwise it is for the main OPAM repo)
@@ -98,14 +98,14 @@ On time based schedule the RM branches vX.
 
 ## Platform
 
-When Coq VX+rc1 is tagged, the PRM branches vX
+When Coq VX+rc1 is tagged, the PRM branches YYYY.MM off
 
 4. Starting with the pins made by RM on Coq's CI all packages part of the
    platform (or its core) are pinned (in accordance with upstreams, which are
    notified about the ongoing process). Most, if not all, packages are in Coq's
    CI or the Platform's CI so there should be no surprises.
    This step should not take more than one month.
-   - The PRM **tags** VX.0+beta tag and publishes the **binary installers**
+   - The PRM **tags** YY.MM+beta tag and publishes the **binary installers**
    - The PRM also ensures a **Docker image** is available with the entire platform prebuilt
 5. As users pick up the platform and find severe bugs in Coq, the platform picks
    up point releases of Coq containing hotfixes and eventually extends packages
@@ -161,10 +161,12 @@ configurations and projects that are no in the platform.
 
 ## Platform CI
 
-- on branch **vX** it must test **all packages** and build **installers** as artifacts.
+- on branch **YYYY.MM** it must test **all packages** and
+  build **installers** as artifacts.
   This makes the platform release doable without specific hardware (e.g. a Mac
   or a PC with windows).
-- on branch **master** it should take Coq master and its **upstream tracked branches**
+- on branch **master** it should take Coq master and its
+  **upstream tracked branches**
   (for the subset of projects part of the platform) and eventually report the
   failures upstream. Currently this activity is logged in dedicated issues.
 
@@ -181,6 +183,15 @@ configurations and projects that are no in the platform.
   agreed between Coq devs and the platform devs (dune, make, gmp, gtk...) as
   well as a set of configure options or env variables for Coq (eg enabling or
   disabling native_compute, tuning OCaml's GC, tweaking the stack size)
+
+
+### Notes about platform versioning
+
+It's essentially the Ubuntu scheme:
+- YYYY.MM plays the role of a major version, as in Coq's 8.13
+- YYYY.MM.0,  YYYY.MM.1 ... play the role of point releases, as Coq's 8.13.0 ..
+
+Hence, it is not YYYY.MM.DD byt rather YYYY.MM.XX.
 
 # Drawbacks
 

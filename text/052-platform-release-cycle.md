@@ -11,7 +11,7 @@ easier for users to provide feedback and for developers to deliver fixes.
 
 In a nutshell the *Coq "beta period"* is replaced by a **Coq platform "beta period"**.
 Coq devs tag an almost final version on top of which the Coq platform core is
-built. Coq point release are then used to quickly deliver fixes
+built. Coq point releases are then used to quickly deliver fixes
 to the platform.
 
 # Motivation
@@ -20,13 +20,13 @@ The beta testing period does not provide enough feedback to sensibly improve
 Coq between the `VX+beta1` and `VX.0` tags. The reasons are, most important
 last:
 - users have better things to do, frankly
-- one month is short, especially with Christmas, summer holydays or conferences
+- one month is short, especially with Christmas, summer holidays or conferences
   around (our beta period is December or May)
 - in order to test Coq you are likely to need a bunch of Coq packages, and they
   are typically only available after the beta period is over
 
 Moreover the "beta period" has also been seen by devs as a time frame where
-they can still change many things. As a results users are even less happy
+they can still change many things. As a result, users are even less happy
 to spend time working on a moving target.
 
 Finally, due to the cost of backporting breaking changes from the master
@@ -72,11 +72,11 @@ Artifacts:
 
 On time based schedule the RM branches vX.
 
-1. The RM shepherds the few PR which are ready, ensures blocker issues are fixed
+1. The RM shepherds the few PRs which are ready, ensures blocker issues are fixed
    and pins projects tracked by CI (using commit hashes, not necessarily tags).
    The RM generates the Changelog file via the `generate-release-changelog.sh`
-   script, but leaves the release notes empty (it's the project leader which
-   fill them in before the .0 release).
+   script, but leaves the release notes empty (it's the project leader who
+   fills them in before the .0 release).
    This step should take no more than 2 weeks.
    - The RM **tags** VX+rc1, but produces no binary installers, see the platform release.
    - The RM ensures an **OPAM package** is available, currently the policy is to upload it to
@@ -111,11 +111,6 @@ When Coq VX+rc1 is tagged, the PRM branches YYYY.MM off
    up point releases of Coq containing hotfixes and eventually extends packages
    beyond the core set.
 
-### Platform versioning
-
-It is out of the scope of this CEP to chose a versioning schema for the
-platform. In the diagram above we append a .digit to the Coq version (one
-of the current proposals).
 
 ## Synchronization points
 
@@ -141,7 +136,7 @@ For each project P included in the platform:
 - if P has ML code, then it must be tested using the **standard configuration**.
   It can also be tested using another configuration.
 - if P is pure .v code we have two cases
-  - if it is a core platform component (has many users in the platform) the it
+  - if it is a core platform component (has many users in the platform) then it
     must be tested using the standard configuration. It can also be tested using
     another configuration.
   - if it is not a core component, then it can be tested with any configuration,
@@ -157,7 +152,7 @@ Moreover, Coq's CI must test:
   makes it build only Coq+CoqIDE, that should be sufficient.
 
 Coq's CI can test anything else of course, including non standard
-configurations and projects that are no in the platform.
+configurations and projects that are not in the platform.
 
 ## Platform CI
 

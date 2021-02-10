@@ -186,7 +186,7 @@ It's essentially the Ubuntu scheme:
 - YYYY.MM plays the role of a major version, as in Coq's 8.13
 - YYYY.MM.0,  YYYY.MM.1 ... play the role of point releases, as Coq's 8.13.0 ..
 
-Hence, it is not YYYY.MM.DD byt rather YYYY.MM.XX.
+Hence, it is not YYYY.MM.DD but rather YYYY.MM.XX.
 
 # Drawbacks
 

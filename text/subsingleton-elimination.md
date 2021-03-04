@@ -82,12 +82,11 @@ In particular, we do not plan late detection of a parametric type in `Type` as a
 
 ## Generalize the syntactic criterion for being in `Prop` or `SProp`
  
-2. accept in `SProp` and `Prop` singleton types with arguments of the form `forall a:A, B` when `B` is recursively an `SProp` or `Prop`-subsingleton
-3. accept in `SProp` and `Prop` types with several constructors when (small) indices justify that the constructors are disjoint (section 5 of "Definitional Proof-Irrelevance without K")
+2. accept in `SProp` and `Prop` types with several constructors when (small) indices justify that the constructors are disjoint (section 5 of "Definitional Proof-Irrelevance without K")
 
 ## Dynamically recognizing subsingleton elimination for `Prop` and `SProp` in `match`
 
-4. This would require calling the subsingleton elimination checker dynamically when typing `match`.
+3. This would require calling the subsingleton elimination checker dynamically when typing `match`.
 
 # Detailed design for the `HProp` addition
 
@@ -158,19 +157,18 @@ Types in `HProp` which are not in the current syntactic class `Prop` could simpl
 
 A few extensions could be done pretty easily:
 1. accept singleton types with all arguments in `SProp` to be in `SProp` (`True`, `and`, ...)
-2. accept in `SProp` and `Prop` singleton types with arguments of the form `forall a:A, B` when `B` is recursively an `SProp` or `Prop`-subsingleton
-4. dynamically recognize subsingleton elimination for `Prop` and `SProp` in `match`
+2. dynamically recognize subsingleton elimination for `Prop` and `SProp` in `match`
 
 The "disjoint indices" extension would require some days of work:
 
-4. accept in `SProp` and `Prop` types with several constructors when (small) indices justify that the constructors are disjoint (section 5 of "Definitional Proof-Irrelevance without K")
+3. accept in `SProp` and `Prop` types with several constructors when (small) indices justify that the constructors are disjoint (section 5 of "Definitional Proof-Irrelevance without K")
 
 The support for `HProp` distinct from `Prop` would require introducing the new subuniverse `HProp` at many places of the code and may be costly.
 
 However, scaling `Prop` to `HProp` would only require the new independent commands:
 
-5. `Subsingleton ...`
-6. `match ... by p with ... end`
-7. `(t : HProp by p)`
+4. `Subsingleton ...`
+5. `match ... by p with ... end`
+6. `(t : HProp by p)`
 
 and each of them are worth a design discussion.

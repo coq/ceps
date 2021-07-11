@@ -60,7 +60,7 @@ assert (C = B).
 unfold C. (* wrongly shows B = B *)
 reflexivity.
 exact I.
-Fail Qed. (*The term "eq_refl" has type "B0 = B0" while it is expected to have type "C = B0". *)
+Fail Qed. (* The term "eq_refl" has type "B0 = B0" while it is expected to have type "C = B0". *)
 ```
 
 Another one is:
@@ -95,15 +95,15 @@ sig
 end
 ```
 
-Remark: the proposal is thus a variation about what was discussed at coq/coq#6254 (future of sections), especially [this comment](https://github.com/coq/coq/issues/6254#issuecomment-480886055) and [this comment](https://github.com/coq/coq/issues/6254#issuecomment-481168862) (distinguishing section variables and goal variables) for the first part, and [this comment](https://github.com/coq/coq/issues/6254#issuecomment-481171412) (representing section variables with constants) for the second part.
+Remark: the proposal is thus a variation about what was discussed at [coq/coq#6254](https://github.com/coq/coq/pull/6254) (future of sections), especially [this comment](https://github.com/coq/coq/issues/6254#issuecomment-480886055) and [this comment](https://github.com/coq/coq/issues/6254#issuecomment-481168862) (distinguishing section variables and goal variables) for the first part, and [this comment](https://github.com/coq/coq/issues/6254#issuecomment-481171412) (representing section variables with constants) for the second part.
 
-Then, in addition to the `Id.t`-based `Context.Named.Declaration` and `named_context`, there would be `variable`-based `Context.Goal.Declaration` and `goal_context`.Similarly, some functions that refers to `Id.t` would instead refer to the new `variable` type (e.g. `mkVar`, `destVar` would be about `variable` but `Environ.vars_of_global`, which is only about section variables, would remain in `Id.t`).
+Then, in addition to the `Id.t`-based `Context.Named.Declaration` and `named_context`, there would be `variable`-based `Context.Goal.Declaration` and `goal_context`. Similarly, some functions that refer to `Id.t` would instead refer to the new `variable` type (e.g. `mkVar`, `destVar` would be about `variable` but `Environ.vars_of_global`, which is only about section variables, would remain in `Id.t`).
 
-It is not clear yet how easy these changes could be propagated to the whole code basis (here is a very preliminary [attempt](https://github.com/herbelin/github-coq/pull/new/master+distinguish-secvar)). Ideally, this should be reducible to involving the nametab at declaration/locating/printing time of section variables, and to make precise when a function is about a goal context (most of the time) and when it is about a section context (mostly in the kernel data-structures).
+It is not clear yet how easy these changes could be propagated to the whole code basis (here is a very preliminary [attempt](https://github.com/herbelin/github-coq/tree/master+distinguish-secvar)). Ideally, this should be reducible to involving the nametab at declaration/locating/printing time of section variables, and to make precise when a function is about a goal context (most of the time) and when it is about a section context (mostly in the kernel data-structures).
 
 # Remaining design questions
 
-- Name to use to refer to a section variable cleared in the current goal (coq/coq#12250).
+- Name to use to refer to a section variable cleared in the current goal ([coq/coq#12250](https://github.com/coq/coq/pull/12250)).
 
   If a section variable is cleared, do we force to refer to its name only in a qualified way or do we still accept to refer to its name without qualification. I.e., in:
 
@@ -116,9 +116,9 @@ It is not clear yet how easy these changes could be propagated to the whole code
   ```
   Do we say that `a` can be accessed (only) as `S.a` or also as `a`.
 
-- Tactics `induction`/`destruct` not clearing section variables (coq/coq#2901, coq/coq#5220, coq/coq#7518)
+- Tactics `induction`/`destruct` not clearing section variables ([coq/coq#2901](https://github.com/coq/coq/issues/2901), [coq/coq#5220](https://github.com/coq/coq/issues/5220), [coq/coq#7518](https://github.com/coq/coq/issues/7518))
 
-  This is actually relatively independent and is addressed by #374 (pending).
+  This is actually relatively independent and is addressed by [#374](https://github.com/coq/coq/pull/374) (pending).
 
 - Renaming section variables
 
@@ -143,10 +143,10 @@ It is not clear yet how easy these changes could be propagated to the whole code
 
 - Impact on `Proof using`
 
-  The resolution of problems with `clear` should open the way to support `Proof using` clearing variables that are explicitly not wanted (coq/coq#883).
+  The resolution of problems with `clear` should open the way to support `Proof using` clearing variables that are explicitly not wanted ([coq/coq#883](https://github.com/coq/coq/issues/883)).
 
   If a variable has been explicitly excluded with a `Proof using`, the use of any constant referring to it should also be rejected.
 
 # Other related issues
 
-Another case where it is needed to know when a variable is a copy of a section variable or a variable which shadowed it: coq/coq#10812 (`subst` on section variables).
+Another case where it is needed to know when a variable is a copy of a section variable or a variable which shadowed it: [coq/coq#10812](https://github.com/coq/coq/issues/10812) (`subst` on section variables).

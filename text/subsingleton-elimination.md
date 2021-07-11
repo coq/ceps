@@ -94,7 +94,7 @@ As above, if the encapsulated type is not a syntactic `SProp` but only equivalen
 
 Proofs of types of `SProp` are definitionally undistinguishable and this prevents extending `SProp` with types for which proofs matter (such as `Acc` whose proofs matter for decidability, or types in `HProp` for which belonging to `HProp` is undecidable).
 
-We may want `match` on arbitrary elements of inhabited `SProp` to automatically reduce. This is the question of implementing eta-expansion for positive types and it is addressed elsewhere.
+We may want `match` on arbitrary elements of inhabited `SProp` to automatically reduce. This is the question of implementing eta-expansion for positive types and it is not addressed in this proposal (see instead e.g. [#11135](https://github.com/coq/coq/pull/11135#discussion_r349579854)).
 
 ### Late detection of `SProp`
 
@@ -106,19 +106,23 @@ In particular, we do not plan late detection of a parametric type in `Type` as a
 
 ## Subtyping of `SProp` in `Prop`
 
-The types characterizing the class `SProp` are all in `Prop`. This suggests that we could have `SProp` considered a subset of `Prop`. This is difficult to implement and the alternative is to define the following explicit subtyping which takes benefit of `SProp` being recognized as a subset of `Prop` in the class defining `Prop`:
+The types characterizing the class `SProp` are all in `Prop`. This suggests that we could have `SProp` considered a subset of `Prop`. Dynamically re-computing the sort of a term to know if it is irrelevant at some time of the conversion algorithm would be costly. The alternative is to define the following explicit subtyping which takes benefit of `SProp` being recognized as a subset of `Prop` in the class defining `Prop`:
 ```
 Inductive Box (A:SProp) : Prop := box : A -> Box A.
 ```
-Eventually, it would be convenient to have `SProp` implicitly a subtype of `Prop`.
+Eventually, it would be convenient to have this explicit boxing from `SProp` to `Prop` automatically inserted.
 
-In particular, this would allow to have `False`, `True`, `and`, `ex` systematically put in `SProp` by default and stop distinguising betwen a definitionally proof-irrelevant copy in `SProp` and an equivalent copy missing explicit definitional proof-irrelevance in `Prop`.
+Then, this would allow to have `False`, `True`, `and`, `ex` systematically put in `SProp` by default and stop distinguising betwen a definitionally proof-irrelevant copy in `SProp` and an equivalent copy missing explicit definitional proof-irrelevance in `Prop`.
 
 # Detailed design for the `Prop` and `SProp` extensions
 
 ## Uniformizing the treatment between `Prop` and `SProp`
 
-1. accept singleton types with all arguments in `SProp` to be in `SProp` as it is the case for `Prop`, the only difference being that recursive arguments are excluded; the indices should be in small types (i.e. `Prop` or `Set`)
+1. Accept (non primitive-record-based) singleton types with all arguments in `SProp` to be in `SProp` as it is the case for `Prop`, the only difference being that recursive arguments are excluded; the indices should be in small types (i.e. `Prop` or `Set`).
+
+A question raised in [this remark](https://github.com/coq/ceps/pull/55#discussion_r587882583) is about whether an expression like `fun (x : and True True) (f : match x with conj _ _ => nat -> nat end) => f 0` should be considered as type-checkable, i.e. about whether the `match x with ... end` should reduce, at least when `and` is in `SProp`.
+
+The author of this proposal tends to think that this reduction is more related to the question of how to deal with eta for (non primitive-record-based) singleton types than to `SProp`. In particular, why the argument would not apply to `Prop` and `Type` as well. The question of eta for (non primitive-record-based) singleton types will be discussed elsewhere.
 
 ## Dynamically recognizing subsingleton elimination for `Prop` and `SProp` in `match`
 

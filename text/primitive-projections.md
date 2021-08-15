@@ -33,7 +33,7 @@ It is common to write `f param t` to mean a compact `Proj` kernel node. It is al
   - Advantages: a simple model; no need to identify `Proj (f,x)` and `App (Const f, params, x)` in conversion
   - Drawbacks: maybe a few incompatibilities due to the dropping of arguments?
 
-Related: [#14084](https://github.com/coq/coq/pull/14084) (`match goal` involving primitive projections).
+Related: [#14084](https://github.com/coq/coq/pull/14084) (`match goal` involving primitive projections) and [#11366](https://github.com/coq/coq/issues/11366) (which requires to be able to declare partially applied projections as coercions).
 
 ## Issue 2: the relative status of "folded" vs "unfolded" `Proj` node
 

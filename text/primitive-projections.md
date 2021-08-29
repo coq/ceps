@@ -67,6 +67,8 @@ See e.g. [#11332](https://github.com/coq/coq/pull/11332).
    - Advantages: a simple model for the user
    - Drawbacks: not a conventional view in polarized logic
 
+Note: consistency between positive and negative record types would require to add support for named projections of local definitions of records.
+
 *Design choice 2*: Idem but `Proj` expands to `match` in positive types.
    - Advantages: conventional view in polarized logic
    - Drawbacks: `match`-based representation of projections are uselessly verbose

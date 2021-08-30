@@ -37,7 +37,11 @@ Related: [#14084](https://github.com/coq/coq/pull/14084) (`match goal` involving
 
 ## Issue 2: the relative status of "folded" vs "unfolded" `Proj` node
 
-*Design choice*: The "folded" vs "unfolded" boolean is dropped. Unfolding a `Proj` node is a no-op. In scenario 2.1 of issue 1, unfolding a `Const` denoting a projection reveals a `Proj` node. In scenario 2.2, it is a no-op.
+*Design choice 1*: The "folded" vs "unfolded" boolean is dropped. Unfolding a `Proj` node is a no-op. In scenario 2.1 of issue 1, unfolding a `Const` denoting a projection reveals a `Proj` node. In scenario 2.2, it is a no-op.
+
+*Design choice 2*: Idem but unfolding a primitive projection applied to the constructor of the record performs the iota-reduction (like in the positive case) instead of a being a no-op.
+
+Related: [#5250](https://github.com/coq/coq/issues/5250), [#5698](https://github.com/coq/coq/issues/5698), [#5699](https://github.com/coq/coq/issues/5699) (effect of unfolding tactics).
 
 See associated [Zulip discussion](https://coq.zulipchat.com/#narrow/stream/237656-Coq-devs.20.26.20plugin.20devs/topic/Primitive.20Projection.20mode).
 

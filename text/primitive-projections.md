@@ -47,11 +47,16 @@ See associated [Zulip discussion](https://coq.zulipchat.com/#narrow/stream/23765
 
 ## Issue 3: the status of `match` and destructing `let` in "primitive" record types
  
-See impact of desugaring `match` in terms of complexity ([#13913](https://github.com/coq/coq/pull/13913)) or unification ([#6726](https://github.com/coq/coq/issues/6726), [9763](https://github.com/coq/coq/issues/9763)) or readability ([6723](https://github.com/coq/coq/issues/6723)).
+See impact of desugaring `match` in terms of complexity ([#13913](https://github.com/coq/coq/pull/13913)) or unification ([#6726](https://github.com/coq/coq/issues/6726), [#9763](https://github.com/coq/coq/issues/9763)) or readability ([#6723](https://github.com/coq/coq/issues/6723)).
 
 *Design choice 1*: keep `match` nodes as they are in primitive record types; they will behave correctly for reduction (that is like their expansion into projections); to deal with them in the conversion, it is enough to extend the conversion with eta-expansions of `match` into projections.
 
+   - Advantages: a priori no break of compatibility for the developments already using `match` on primitive record types
+
 *Design choice 2*: forbid `match` at all on primitive record types (as well as `fun 'pat => ...` and `let 'pat := ... in ...` and `let (x1,...,xn) := ... in ...`), even as a primitive form of sugar, making primitive and non-primitive record types two incompatible styles of formalization.
+
+   - Advantages: model consistent with viewing primitive record types as negative types in polarized logic
+   - Drawbacks: unclear how to address the compatibility with existing code
 
 ## Issue 4: The status of the `t.(f args)` notation as an alternative notation for any kind of application.
 

@@ -7,7 +7,7 @@
 Projections of record fields currently follow different overlapping paths:
 - constructors-based vs destructors-based normal forms
 - `t.(f params)` vs `f params t` concrete representation
-- unfolded `Proj` vs folded `Proj` vs `App` internal representation
+- unfolded `Proj` vs folded `Proj` vs `App`-`Const` internal representation
 
 This document is an attempt to propose solutions to clarify the picture.
 
@@ -17,21 +17,37 @@ See also [#14640](https://github.com/coq/coq/pull/14640) which tries to set up a
 
 It is common to write `f param t` to mean a compact `Proj` kernel node. It is also useful to have a non compact representation for partial application of a projection or for an unapplied projection. What to do with it?
 
-*Design choice 1*: not a kernel problem: the user (or vernac level) can declare `Definition f' params x := x.(f params)` and use it later as an ordinary definition
+*Design choice 1*: The kernel provides only compact `Proj` nodes for projections in primitive record types. It is the responsibility of the user (or of the vernac level) to later declare `Definition f' params x := x.(f params)` (with a new name) and to use it as an ordinary definition.
   - Advantages: a simple model
   - Drawbacks: the name `f'` is different
+
+1. *Design subchoice 1.1*: `Proj` nodes are exclusively parsed and printed using the `x.(f)` without parameters.
+   - Advantages: a direct correspondence between concrete and internal syntax
+   - Drawbacks: possible confusion with the more general syntax for projections of non-primitive records which has the form `x.(f params)` and possible confusion with the "tolerance" for using at parsing time the notation `x.(f params)` for any constant `f` even if not a projection
+
+2. *Design subchoice 1.2*: Idem but using a different syntax such as `x.[t]`, or `x.((t))`, or `x.{t}`, etc.
+   - Advantages: no confusion with the existing uses of the `x.(f)` syntax
+   - Drawbacks: reserves a new syntactic construction
+
+3. *Design subchoice 1.3*: `Proj` nodes are exclusively parsed and printed using the `x.(f _ ... _)` syntax where the `_` take the place of the parameters, noticing however that if the parameters are declared implicit, this reduces to the notation `x.(f)`.
+   - Advantages: compatibility with the existing syntax for projections in non-primitive records
+   - Drawbacks: one may still want a clearer distinction from the other uses of the syntax `x.(f params)`
+
+4. *Design subchoice 1.4*: `Proj` nodes are exclusively printed using the `x.(f _ ... _)` syntax (reducing to `x.(f)` with implicit parameters) but it is tolerated to use `f params x` at parsing as a compatibility notation for `Proj(f,x)` (when `f` is a projection in a primitive record type).
+   - Advantages: compatibility with the existing usage of often writing `f params x` for a primitive projection
+   - Drawbacks: asymmetry parsing/printing (but deprecating `f params x` could eventually clarify things)
 
 *Design choice 2*: Whenever a record is defined, a `Const f` node of same name `f` is made available at the same time and `Proj (f,x)` and `App (Const f, params, x)` are considered convertible by default without needing any form of explicit unfolding. Note that the infrastructure to make them convertible basically already exists in coercions, unification, ...
   - Advantages: the two representations are fully equivalent (up to the compact representation and the loss of the exact form of parameters)
   - Drawbacks: the code to identify `Const` and `Proj` might be considered intrusive (but at least, it is alreay there, using `Projection.constant` and `expand_projection` machinery)
 
-*Design subchoice 2.1*: When the syntax `f params t` is used, does it bind automatically to the compact representation (as it is done now), and thus reprinted as `t.(f params)`?
-  - Advantages: compatibility with the current usages
-  - Drawbacks: it does some transformation under the carpet
+1. *Design subchoice 2.1*: When the syntax `f params t` is used, does it bind automatically to the compact representation (as it is done now), and thus reprinted as `t.(f params)`?
+   - Advantages: compatibility with the current usages
+   - Drawbacks: it does some transformation under the carpet
 
-*Design subchoice 2.2*: Any application of `Const f` to enough arguments is automatically turned by `mkApp` into a `Proj` (this assumes that any constant `f` contains an information on its projection status)? In particular, `Const` is used only for non-applied or not-enough-applied projection.
-  - Advantages: a simple model; no need to identify `Proj (f,x)` and `App (Const f, params, x)` in conversion
-  - Drawbacks: maybe a few incompatibilities due to the dropping of arguments?
+2. *Design subchoice 2.2*: Any application of `Const f` to enough arguments is automatically turned by `mkApp` into a `Proj` (this assumes that any constant `f` contains an information on its projection status)? In particular, `Const` is used only for non-applied or not-enough-applied projection.
+   - Advantages: a simple model; no need to identify `Proj (f,x)` and `App (Const f, params, x)` in conversion
+   - Drawbacks: maybe a few incompatibilities due to the dropping of arguments?
 
 Related: [#14084](https://github.com/coq/coq/pull/14084) (`match goal` involving primitive projections) and [#11366](https://github.com/coq/coq/issues/11366) (which requires to be able to declare partially applied projections as coercions).
 

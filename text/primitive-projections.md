@@ -70,15 +70,16 @@ Note: effect of various reduction commands on the diverse representations of pro
 |                                | non-primitive | prim Const        | prim folded Proj | prim unfolded Proj | expected
 | ------------------------------ | ------------- | ----------------- | ---------------- | ------------------ | --------
 | unfold on non-`Build`          | to `match`    | to unfolded Proj  | to unfolded Proj | nop                | error (2) or nop (1)
-| unfold at on non-`Build`       | to `match`    | to unfolded Proj  | to unfolded Proj | error              | error or nop?
+| unfold at on non-`Build`       | to `match`    | to unfolded Proj  | error (bug?)     | error              | error or nop?
 | unfold on `Build`              | contract      | contract          | contract         | contract           | contract
-| unfold at on `Build`           | contract      | error (bug?)      | error (bug?)     | contract           | contract
+| unfold at on `Build`           | contract      | contract          | error (bug?)     | error (bug?)       | contract
 | simpl on arg non-red `Build`   | nop           | nop               | nop              | nop                | nop
 | simpl on arg red `Build`       | contract      | contract          | contract         | contract           | contract
-| simpl never                    | nop           | nop               | nop              | nop                | nop
+| simpl never on arg red `Build` | nop           | nop               | nop              | contract (!)       | nop
 | simpl nomatch non-red `Build`  | nop           | nop               | nop              | nop                | nop
-| delta                          | to `match`    | to expanded unfolded Proj | to unfolded Proj | nop        | nop
-| iota on `Build`                | contract      | nop               | nop              | nop (bug?)         | contract
+| delta                          | to expanded `match` | to expanded unfolded Proj | nop (?!) | nop          | nop
+| delta+beta                     | to `match`    | to unfolded Proj  | to unfolded Proj | nop                | nop
+| iota on `Build`                | contract      | nop               | nop              | contract           | contract
 
 <details>
 <summary>Coq File used to test the reduction commands</summary>
@@ -87,17 +88,6 @@ Note: effect of various reduction commands on the diverse representations of pro
 Module NotPrim.
 (* Test effect on non-primitive Projections *)
 Record F A := { a : A }.
-
-Module OnBuild.
-Goal {|a:=0|}.(a nat) = 0.
-unfold a. Undo.
-unfold a at 1. Undo.
-simpl. Undo.
-Local Arguments a : simpl never.
-simpl. Undo.
-cbv delta [a]. Undo.
-Abort.
-End OnBuild.
 
 Module NotBuild.
 
@@ -110,9 +100,22 @@ simpl. Undo.
 Local Arguments a : simpl never.
 simpl. Undo.
 cbv delta [a]. Undo.
+cbv beta delta [a]. Undo.
 Abort.
 
 End NotBuild.
+
+Module OnBuild.
+Goal {|a:=0|}.(a nat) = 0.
+unfold a. Undo.
+unfold a at 1. Undo.
+simpl. Undo.
+Local Arguments a : simpl never.
+simpl. Undo.
+cbv delta [a]. Undo.
+cbv beta delta [a]. Undo.
+Abort.
+End OnBuild.
 
 Module RedToBuild.
 Goal (id {|a:=0|}).(a nat) = 0.
@@ -124,6 +127,7 @@ simpl. Undo.
 Arguments a : simpl nomatch.
 simpl. Undo.
 cbv delta [a]. Undo.
+cbv beta delta [a]. Undo.
 Abort.
 End RedToBuild.
 
@@ -136,20 +140,6 @@ Module ConstPrim.
 Set Primitive Projections.
 Record F A := { a : A }.
 
-Module OnBuild.
-Goal (fun A => a A) nat {|a:=0|} = 0.
-cbv beta.
-(* Now an applied Const *)
-unfold a. Undo.
-unfold a at 1. Undo.
-simpl. Undo.
-Local Arguments a : simpl never.
-simpl. Undo.
-cbv delta [a]. Undo.
-cbv iota. Undo.
-Abort.
-End OnBuild.
-
 Module NotBuild.
 
 Goal forall x, (fun A => a A) nat x = 0.
@@ -161,9 +151,25 @@ simpl. Undo.
 Local Arguments a : simpl never.
 simpl. Undo.
 cbv delta [a]. Undo.
+cbv beta delta [a]. Undo.
 Abort.
 
 End NotBuild.
+
+Module OnBuild.
+Goal (fun A => a A) nat {|a:=0|} = 0.
+cbv beta.
+(* Now an applied Const *)
+unfold a. Undo.
+unfold a at 1. Undo.
+simpl. Undo.
+Local Arguments a : simpl never.
+simpl. Undo.
+cbv delta [a]. Undo.
+cbv beta delta [a]. Undo.
+cbv iota. Undo.
+Abort.
+End OnBuild.
 
 Module RedToBuild.
 Goal (fun A => a A) nat (id {|a:=0|}) = 0.
@@ -175,6 +181,7 @@ simpl. Undo.
 Arguments a : simpl nomatch.
 simpl. Undo.
 cbv delta [a]. Undo.
+cbv beta delta [a]. Undo.
 Abort.
 End RedToBuild.
 
@@ -187,6 +194,20 @@ Module FoldedProj.
 Set Primitive Projections.
 Record F A := { a : A }.
 
+Module NotBuild.
+
+Goal forall x, x.(a nat) = 0.
+match goal with |- forall x, x.(a nat) = 0 => idtac end.
+unfold a. Fail match goal with |- forall x, x.(a nat) = 0 => idtac end. Undo 2.
+Fail unfold a at 1. Undo.
+simpl. Undo.
+cbv delta [a]. match goal with |- forall x, x.(a nat) = 0 => idtac end. Undo 2.
+cbv beta delta [a]. Fail match goal with |- forall x, x.(a nat) = 0 => idtac end. Undo 2.
+unfold a.
+Abort.
+
+End NotBuild.
+
 Module OnBuild.
 Goal {|a:=0|}.(a nat) = 0.
 unfold a. Undo.
@@ -194,23 +215,12 @@ Fail unfold a at 1. Undo.
 simpl. Undo.
 Local Arguments a : simpl nomatch.
 simpl. Undo.
-cbv delta [a]. Undo.
+cbv delta [a]. match goal with |- {|a:=0|}.(a nat) = 00 => idtac end. Undo 2.
+cbv beta delta [a]. Fail match goal with |- forall x, x.(a nat) = 0 => idtac end. Undo 2.
 cbv iota. Undo.
 Abort.
 
 End OnBuild.
-
-Module NotBuild.
-
-Goal forall x, x.(a nat) = 0.
-unfold a. Undo.
-Fail unfold a at 1. Undo.
-simpl. Undo.
-cbv delta [a]. Undo.
-unfold a.
-Abort.
-
-End NotBuild.
 
 End FoldedProj.
 
@@ -221,22 +231,6 @@ Module UnfoldedProj.
 Set Primitive Projections.
 Record F A := { a : A }.
 
-Module OnBuild.
-
-Goal {|a:=0|}.(a nat) = 0.
-cbv delta [a].
-(* now unfolded *)
-unfold a. Undo.
-Fail unfold a at 1. Undo.
-simpl. Undo.
-cbv iota. Undo.
-unfold a. Undo.
-Local Arguments a : simpl never.
-simpl. Undo.
-Abort.
-
-End OnBuild.
-
 Module NotBuild.
 
 Goal forall x, x.(a nat) = 0.
@@ -249,6 +243,24 @@ cbv delta [a]. Undo.
 Abort.
 
 End NotBuild.
+
+Module OnBuild.
+
+Goal {|a:=0|}.(a nat) = 0.
+cbv beta delta [a].
+(* now unfolded *)
+unfold a. Undo.
+Fail unfold a at 1. Undo.
+simpl. Undo.
+cbv delta [a]. Undo.
+cbv beta delta [a]. Undo.
+cbv iota. Undo.
+unfold a. Undo.
+Local Arguments a : simpl never.
+simpl. Undo.
+Abort.
+
+End OnBuild.
 
 End UnfoldedProj.
 ```

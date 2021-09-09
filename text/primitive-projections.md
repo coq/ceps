@@ -37,7 +37,7 @@ It is common to write `f param t` to mean a compact `Proj` kernel node. It is al
    - Advantages: compatibility with the existing usage of often writing `f params x` for a primitive projection
    - Drawbacks: asymmetry parsing/printing (but deprecating `f params x` could eventually clarify things)
 
-*Design choice 2*: Whenever a record is defined, a `Const f` node of same name `f` is made available at the same time and `Proj (f,x)` and `App (Const f, params, x)` are considered convertible by default without needing any form of explicit unfolding. Note that the infrastructure to make them convertible basically already exists in coercions, unification, ...
+*Design choice 2*: Whenever a record is defined, a `Const f` node of same name `f` is made available at the same time (with body `fun params x => x.(f)` that is `Lambda` over a `Proj`) and `Proj (f,x)` and `App (Const f, params, x)` are considered convertible by default without needing any form of explicit unfolding. Note that the infrastructure to make them convertible basically already exists in coercions, unification, ...
   - Advantages: the two representations are fully equivalent (up to the compact representation and the loss of the exact form of parameters)
   - Drawbacks: the code to identify `Const` and `Proj` might be considered intrusive (but at least, it is alreay there, using `Projection.constant` and `expand_projection` machinery)
 
@@ -48,6 +48,10 @@ It is common to write `f param t` to mean a compact `Proj` kernel node. It is al
 2. *Design subchoice 2.2*: Any application of `Const f` to enough arguments is automatically turned by `mkApp` into a `Proj` (this assumes that any constant `f` contains an information on its projection status)? In particular, `Const` is used only for non-applied or not-enough-applied projection.
    - Advantages: a simple model; no need to identify `Proj (f,x)` and `App (Const f, params, x)` in conversion
    - Drawbacks: maybe a few incompatibilities due to the dropping of arguments?
+
+3. *Design subchoice 2.3*: delta-reduction is refined so that in the case of `Const f`, the reduction can happen only when `f` is applied to at least the number of parameters + 1. We arrange at parsing time that `Const` is used only for non-applied or not-enough-applied projection (even if it can be changed later by reduction).
+   - Advantages: the natural expectation
+   - Drawbacks: maybe a bit ad hoc, though controlling reduction with properties of the arguments is not new (already done for `simpl`)
 
 Related: [#14084](https://github.com/coq/coq/pull/14084) (`match goal` involving primitive projections) and [#11366](https://github.com/coq/coq/issues/11366) (which requires to be able to declare partially applied projections as coercions).
 

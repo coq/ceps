@@ -65,6 +65,197 @@ Related: [#5250](https://github.com/coq/coq/issues/5250), [#5698](https://github
 
 See associated [Zulip discussion](https://coq.zulipchat.com/#narrow/stream/237656-Coq-devs.20.26.20plugin.20devs/topic/Primitive.20Projection.20mode).
 
+Note: effect of various reduction commands on the diverse representations of projections:
+
+|                                | non-primitive | prim Const        | prim folded Proj | prim unfolded Proj | expected
+| ------------------------------ | ------------- | ----------------- | ---------------- | ------------------ | --------
+| unfold on non-`Build`          | to `match`    | to unfolded Proj  | to unfolded Proj | nop                | error (2) or nop (1)
+| unfold at on non-`Build`       | to `match`    | to unfolded Proj  | to unfolded Proj | error              | error or nop?
+| unfold on `Build`              | contract      | contract          | contract         | contract           | contract
+| unfold at on `Build`           | contract      | error (bug?)      | error (bug?)     | contract           | contract
+| simpl on arg non-red `Build`   | nop           | nop               | nop              | nop                | nop
+| simpl on arg red `Build`       | contract      | contract          | contract         | contract           | contract
+| simpl never                    | nop           | nop               | nop              | nop                | nop
+| simpl nomatch non-red `Build`  | nop           | nop               | nop              | nop                | nop
+| delta                          | to `match`    | to expanded unfolded Proj | to unfolded Proj | nop        | nop
+| iota on `Build`                | contract      | nop               | nop              | nop (bug?)         | contract
+
+<details>
+<summary>Coq File used to test the reduction commands</summary>
+
+```coq
+Module NotPrim.
+(* Test effect on non-primitive Projections *)
+Record F A := { a : A }.
+
+Module OnBuild.
+Goal {|a:=0|}.(a nat) = 0.
+unfold a. Undo.
+unfold a at 1. Undo.
+simpl. Undo.
+Local Arguments a : simpl never.
+simpl. Undo.
+cbv delta [a]. Undo.
+Abort.
+End OnBuild.
+
+Module NotBuild.
+
+Goal forall x, x.(a nat) = 0.
+cbv beta.
+(* Now an applied Const *)
+unfold a. Undo.
+unfold a at 1. Undo.
+simpl. Undo.
+Local Arguments a : simpl never.
+simpl. Undo.
+cbv delta [a]. Undo.
+Abort.
+
+End NotBuild.
+
+Module RedToBuild.
+Goal (id {|a:=0|}).(a nat) = 0.
+cbn beta.
+(* Now an applied Const *)
+unfold a. Undo.
+unfold a at 1. Undo.
+simpl. Undo.
+Arguments a : simpl nomatch.
+simpl. Undo.
+cbv delta [a]. Undo.
+Abort.
+End RedToBuild.
+
+End NotPrim.
+
+(**********************************)
+
+Module ConstPrim.
+(* Test effect on Const in Primitive Projections *)
+Set Primitive Projections.
+Record F A := { a : A }.
+
+Module OnBuild.
+Goal (fun A => a A) nat {|a:=0|} = 0.
+cbv beta.
+(* Now an applied Const *)
+unfold a. Undo.
+unfold a at 1. Undo.
+simpl. Undo.
+Local Arguments a : simpl never.
+simpl. Undo.
+cbv delta [a]. Undo.
+cbv iota. Undo.
+Abort.
+End OnBuild.
+
+Module NotBuild.
+
+Goal forall x, (fun A => a A) nat x = 0.
+cbv beta.
+(* Now an applied Const *)
+unfold a. Undo.
+unfold a at 1. Undo.
+simpl. Undo.
+Local Arguments a : simpl never.
+simpl. Undo.
+cbv delta [a]. Undo.
+Abort.
+
+End NotBuild.
+
+Module RedToBuild.
+Goal (fun A => a A) nat (id {|a:=0|}) = 0.
+cbn beta.
+(* Now an applied Const *)
+unfold a. Undo.
+unfold a at 1. Undo.
+simpl. Undo.
+Arguments a : simpl nomatch.
+simpl. Undo.
+cbv delta [a]. Undo.
+Abort.
+End RedToBuild.
+
+End ConstPrim.
+
+(**********************************)
+
+Module FoldedProj.
+
+Set Primitive Projections.
+Record F A := { a : A }.
+
+Module OnBuild.
+Goal {|a:=0|}.(a nat) = 0.
+unfold a. Undo.
+Fail unfold a at 1. Undo.
+simpl. Undo.
+Local Arguments a : simpl nomatch.
+simpl. Undo.
+cbv delta [a]. Undo.
+cbv iota. Undo.
+Abort.
+
+End OnBuild.
+
+Module NotBuild.
+
+Goal forall x, x.(a nat) = 0.
+unfold a. Undo.
+Fail unfold a at 1. Undo.
+simpl. Undo.
+cbv delta [a]. Undo.
+unfold a.
+Abort.
+
+End NotBuild.
+
+End FoldedProj.
+
+(**********************************)
+
+Module UnfoldedProj.
+
+Set Primitive Projections.
+Record F A := { a : A }.
+
+Module OnBuild.
+
+Goal {|a:=0|}.(a nat) = 0.
+cbv delta [a].
+(* now unfolded *)
+unfold a. Undo.
+Fail unfold a at 1. Undo.
+simpl. Undo.
+cbv iota. Undo.
+unfold a. Undo.
+Local Arguments a : simpl never.
+simpl. Undo.
+Abort.
+
+End OnBuild.
+
+Module NotBuild.
+
+Goal forall x, x.(a nat) = 0.
+unfold a.
+(* now unfolded *)
+unfold a. Undo.
+Fail unfold a at 1. Undo.
+simpl. Undo.
+cbv delta [a]. Undo.
+Abort.
+
+End NotBuild.
+
+End UnfoldedProj.
+```
+</details>
+
+Note 2: should a reduction specific name be added for projections (e.g. `proj`) which `iota` would include?
+
 ## Issue 3: the status of `match` and destructing `let` in "primitive" record types
  
 See impact of desugaring `match` in terms of complexity ([#13913](https://github.com/coq/coq/pull/13913)) or unification ([#6726](https://github.com/coq/coq/issues/6726), [#9763](https://github.com/coq/coq/issues/9763)) or readability ([#6723](https://github.com/coq/coq/issues/6723)).

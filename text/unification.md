@@ -70,7 +70,7 @@ An atomic unification problem can be simplified as follows:
 Solving non atomic simple unification problems relies on basically two concepts (see Huet 1975, `MATCH` algorithm):
 - *Projection*, that is, solving `Γ ⊢ ?e@{a:=t,b:=t} =?= t` by either setting `Δ ⊢ ?e := a` or `Δ ⊢ ?e := b` so that `?e@{a:=t,b:=t}` indeed evaluates in `Γ` to `t`.
 
-  In the more general case, a projection requires to solve general unification problems, that is, to know if `Γ ⊢ ?e@{a:=t} =?= u` can be solved by projecting `a` requires to find a context `E` such that `Γ ⊢ E[t] =?= u` is resolvable (up to reduction of `E[t]`). This can be done in a systematic way in algebraic-type-free λ-calculus by reasoning on the normal forms of `t` and `u` and using type constraints. It is not clear however that a systematic study of the process and of the form of evaluation ontexts has already been done somewhere in the presence of algebraic types.
+  In the more general case, a projection requires to solve general unification problems, that is, to know if `Γ ⊢ ?e@{a:=t} =?= u` can be solved by projecting `a` requires to find a context `E` such that `Γ ⊢ E[t] =?= u` is resolvable (up to reduction of `E[t]`). This can be done in a systematic way in algebraic-type-free λ-calculus by reasoning on the normal forms of `t` and `u` and using type constraints. It is not clear however that a systematic study of the process and of the form of evaluation contexts has already been done somewhere in the presence of algebraic types.
 
   For instance, in the presence of algebraic types, there is a specific incarnation of projection steps involving constructors. For instance, the problem `Γ ⊢ match ?e with S n => t | O => u end =?= v` can be solved (among other resolution strategies) by defining `?e := S ?n` for a new existential variable `?n` and solving `Γ ⊢ t[n:=?n] =?= v` or defining `?e := 0` and solving `Γ ⊢ u =?= v`.
 
@@ -255,7 +255,7 @@ My feeling is that the true backtracking ability C.1 of `Evarconv.solve_unif_con
 - Existential variables for sorts can sometimes not be instantiated by `Prop` even in situation where it would be legitimate to do so (see PR [#7369](https://github.com/coq/coq/pull/7369)).
 
 **Optimizations**
-- Systematically eta-reduce the solutions to existential variables (with all kinds of eta). On one side, this seems to be the natural expectation. On the other side, this would avoid caring about whether it might be dommageable to eta-expand this or that solution in the unification algorithm.
+- Systematically eta-reduce the solutions to existential variables (with all kinds of eta). On one side, this seems to be the natural expectation. On the other side, this would avoid caring about whether it might be harmful to eta-expand this or that solution in the unification algorithm.
 - Give an order between constants which would allow to predict which side to reduce in `E[c] =?= E'[c]`.
 - Keep constants unfolding to fixpoints folded so as to concentrate on the essential and reduce the size of expressions, including in evaluation contexts (i.e. stacks).
 - Do more aggressive restrictions of contexts (e.g. Sozeau and Ziliani seem to take the downwards well-typed closure of restrictions while Coq takes the upwards well-typed closure - knowing that taking the closure by dependency requires in theory to take care of erasable occurrences)?

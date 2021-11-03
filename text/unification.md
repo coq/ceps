@@ -199,7 +199,7 @@ A. There is a function `Evarsolve.solve_simple_eqn` to solve simple unification 
    - as a heuristic, we may still rely on syntactic equality so as, e.g., to use a projection in `?e@{ack 4 4} := ack 4 4`
 
 2. It may fail to find possible solutions:
-   1. there arye valid circular instances that it is not able to accept (see ongoing PR [#14746](https://github.com/coq/coq/pull/14746))
+   1. there are valid circular instances that it is not able to accept (see ongoing PR [#14746](https://github.com/coq/coq/pull/14746))
    2. it is not able to detect that if a variable of the term to match is not in the scope of the existential variable it could still be erasable by reduction
 
 ### Reduction of unification problems to simpler unification problems

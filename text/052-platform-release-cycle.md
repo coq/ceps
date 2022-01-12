@@ -191,6 +191,6 @@ Hence, it is not YYYY.MM.DD but rather YYYY.MM.XX.
 # Drawbacks
 
 This new process identifies 3 groups of developers which need to talk to each
-others: Coq dev, platform devs, and Docker devs. This is a risk, but also an
+other: Coq dev, platform devs, and Docker devs. This is a risk, but also an
 advantage since the Coq release becomes more lightweight, leaving the RM
 more time to focus on supporting the release with hotfixes.

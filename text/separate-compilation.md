@@ -4,7 +4,7 @@
 
 # Summary
 
-Coq provides a module system that can be used explicitly through commands such as `Module` and `Module Type`. These can be quite heavyweight in many instances, and have some limitations when it comes to separately compiling files and building generic libraries. The ideas are drawn from OCaml, where .mli files can be used to express the interface of a module separately from its implementation. In addition to build parallelism, this also enables:
+Coq provides a module system that can be used explicitly through commands such as `Module` and `Module Type`. These can be quite heavyweight in many instances, and have some limitations when it comes to separately compiling files and building generic libraries. The ideas are drawn from OCaml, where .mli files can be used to express the interface of a module separately from its implementation. This enables:
 Avoiding dependencies that are only needed for non-exposed definitions, e.g. you do not need to expose the fact that proofs are constructed using particular tactics.
 Build parallelism (even without using -vos builds) because clients can be compiled against specification files only.
 

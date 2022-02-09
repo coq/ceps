@@ -10,9 +10,15 @@ Build parallelism (even without using -vos builds) because clients can be compil
 
 This CEP proposes several bits of sugar that makes it easier to use modules and achieve separate compilation.
 
+NOTE: In this proposal we use the extension `.vi` to be analog to `.mli` (derived from `.ml`). Similarly, we use `.vio` as what it compiles to. The `.vio` extension is already used for `-quick` build, so we could use `.vix` or anything else here. Or, remove `-quick` builds entirely and re-purpose the name.
+
+## Background
+
+The goal of `.vi` files is to support separate compilation in Cardelli's sense: implementation changes that preserve the interface cannot affect clients. More formally, modules can be typechecked separately, and successful typechecking guarantees successful linking (again, up to universe checking; see below). For clarity, we intend "typechecking" to include all of elaboration, including the execution of proof scripts. If a client `bar.v` of a `foo.vi` interface elaborates correctly to a compiled file (`bar.vo` or `bar.vok`), and if `foo.v` satisfies its interface, 
+
 # Proposal
 
-At the highest level, this proposal introduces the concept of an interface file with a .vi extension. An example of a .vi and .v file for a simple module would be the following:
+At the highest level, this proposal introduces the concept of an interface file with a `.vi` extension. An example of a `.vi` and `.v` file for a simple module would be the following:
 
 ```
 (* lib.vi *)
@@ -41,6 +47,49 @@ End lib.
 Export lib. (* make the declarations from lib available from [Import]ing lib (rather that lib.lib *)
 ```
 
+With the new file, there are two  additional scenarios for considerations:
+
+1. A `.v` file without a `.vi` file. This *must not* change at all. It is analagous to having a `Module` without an opaque ascription. It is also equivalent to copy-pasting the `.v` file in the corresponding `.vi` file. [^vi-less]
+2. A `.vi` file without a `.v` file. In this case, 
+
+[^vi-less]: There is some disagreement here concerning whether the bodies of `Qed`d definitions should be included here.
+
+/// REMOVE
+if .vi is missing then
+  produce it by dropping the body of Qed definitions
+
+- after you do this, you only need to consider the .v&.vi case
+* in the -vos build when you process a [Require] you get the .vio file
+* in the vo build when you process the require, you read the .vio file and the .vo file pulling the universes from the later into the former
+
+if the .vi is missing then
+  cp x.v x.vi
+- after you do this, you only need to consider the .v&.vi case
+* you read the information from .vio file, treat .vio as a .vo
+
+vos, .vi
+vos, .v
+vos, .v{,i}
+vo, .vi
+vo, .v
+vo, .v{,i}
+
+
+What are the build dependencies to build: client.v that requires lib.
+
+```
+# full build with universe checking
+lib.vio : lib.vo lib.vi
+lib.vo : lib.v
+
+# partial build (build speedup, no universe checking)
+lib.vio : lib.vi
+lib.vo : lib.vio lib.v
+
+client.v : lib.vio
+```
+/// END REMOVE
+
 ## Semantics
 
 In this section we sketch the semantics informally — ignoring problems due to universe constraints until the relevant subsections.
@@ -62,7 +111,9 @@ sometimes, Coq also seems to produce stricter universe constraints than strictly
 
 ### "Full compilation" semantics
 
-It might be desirable to use interfaces even when compiling "vo-style" rather than "vos-style". At least, it would be easier to check universes in such a mode. This means that compiling `consumer.v` would load `producer.vo` despite the existence of `producer.vi`. We propose that in this mode, most side effects of `producer.vo` shall be ignored anyway, including its `Require`-bound side effects. However, the extra universe constraints from `producer.vo` compared to `producer.vos` are important.
+It might be desirable to use interfaces even when compiling "vo-style" rather than "vos-style". At least, it would be easier to check universes in such a mode.
+This means that compiling `consumer.v` would load `producer.vo` despite the existence of `producer.vi`. We propose that in this mode, most side effects of `producer.vo` shall be ignored anyway, including its `Require`-bound side effects.
+However, the extra universe constraints from `producer.vo` compared to `producer.vos` are important.
 
 # Implementation
 
@@ -70,7 +121,7 @@ We speculate this can be accomplished by compiling `.vi` files to `.vos` outputs
 
 ==
 
-The goal of `.vi` files is to support separate compilation in Cardelli's sense: implementation changes that preserve the interface cannot affect clients. More formally, modules can be typechecked separately, and successful typechecking guarantees successful linking (again, up to universe checking; see below). For clarity, we intend "typechecking" to include all of elaboration, including the execution of proof scripts. If a client `bar.v` of a `foo.vi` interface elaborates correctly to a compiled file (`bar.vo` or `bar.vok`), and if `foo.v` satisfies its interface, 
+
 
 The semantics of a `.vi` file would resemble today's opaque ascription with module types, while reducing boilerplate. Clients would only see the interface declared in the .vi file, but would not see the definitions of the .v file, nor its non-logical side effects such as hints.
 
@@ -87,7 +138,7 @@ We consider vos builds a special case of this proposal, where interfaces are inf
 To remedy this problem, we propose an additional "global" check. By analogy with separate compilation in other languages, we call this "link-time" universe checking.
 
 Consider files `a.vi`, `a.v` and `b.v`, where `Title: Separate Compilation in Coq
-Authors: David Swasey, Paolo Giarrusso, Gregory Malecha
+Authors: David Swasey, Paolo Giarrusso, Gregory Malecha`
 
 # Summary
 
@@ -97,32 +148,6 @@ Build parallelism (even without using -vos builds) because clients can be compil
 
 This CEP proposes several bits of sugar that makes it easier to use modules and achieve separate compilation.
 
-# Proposal
-
-At the highest level, this proposal introduces the concept of an interface file with a .vi extension. An example of a .vi and .v file for a simple module would be the following:
-
-(* lib.vi *)
-Parameter value : nat.
-Axiom value_is_42 : value = 42.
-
-(* lib.v *)
-Definition value : nat := 42.
-Definition value_is_42 : value = 42 := ltac:(reflexivity).
-
-Conceptually, this pair of files could be compiled to the following single Coq file:
-
-(* lib_composed.v: *)
-Module Type LIB.
-  Parameter value : nat.
-  Axiom value_is_42 : value = 42.
-End LIB.
-
-Module lib : LIB.
-  Definition value : nat := 42.
-  Definition value_is_42 : value = 42 := ltac:(reflexivity).
-End lib.
-
-Export lib. (* make the declarations from lib available from [Import]ing lib (rather that lib.lib *)
 
 ## Semantics
 
@@ -151,15 +176,6 @@ It might be desirable to use interfaces even when compiling "vo-style" rather th
 
 We speculate this can be accomplished by compiling `.vi` files to `.vos` outputs, and compiling `.v` files into `.vok` files.
 
-==
-
-The goal of `.vi` files is to support separate compilation in Cardelli's sense: implementation changes that preserve the interface cannot affect clients. More formally, modules can be typechecked separately, and successful typechecking guarantees successful linking (again, up to universe checking; see below). For clarity, we intend "typechecking" to include all of elaboration, including the execution of proof scripts. If a client `bar.v` of a `foo.vi` interface elaborates correctly to a compiled file (`bar.vo` or `bar.vok`), and if `foo.v` satisfies its interface, 
-
-The semantics of a `.vi` file would resemble today's opaque ascription with module types, while reducing boilerplate. Clients would only see the interface declared in the .vi file, but would not see the definitions of the .v file, nor its non-logical side effects such as hints.
-
-Unlike today, `.vi` interfaces would hide not just `Import`-bound side effects, but also `Require`-bound ones. [This might be kind-of possible today by hiding `Require` inside modules with opaque ascriptions, but `Require` is discouraged inside interactive modules.]
-
-A reviewer of our CoqPL paper objected to our proposal, because removing an interface file would reintroduce the hidden side effects and break clients. We consider this not a bug but a feature, essential to separate compilation: any change to the 
 
 ### Universes
 
@@ -182,7 +198,7 @@ A further issue is that universe inference does not seem to be prone to parallel
 ## Value
 
 
-b.v` depends on `a.v`. Assume that `a.v` satisfies the interface in `a.vi` but adds universe constraints, and that `b.v` typechecks against `a.vi`. Moreover, assume that the universe constraints of `a.v` and `b.v` are both satisfiable in isolation.
+`b.v` depends on `a.v`. Assume that `a.v` satisfies the interface in `a.vi` but adds universe constraints, and that `b.v` typechecks against `a.vi`. Moreover, assume that the universe constraints of `a.v` and `b.v` are both satisfiable in isolation.
 
 We have two problems:
 

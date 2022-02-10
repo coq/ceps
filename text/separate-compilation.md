@@ -8,7 +8,7 @@ Coq provides a module system that can be used explicitly through commands such a
 Avoiding dependencies that are only needed for non-exposed definitions, e.g. you do not need to expose the fact that proofs are constructed using particular tactics.
 Build parallelism (even without using -vos builds) because clients can be compiled against specification files only.
 
-This CEP proposes several bits of sugar that makes it easier to use modules and achieve separate compilation.
+This CEP proposes the introduction of a Coq interface file (which we will call a `.vi` file) that makes it possible to ascribe a `Moddule Type` to a top-level, i.e. declared as a file, `Module`.
 
 NOTE: In this proposal we use the extension `.vi` to be analog to `.mli` (derived from `.ml`). Similarly, we use `.vio` as what it compiles to. The `.vio` extension is already used for `-quick` build, so we could use `.vix` or anything else here. Or, remove `-quick` builds entirely and re-purpose the name.
 
@@ -18,9 +18,16 @@ The goal of `.vi` files is to support separate compilation in Cardelli's sense: 
 
 # Proposal
 
-At the highest level, this proposal introduces the concept of an interface file with a `.vi` extension. An example of a `.vi` and `.v` file for a simple module would be the following:
+This proposal introduces the concept of an interface file with a `.vi` extension.
+We think of this file as containing the `Module Type` for the corresponding `.v` file (which contains the `Module` the way it currently does in Coq and Ocaml).
+With the new file type, we have three situations to consider: both a `.vi` and a `.v` file, only a `.v` file, and only a `.vi** file.
 
-```
+**Note**: In this section, we focus on the *Gallina*-level semantics focusing on the equivalent mathematical formulations.
+
+## Both a `.vi` and `.v` File
+An example of a `.vi` and `.v` file for a simple module would be the following:
+
+```coq
 (* lib.vi *)
 Parameter value : nat.
 Axiom value_is_42 : value = 42.
@@ -30,9 +37,9 @@ Definition value : nat := 42.
 Definition value_is_42 : value = 42 := ltac:(reflexivity).
 ```
 
-Conceptually, this pair of files could be compiled to the following single Coq file:
+At the *Gallina*-level, this pair of files could be compiled to the following single Coq file:
 
-```
+```coq
 (* lib_composed.v: *)
 Module Type LIB.
   Parameter value : nat.
@@ -47,48 +54,54 @@ End lib.
 Export lib. (* make the declarations from lib available from [Import]ing lib (rather that lib.lib *)
 ```
 
-With the new file, there are two  additional scenarios for considerations:
+Note that it is possible for `lib.vi` and `lib.v` to `Require` different libraries.
+In this case, it is *crucial* that side-effects (e.g. definitions, tactics, hints, notations, etc) from the `.v` file  are **not** visible by clients that `Require lib`.
+Hiding these implementation details enables separate compilation, but the benefits go beyond build parallelism.
 
-1. A `.v` file without a `.vi` file. This *must not* change at all. It is analagous to having a `Module` without an opaque ascription. It is also equivalent to copy-pasting the `.v` file in the corresponding `.vi` file. [^vi-less]
-2. A `.vi` file without a `.v` file. In this case, 
+## Only a `.v` File
 
-[^vi-less]: There is some disagreement here concerning whether the bodies of `Qed`d definitions should be included here.
+It is crucial that having a `.v` file without a corresponding interface does *not* change the the current behavior of Coq.
+In Gallina, this is analagous to having a `Module` without a `Module Type` ascription.
 
-/// REMOVE
-if .vi is missing then
-  produce it by dropping the body of Qed definitions
+In order to provide a uniform semantic understanding, we opt to reduce this to the previous situation in which both files exist, but note explictly that an implementation may not do this. For example, in Ocaml, a single `.ml` file does *not* generate a `.cmi` file.
 
-- after you do this, you only need to consider the .v&.vi case
-* in the -vos build when you process a [Require] you get the .vio file
-* in the vo build when you process the require, you read the .vio file and the .vo file pulling the universes from the later into the former
+The existance of dependent types and opaque definitions makes this question more subtle than the basic Ocaml solution.
+We see three solutions:
 
-if the .vi is missing then
-  cp x.v x.vi
-- after you do this, you only need to consider the .v&.vi case
-* you read the information from .vio file, treat .vio as a .vo
+1. *Verbatim* Synthesize the interface (the `.vi`) file using the *verbatim* contents of the `.v` file. This includes *all* definitions, hints, and other side effects. In particular it also includes the bodies of opaque (e.g. `Qed`d) defintions. While somewhat counter-intuitive, including the bodies of opaque definitions (as opposed to just their signature) means that we recover the exact semantics that we would get from including the implementation directly.
+2. Synthesize the interface (the `.vi`) file using the contents of the `.v` file where opaque defintions (e.g. those that are `Qed`-d are replaced by `Parameter`s. There are two ways to do this: exactly and approximately.
+   - The *exact* characterization does not expose the body of the definition, but it does include its *full* characterization including universe constraints. Note that universe constraints may not be apparent from the type of the definition but they must still be included.
+   - The *approximate* characterization follows what a user would get from textually copying the type of the definition and converting it from a defined symbol to an assumed symbol, e.g. a `Parameter`.
+   
+   In this setup, the *exact* characterization is effectively the same as the first proposal, it simply changes the way that the opaque ascription is provided, i.e. from using `Qed` to using an opaque module ascription.
+   The *approximate* characterization follows (more closely) the semantics of `-vos` builds. This enables build parallelism at the cost of delayed universe checks (and all of the consequences of this).
+   
+We note that both the *verbatim* proposal and the *exact* proposal are _effectively_ the same in the math. Aesthetically, we believe that the *exact* proposal seems cleaner, opting to hide more details from clients and use a more uniform sealing mechanism. The *Verbatim* option, on the other hand, seems more natural to understand and potentially implement.
 
-vos, .vi
-vos, .v
-vos, .v{,i}
-vo, .vi
-vo, .v
-vo, .v{,i}
+## Only a `.vi` File
 
+When only an interface file exists, there is (potentially) no underlying implementation, but the existance of the interface should still provide definite references to an implementation.
+Casting this in the feature set of the current Coq ecosystem, this essentially translates to a `Declare Module`.
+Concretely,
 
-What are the build dependencies to build: client.v that requires lib.
-
+```coq
+(* lib.vi *)
+Parameter answer : nat.
+Axiom answer_is_42 : answer = 42.
 ```
-# full build with universe checking
-lib.vio : lib.vo lib.vi
-lib.vo : lib.v
 
-# partial build (build speedup, no universe checking)
-lib.vio : lib.vi
-lib.vo : lib.vio lib.v
+would be "translated" to:
 
-client.v : lib.vio
+```coq
+(* lib.v *)
+Module Type LIB.
+  Parameter answer : nat.
+  Axiom answer_is_42 : answer = 42.
+End LIB.
+
+Declare Module lib : LIB.
+Export lib.
 ```
-/// END REMOVE
 
 ## Semantics
 

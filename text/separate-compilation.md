@@ -109,7 +109,7 @@ Export lib.
 
 In this section we sketch the semantics informally — ignoring problems due to universe constraints until the relevant subsections.
 
-.vi interfaces are meant to hide implementations and support separate compilation in Cardelli's sense. Hence, a module `consumer.v` that consumes the interface of `producer.vi` shall be compiled without inspecting either `producer.v`, any build product from `producer.v`, or even the existence of `producer.v`. As a consequence, no change to `producer.v` can affect whether `consumer.v` typechecks.
+`.vi` interfaces are meant to hide implementations and support separate compilation in Cardelli's sense. Hence, a module `consumer.v` that consumes the interface of `producer.vi` shall be compiled without inspecting either `producer.v`, any build product from `producer.v`, or even the existence of `producer.v`. As a consequence, no change to `producer.v` can affect whether `consumer.v` typechecks.
 
 Because Coq modules do not satisfy subsumption, removing `.vi` files can expose implementation details that break clients. This is a feature.
 
@@ -149,18 +149,15 @@ We consider vos builds a special case of this proposal, where interfaces are inf
 
 To remedy this problem, we propose an additional "global" check. By analogy with separate compilation in other languages, we call this "link-time" universe checking.
 
-Consider files `a.vi`, `a.v` and `b.v`, where `Title: Separate Compilation in Coq
-Authors: David Swasey, Paolo Giarrusso, Gregory Malecha`
+Consider files `a.vi`, `a.v` and `b.v`, where `b.v` depends on `a.v`. Assume that `a.v` satisfies the interface in `a.vi` but adds universe constraints, and that `b.v` typechecks against `a.vi`. Moreover, assume that the universe constraints of `a.v` and `b.v` are both satisfiable in isolation.
 
-## Semantics
+We have two problems:
 
-In this section we sketch the semantics informally — ignoring problems due to universe constraints until the relevant subsections.
+Composing the universe constraints of `a.v` and `b.v` might produce an unsatisfiable constraint set, but this is not detected. This can also 
+We can elaborate `a.v` and `b.v` separately, but their combination might produce an unsatisfiable
 
-.vi interfaces are meant to hide implementations and support separate compilation in Cardelli's sense. Hence, a module `consumer.v` that consumes the interface of `producer.vi` shall be compiled without inspecting either `producer.v`, any build product from `producer.v`, or even the existence of `producer.v`. As a consequence, no change to `producer.v` can affect whether `consumer.v` typechecks.
 
-Because Coq modules do not satisfy subsumption, removing `.vi` files can expose implementation details that break clients. This is a feature.
-
-`.vi` interfaces can hide `Require`-bound side effects. Hiding is also an intentional feature, that is supported automatically in the above compilation model. However, this feature is not supported today, either via existing  `vos` builds or via opaque ascription. [One can write a Require in an interactive module, but Coq complains enough we have not explored what happens. If we lift the Require out into the surrounding top-level module, its side effects cannot be hidden.]
+A further issue is that universe inference does not seem to be prone to parallelism. Without seeing `producer.v`, 
 
 ### "Link-time" Universe Checking
 
@@ -171,27 +168,6 @@ The above assumes that universes and universe constraints for a term can be gene
 for instance, some Ltac can fail with an universe inconsistency and backtrack (as mentioned in https://coq.zulipchat.com/#narrow/stream/237977-Coq-users/topic/vos.2Fvok.20and.20link-time.20universe.20check); we propose that the extra constraints be hidden at this stage
 sometimes, Coq also seems to produce stricter universe constraints than strictly needed, as Gaëtan shows in https://coq.zulipchat.com/#narrow/stream/237977-Coq-users/topic/Why.20does.20my.20fix.20for.20a.20universe.20problem.20work.3F/near/264903292. It'd be nice if the constraints were produced modularly, even if this might produce bigger graphs (hopefully in a tolerable way), or might require manual eta-expansion (we'd need Coq to give a warning/error when it must eta-expand, suggesting the user do that by hand).
 
-### "Full compilation" semantics
-
-It might be desirable to use interfaces even when compiling "vo-style" rather than "vos-style". At least, it would be easier to check universes in such a mode. This means that compiling `consumer.v` would load `producer.vo` despite the existence of `producer.vi`. We propose that in this mode, most side effects of `producer.vo` shall be ignored anyway, including its `Require`-bound side effects. However, the extra universe constraints from `producer.vo` compared to `producer.vos` are important.
-
-### Universes
-
-As some readers will anticipate, universe checks do not admit fully separate compilation; module bodies might add constraints absent from interfaces. This is already an issue with `.vos` builds today, and is a problem inherent to parallel builds, so any solutions to this problem could be shared.
-
-We consider vos builds a special case of this proposal, where interfaces are inferred as the strictest possible ones for the given implementation; `.vi` files enable hiding more implementation details. In both cases, the interface omits universe constraints that are derived from hidden bodies (for vos builds, just Qed bodies). While some universe checks are performed anyway, omitted constraints might make the universe graph unsatisfiable.
-
-To remedy this problem, we propose an additional "global" check. By analogy with separate compilation in other languages, we call this "link-time" universe checking.
-
-Consider files `a.vi`, `a.v` and `b.v`, where `b.v` depends on `a.v`. Assume that `a.v` satisfies the interface in `a.vi` but adds universe constraints, and that `b.v` typechecks against `a.vi`. Moreover, assume that the universe constraints of `a.v` and `b.v` are both satisfiable in isolation.
-
-We have two problems:
-
-Composing the universe constraints of `a.v` and `b.v` might produce an unsatisfiable constraint set, but this is not detected. This can also 
-We can elaborate `a.v` and `b.v` separately, but their combination might produce an unsatisfiable
-
-
-A further issue is that universe inference does not seem to be prone to parallelism. Without seeing `producer.v`, 
 
 ## Value
 

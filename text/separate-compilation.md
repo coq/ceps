@@ -22,9 +22,14 @@ The goal of `.vi` files is to support separate compilation in Cardelli's sense: 
 
 This proposal introduces the concept of an interface file with a `.vi` extension.
 We think of this file as containing the `Module Type` for the corresponding `.v` file (which contains the `Module` the way it currently does in Coq and Ocaml).
-With the new file type, we have three situations to consider: both a `.vi` and a `.v` file, only a `.v` file, and only a `.vi** file.
+`.vi` interfaces are meant to hide implementations and support separate compilation in Cardelli's sense. Hence, a module `consumer.v` that consumes the interface of `producer.vi` shall be compiled without inspecting either `producer.v`, any build product from `producer.v`, or even the existence of `producer.v`. As a consequence, no change to `producer.v** can affect whether `consumer.v** typechecks.
 
-**Note**: In this section, we focus on the *Gallina*-level semantics focusing on the equivalent mathematical formulations.
+**Caveat** Because the behavior of Coq (e.g. tactics), as opposed to Gallina, can change when more definitions become available, removing a `.vi` file can expose implementation details that break client proof scripts though (we believe) that it can not break kernel type checking in theory (i.e. ignoring practical considerations such as conversion times). We consider the potential to break clients a feature because meta-reasoning *should* occur at the interface and note the implemenation. 
+
+In this section, we focus on the *Gallina*-level semantics focusing on the equivalent mathematical formulations.
+We delay consideration of universes until the relevant subsection.
+
+With the new file type, we have three situations to consider: both a `.vi` and a `.v` file, only a `.v` file, and only a `.vi** file.
 
 ## Both a `.vi` and `.v` File
 An example of a `.vi` and `.v` file for a simple module would be the following:
@@ -105,43 +110,7 @@ Declare Module lib : LIB.
 Export lib.
 ```
 
-## Semantics
-
-In this section we sketch the semantics informally — ignoring problems due to universe constraints until the relevant subsections.
-
-`.vi` interfaces are meant to hide implementations and support separate compilation in Cardelli's sense. Hence, a module `consumer.v` that consumes the interface of `producer.vi` shall be compiled without inspecting either `producer.v`, any build product from `producer.v`, or even the existence of `producer.v`. As a consequence, no change to `producer.v` can affect whether `consumer.v` typechecks.
-
-Because Coq modules do not satisfy subsumption, removing `.vi` files can expose implementation details that break clients. This is a feature.
-
-`.vi` interfaces can hide `Require`-bound side effects. Hiding is also an intentional feature, that is supported automatically in the above compilation model. However, this feature is not supported today, either via existing  `vos` builds or via opaque ascription. [One can write a Require in an interactive module, but Coq complains enough we have not explored what happens. If we lift the Require out into the surrounding top-level module, its side effects cannot be hidden.]
-
-### "Link-time" Universe Checking
-
-Cardelli's separate compilation has a further demand: in this example, if `consumer.v` typechecks, and `producer.v` satisfies its interface, the two shall link successfully. In Coq this is true except for universe constraints, like for existing `.vos` builds. To alleviate this problem, we propose
-extending `.vok` outputs to include proof terms, or at least universe constraints
-so that we can run a "link-time checker" that loads the whole program and checks whether combined universe constraints are satisfiable.
-The above assumes that universes and universe constraints for a term can be generated in isolation. However, universe inference is sometimes too greedy: when compiling `consumer.v` without the universe constraints from `producer.v`, Coq will sometimes produce different terms.
-for instance, some Ltac can fail with an universe inconsistency and backtrack (as mentioned in https://coq.zulipchat.com/#narrow/stream/237977-Coq-users/topic/vos.2Fvok.20and.20link-time.20universe.20check); we propose that the extra constraints be hidden at this stage
-sometimes, Coq also seems to produce stricter universe constraints than strictly needed, as Gaëtan shows in https://coq.zulipchat.com/#narrow/stream/237977-Coq-users/topic/Why.20does.20my.20fix.20for.20a.20universe.20problem.20work.3F/near/264903292. It'd be nice if the constraints were produced modularly, even if this might produce bigger graphs (hopefully in a tolerable way), or might require manual eta-expansion (we'd need Coq to give a warning/error when it must eta-expand, suggesting the user do that by hand).
-
-### "Full compilation" semantics
-
-It might be desirable to use interfaces even when compiling "vo-style" rather than "vos-style". At least, it would be easier to check universes in such a mode.
-This means that compiling `consumer.v` would load `producer.vo` despite the existence of `producer.vi`. We propose that in this mode, most side effects of `producer.vo` shall be ignored anyway, including its `Require`-bound side effects.
-However, the extra universe constraints from `producer.vo` compared to `producer.vos` are important.
-
-# Implementation
-
-The implementation would require (at least) the following:
-
-1. Extending the build infrastructure to support `.vi` compilation.
-2. Modifying the implementation of `Require` to search for `.vio` files in addition to `.vo` files. For backwards compatibility, we believe it would be important to search for both `.vio` and `.vo` files *simultaneously* rather than first searching for a `.vio` and then for a `.vo` because the later would mean that adding a `.vi` files could change the library that is used.
-3. We believe that the bit-level representation of `.vio` could be the same as `.vo` files, though an alternative would be to leverage the representation of `.vos` files (which might be the same).
-
-==
-
-
-### Universes
+## Universes
 
 As some readers will anticipate, universe checks do not admit fully separate compilation; module bodies might add constraints absent from interfaces. This is already an issue with `.vos` builds today, and is a problem inherent to parallel builds, so any solutions to this problem could be shared.
 
@@ -153,32 +122,29 @@ Consider files `a.vi`, `a.v` and `b.v`, where `b.v` depends on `a.v`. Assume tha
 
 We have two problems:
 
-Composing the universe constraints of `a.v` and `b.v` might produce an unsatisfiable constraint set, but this is not detected. This can also 
-We can elaborate `a.v` and `b.v` separately, but their combination might produce an unsatisfiable
-
+1. Composing the universe constraints of `a.v` and `b.v` might produce an unsatisfiable constraint set, but this is not detected. This can also occur in "vos-style" builds.
+2. We can elaborate `a.v` and `b.v` separately, but their combination might produce an unsatisfiable universe graph.
 
 A further issue is that universe inference does not seem to be prone to parallelism. Without seeing `producer.v`, 
+
 
 ### "Link-time" Universe Checking
 
-Cardelli's separate compilation has a further demand: in this example, if `consumer.v` typechecks, and `producer.v` satisfies its interface, the two shall link successfully. In Coq this is true except for universe constraints, like for existing `.vos` builds. To alleviate this problem, we propose
-extending `.vok` outputs to include proof terms, or at least universe constraints
-so that we can run a "link-time checker" that loads the whole program and checks whether combined universe constraints are satisfiable.
-The above assumes that universes and universe constraints for a term can be generated in isolation. However, universe inference is sometimes too greedy: when compiling `consumer.v` without the universe constraints from `producer.v`, Coq will sometimes produce different terms.
-for instance, some Ltac can fail with an universe inconsistency and backtrack (as mentioned in https://coq.zulipchat.com/#narrow/stream/237977-Coq-users/topic/vos.2Fvok.20and.20link-time.20universe.20check); we propose that the extra constraints be hidden at this stage
-sometimes, Coq also seems to produce stricter universe constraints than strictly needed, as Gaëtan shows in https://coq.zulipchat.com/#narrow/stream/237977-Coq-users/topic/Why.20does.20my.20fix.20for.20a.20universe.20problem.20work.3F/near/264903292. It'd be nice if the constraints were produced modularly, even if this might produce bigger graphs (hopefully in a tolerable way), or might require manual eta-expansion (we'd need Coq to give a warning/error when it must eta-expand, suggesting the user do that by hand).
+Cardelli's separate compilation has a further demand: in this example, if `consumer.v` typechecks, and `producer.v` satisfies its interface, the two shall link successfully. In Coq this is true except for universe constraints, like for existing `.vos` builds. To alleviate this problem, we propos`extending `.vok` outputs to i`lude proof terms, or at least universe constraint`so that we can r` a "link-time checker" that loads the whole program and checks whether combined universe constraints are satisfiable`The above assumes that u`verses and universe constraints for a term can be generated in isolation. However, universe inference is sometimes too greedy: when compiling `consumer.v` without the universe constraints from `producer.v`, Coq will sometimes produce different terms`for instance, some Ltac c` fail with an universe inconsistency and backtrack (as mentioned in https://coq.zulipchat.com/#narrow/stream/237977-Coq-users/topic/vos.2Fvok.20and.20link-time.20universe.20check); we propose that the extra constraints be hidden at this stag`sometimes, Coq also seems t`produce stricter universe constraints than strictly needed, as Gaëtan shows in https://coq.zulipchat.com/#narrow/stream/237977-Coq-users/topic/Why.20does.20my.20fix.20for.20a.20universe.20problem.20work.3F/near/264903292. It'd be nice if the constraints were produced modularly, even if this might produce bigger graphs (hopefully in a tolerable way), or might require manual eta-expansion (we'd need Coq to give a warning/error when it must eta-expand, suggesting the user do that by hand)`
+
+### "Full compilation" semantics
+
+The notion of full compilation semantics, i.e. a sound full-build semantics akin to a "vo-style" build can be achieved (at the cost of build parallelism) by introducing a dependency between the `.vio` file and the `.vo` file and elaboring the resulting `.vio` file with universe constraints introduced by the implementation. It is important that this does not include other side-effects from the `.vo` such as hints, tactics, or plugin requirements.
 
 
-## Value
+[//]: # It might be desirable to use interfaces even when compiling "vo-style" rather than "vos-style". At least, it would be easier to check universes in such a mode. This means that compiling `consumer.v` would load `producer.vo` despite the existence of `producer.vi`. We propose that in this mode, most side effects of `producer.vo` shall be ignored anyway, including its `Require`-bound side effects.
+However, the extra universe constraints from `producer.vo` compared to `producer.vos` are important.
 
+# Implementation
 
-`b.v` depends on `a.v`. Assume that `a.v` satisfies the interface in `a.vi` but adds universe constraints, and that `b.v` typechecks against `a.vi`. Moreover, assume that the universe constraints of `a.v` and `b.v` are both satisfiable in isolation.
+The implementation would require (at least) the following:
 
-We have two problems:
-
-Composing the universe constraints of `a.v` and `b.v` might produce an unsatisfiable constraint set, but this is not detected. This can also 
-We can elaborate `a.v` and `b.v` separately, but their combination might produce an unsatisfiable
-
-
-A further issue is that universe inference does not seem to be prone to parallelism. Without seeing `producer.v`, 
+1. Extending the build infrastructure to support `.vi` compilation.
+2. Modifying the implementation of `Require` to search for `.vio` files in addition to `.vo` files. For backwards compatibility, we believe it would be important to search for both `.vio` and `.vo` files *simultaneously* rather than first searching for a `.vio` and then for a `.vo` because the later would mean that adding a `.vi` files could change the library that is used.
+3. We believe that the bit-level representation of `.vio` could be the same as `.vo` files, though an alternative would be to leverage the representation of `.vos` files (which might be the same).
 

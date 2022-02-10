@@ -8,7 +8,9 @@ Coq provides a module system that can be used explicitly through commands such a
 Avoiding dependencies that are only needed for non-exposed definitions, e.g. you do not need to expose the fact that proofs are constructed using particular tactics.
 Build parallelism (even without using -vos builds) because clients can be compiled against specification files only.
 
-This CEP proposes the introduction of a Coq interface file (which we will call a `.vi` file) that makes it possible to ascribe a `Moddule Type` to a top-level, i.e. declared as a file, `Module`.
+This CEP proposes the introduction of a Coq interface file (which we will call a `.vi` file) that makes it possible to ascribe a module type to a top-level, i.e. declared as a file, module.
+The semantics of a `.vi` file would resemble today's opaque ascription with module types, while reducing boilerplate. Clients would only see the interface declared in the `.vi` file, but would neither see see the definitions of the `.v` file, nor its non-logical side effects such as hints.
+Unlike today, `.vi` interfaces would hide not just `Import`-bound side effects, but also `Require`-bound ones.
 
 NOTE: In this proposal we use the extension `.vi` to be analog to `.mli` (derived from `.ml`). Similarly, we use `.vio` as what it compiles to. The `.vio` extension is already used for `-quick` build, so we could use `.vix` or anything else here. Or, remove `-quick` builds entirely and re-purpose the name.
 
@@ -130,17 +132,14 @@ However, the extra universe constraints from `producer.vo` compared to `producer
 
 # Implementation
 
-We speculate this can be accomplished by compiling `.vi` files to `.vos` outputs, and compiling `.v` files into `.vok` files.
+The implementation would require (at least) the following:
+
+1. Extending the build infrastructure to support `.vi` compilation.
+2. Modifying the implementation of `Require` to search for `.vio` files in addition to `.vo` files. For backwards compatibility, we believe it would be important to search for both `.vio` and `.vo` files *simultaneously* rather than first searching for a `.vio` and then for a `.vo` because the later would mean that adding a `.vi` files could change the library that is used.
+3. We believe that the bit-level representation of `.vio` could be the same as `.vo` files, though an alternative would be to leverage the representation of `.vos` files (which might be the same).
 
 ==
 
-
-
-The semantics of a `.vi` file would resemble today's opaque ascription with module types, while reducing boilerplate. Clients would only see the interface declared in the .vi file, but would not see the definitions of the .v file, nor its non-logical side effects such as hints.
-
-Unlike today, `.vi` interfaces would hide not just `Import`-bound side effects, but also `Require`-bound ones. [This might be kind-of possible today by hiding `Require` inside modules with opaque ascriptions, but `Require` is discouraged inside interactive modules.]
-
-A reviewer of our CoqPL paper objected to our proposal, because removing an interface file would reintroduce the hidden side effects and break clients. We consider this not a bug but a feature, essential to separate compilation: any change to the 
 
 ### Universes
 
@@ -152,15 +151,6 @@ To remedy this problem, we propose an additional "global" check. By analogy with
 
 Consider files `a.vi`, `a.v` and `b.v`, where `Title: Separate Compilation in Coq
 Authors: David Swasey, Paolo Giarrusso, Gregory Malecha`
-
-# Summary
-
-Coq provides a module system that can be used explicitly through commands such as `Module` and `Module Type`. These can be quite heavyweight in many instances, and have some limitations when it comes to separately compiling files and building generic libraries. The ideas are drawn from OCaml, where .mli files can be used to express the interface of a module separately from its implementation. In addition to build parallelism, this also enables:
-Avoiding dependencies that are only needed for non-exposed definitions, e.g. you do not need to expose the fact that proofs are constructed using particular tactics.
-Build parallelism (even without using -vos builds) because clients can be compiled against specification files only.
-
-This CEP proposes several bits of sugar that makes it easier to use modules and achieve separate compilation.
-
 
 ## Semantics
 
@@ -184,11 +174,6 @@ sometimes, Coq also seems to produce stricter universe constraints than strictly
 ### "Full compilation" semantics
 
 It might be desirable to use interfaces even when compiling "vo-style" rather than "vos-style". At least, it would be easier to check universes in such a mode. This means that compiling `consumer.v` would load `producer.vo` despite the existence of `producer.vi`. We propose that in this mode, most side effects of `producer.vo` shall be ignored anyway, including its `Require`-bound side effects. However, the extra universe constraints from `producer.vo` compared to `producer.vos` are important.
-
-# Implementation
-
-We speculate this can be accomplished by compiling `.vi` files to `.vos` outputs, and compiling `.v` files into `.vok` files.
-
 
 ### Universes
 
@@ -220,7 +205,4 @@ We can elaborate `a.v` and `b.v` separately, but their combination might produce
 
 
 A further issue is that universe inference does not seem to be prone to parallelism. Without seeing `producer.v`, 
-
-## Value
-
 

@@ -88,7 +88,7 @@ We note that both the *verbatim* proposal and the *exact* proposal are _effectiv
 ## Only a `.vi` File
 
 When only an interface file exists, there is (potentially) no underlying implementation, but the existance of the interface should still provide definite references to an implementation.
-Casting this in the feature set of the current Coq ecosystem, this essentially translates to a `Declare Module`.
+Casting this in the feature set of the current Coq ecosystem, this essentially translates to a `Declare Module` [^full-functorization].
 Concretely,
 
 ```coq
@@ -148,3 +148,4 @@ The implementation would require (at least) the following:
 2. Modifying the implementation of `Require` to search for `.vio` files in addition to `.vo` files. For backwards compatibility, we believe it would be important to search for both `.vio` and `.vo` files *simultaneously* rather than first searching for a `.vio` and then for a `.vo` because the later would mean that adding a `.vi` files could change the library that is used.
 3. We believe that the bit-level representation of `.vio` could be the same as `.vo` files, though an alternative would be to leverage the representation of `.vos` files (which might be the same).
 
+[^full-functorization]: An alternative characterization of `Declare Module` is to implicitly functorize all dependent modules over the module type of the declared module. This understanding of `Declare Module` does enable some additional flexibility at "link-time" but is beyond the scope of this proposal.

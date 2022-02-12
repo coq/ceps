@@ -42,8 +42,10 @@ builds: to avoid confusion, we could choose other file extensions or remove
 # Proposed Semantics
 
 In this section, we describe the meaning of our Coq extension: instead of
-suggesting an implementation strategy, we sketch a *Gallina*-level
-semantics, to be taken as an informal specification.
+suggesting an implementation strategy, we sketch a semantics as a
+source-to-source transformation, to be taken as an informal and _approximate_
+specification. However, this is an approximate specification, because the exact
+semantics cannot be expressed via source-to-source transformation.
 
 As a key principle: `.vi` interfaces are meant to hide implementations and support separate compilation in Cardelli's sense. Hence, compiling a module `consumer.v` that consumes the interface of `producer.vi` shall not depend (directly or indirectly) on the existence of `producer.v` or its contents. As a consequence, no change to `producer.v` can affect whether `consumer.v` typechecks.
 
@@ -54,38 +56,62 @@ distinguishes three scenarios, depending on the existence of:
 - or only `lib.vi`.
 
 ## Both a `.vi` and `.v` File
-An example of a `.vi` and `.v` file for a simple module would be the following:
+
+For concreteness, consider the following example:
 
 ```coq
 (* lib.vi *)
+Global Open Scope Z_scope.
 Parameter value : nat.
-Axiom value_is_42 : value = 42.
+Axiom value_is_42 : value = 42%nat.
 
 (* lib.v *)
+Require Import stdpp.prelude.
+Global Open Scope N_scope.
+
 Definition value : nat := 42.
-Definition value_is_42 : value = 42 := ltac:(reflexivity).
+Definition value_is_42 : value = 42%nat := ltac:(reflexivity).
+
+Definition other_value : N := 42.
 ```
 
-At the *Gallina*-level, this pair of files could be compiled to the following single Coq file:
+Here, `lib.v` contains both the implementation of `lib.vi` and some commands
+that perform global side effects and that should be hidden from clients:
+`stdpp.prelude` modifies many Coq settings aggressively, even when simply
+`Require`d, so adding this `Require` is a significant breaking change. 
+
+In this example, the semantics of `lib` would resemble the semantics of the
+following Coq source:
 
 ```coq
 (* lib_composed.v: *)
-Module Type LIB.
+Module Type __LIB.
+  Global Open Scope Z_scope.
   Parameter value : nat.
   Axiom value_is_42 : value = 42.
-End LIB.
+End __LIB.
 
-Module lib : LIB.
+Module __lib : __LIB.
+  Require Import stdpp.prelude.
+  Global Open Scope N_scope.
+
   Definition value : nat := 42.
-  Definition value_is_42 : value = 42 := ltac:(reflexivity).
-End lib.
+  Definition value_is_42 : value = 42%nat := ltac:(reflexivity).
+End __lib.
 
-Export lib. (* make the declarations from lib available from [Import]ing lib (rather that lib.lib *)
+Export __lib. (* make the declarations from lib available from [Import]ing lib (rather that lib.lib *)
 ```
 
-Note that it is possible for `lib.vi` and `lib.v` to `Require` different libraries.
-In this case, it is *crucial* that side-effects (e.g. definitions, tactics, hints, notations, etc) from the `.v` file  are **not** visible by clients that `Require lib`.
-Hiding these implementation details enables separate compilation, but the benefits go beyond build parallelism.
+In this example translation, we use the `\_\_` prefix for generated identifiers
+used as a translation device; these identifiers should be hidden from clients.
+
+This translation turns the `.vi` interface into a module type, the `.v`
+implementation into a module, and uses opaque module ascription to hide them
+module contents.
+The only visible side effects are those that appear in the interface: here,
+only `Global Open Scope Z_scope`. As we only `Require` stdpp.prelude in the
+module body, we intend this to be **hidden** from clients that perform `Require
+lib`, even if this might not be guaranteed by ``lib_composed.v`.
 
 ## Only a `.v` File
 

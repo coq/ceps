@@ -39,7 +39,7 @@ source files, and the `.vio` extension for interface object files. However,
 builds: to avoid confusion, we could choose other file extensions or remove
 `-quick` builds entirely.
 
-# Proposal
+# Proposed Semantics
 
 This proposal introduces the concept of an interface file with a `.vi` extension.
 We think of this file as containing the `Module Type` for the corresponding `.v` file (which contains the `Module` the way it currently does in Coq and Ocaml).
@@ -152,7 +152,7 @@ A further issue is that universe inference does not seem to be prone to parallel
 
 Cardelli's separate compilation has a further demand: in this example, if `consumer.v` typechecks, and `producer.v` satisfies its interface, the two shall link successfully. In Coq this is true except for universe constraints, like for existing `.vos` builds. To alleviate this problem, we propos`extending `.vok` outputs to i`lude proof terms, or at least universe constraint`so that we can r` a "link-time checker" that loads the whole program and checks whether combined universe constraints are satisfiable`The above assumes that u`verses and universe constraints for a term can be generated in isolation. However, universe inference is sometimes too greedy: when compiling `consumer.v` without the universe constraints from `producer.v`, Coq will sometimes produce different terms`for instance, some Ltac c` fail with an universe inconsistency and backtrack (as mentioned in https://coq.zulipchat.com/#narrow/stream/237977-Coq-users/topic/vos.2Fvok.20and.20link-time.20universe.20check); we propose that the extra constraints be hidden at this stag`sometimes, Coq also seems t`produce stricter universe constraints than strictly needed, as Gaëtan shows in https://coq.zulipchat.com/#narrow/stream/237977-Coq-users/topic/Why.20does.20my.20fix.20for.20a.20universe.20problem.20work.3F/near/264903292. It'd be nice if the constraints were produced modularly, even if this might produce bigger graphs (hopefully in a tolerable way), or might require manual eta-expansion (we'd need Coq to give a warning/error when it must eta-expand, suggesting the user do that by hand)`
 
-### "Full compilation" semantics
+### "Full compilation" Semantics
 
 The notion of full compilation semantics, i.e. a sound full-build semantics akin to a "vo-style" build can be achieved (at the cost of build parallelism) by introducing a dependency between the `.vio` file and the `.vo` file and elaboring the resulting `.vio` file with universe constraints introduced by the implementation. It is important that this does not include other side-effects from the `.vo` such as hints, tactics, or plugin requirements.
 

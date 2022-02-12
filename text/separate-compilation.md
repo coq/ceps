@@ -47,12 +47,12 @@ This proposal introduces the concept of an interface file with a `.vi` extension
 We think of this file as containing the `Module Type` for the corresponding `.v` file (which contains the `Module` the way it currently does in Coq and Ocaml).
 `.vi` interfaces are meant to hide implementations and support separate compilation in Cardelli's sense. Hence, a module `consumer.v` that consumes the interface of `producer.vi` shall be compiled without inspecting either `producer.v`, any build product from `producer.v`, or even the existence of `producer.v`. As a consequence, no change to `producer.v** can affect whether `consumer.v** typechecks.
 
-**Caveat** Because the behavior of Coq (e.g. tactics), as opposed to Gallina, can change when more definitions become available, removing a `.vi` file can expose implementation details that break client proof scripts though (we believe) that it cannot break kernel type checking in theory (i.e. ignoring practical considerations such as conversion times). We consider the potential to break clients a feature because meta-reasoning *should* occur at the interface and note the implemenation. 
+**Caveat** Because the behavior of Coq (e.g. tactics), as opposed to Gallina, can change when more definitions become available, removing a `.vi` file can expose implementation details that break client proof scripts though (we believe) that it cannot break kernel type checking in theory (i.e. ignoring practical considerations such as conversion times). We consider the potential to break clients a feature because meta-reasoning *should* occur at the interface and not the implemenation. 
 
 In this section, we focus on the *Gallina*-level semantics focusing on the equivalent mathematical formulations.
 We delay consideration of universes until the relevant subsection.
 
-With the new file type, we have three situations to consider: both a `.vi` and a `.v` file, only a `.v` file, and only a `.vi** file.
+With the new file type, we have three situations to consider: both a `.vi` and a `.v` file, only a `.v` file, and only a `.vi` file.
 
 ## Both a `.vi` and `.v` File
 An example of a `.vi` and `.v` file for a simple module would be the following:

@@ -41,15 +41,17 @@ builds: to avoid confusion, we could choose other file extensions or remove
 
 # Proposed Semantics
 
-This proposal introduces the concept of an interface file with a `.vi` extension.
-We think of this file as containing the `Module Type` for the corresponding `.v` file (which contains the `Module` the way it currently does in Coq and Ocaml).
-`.vi` interfaces are meant to hide implementations and support separate compilation in Cardelli's sense. Hence, a module `consumer.v` that consumes the interface of `producer.vi` shall be compiled without inspecting either `producer.v`, any build product from `producer.v`, or even the existence of `producer.v`. As a consequence, no change to `producer.v** can affect whether `consumer.v** typechecks.
+In this section, we describe the meaning of our Coq extension: instead of
+suggesting an implementation strategy, we sketch a *Gallina*-level
+semantics, to be taken as an informal specification.
 
+As a key principle: `.vi` interfaces are meant to hide implementations and support separate compilation in Cardelli's sense. Hence, compiling a module `consumer.v` that consumes the interface of `producer.vi` shall not depend (directly or indirectly) on the existence of `producer.v` or its contents. As a consequence, no change to `producer.v` can affect whether `consumer.v` typechecks.
 
-In this section, we focus on the *Gallina*-level semantics focusing on the equivalent mathematical formulations.
-We delay consideration of universes until the relevant subsection.
-
-With the new file type, we have three situations to consider: both a `.vi` and a `.v` file, only a `.v` file, and only a `.vi` file.
+More concretely, our semantics for compiling top-level module (say, `lib`)
+distinguishes three scenarios, depending on the existence of:
+- both `lib.vi` and `lib.v`;
+- only `lib.v`;
+- or only `lib.vi`.
 
 ## Both a `.vi` and `.v` File
 An example of a `.vi` and `.v` file for a simple module would be the following:

@@ -4,15 +4,38 @@
 
 # Summary
 
-Coq provides a module system that can be used explicitly through commands such as `Module` and `Module Type`. These can be quite heavyweight in many instances, and have some limitations when it comes to separately compiling files and building generic libraries. The ideas are drawn from OCaml, where .mli files can be used to express the interface of a module separately from its implementation. This enables:
-Avoiding dependencies that are only needed for non-exposed definitions, e.g. you do not need to expose the fact that proofs are constructed using particular tactics.
-Build parallelism (even without using -vos builds) because clients can be compiled against specification files only.
+Coq provides a module system that can be used explicitly through commands such
+as `Module` and `Module Type`. These can be quite heavyweight in many instances,
+and have some limitations when it comes to separately compiling files and
+building generic libraries.
+To address these problems, and support information hiding and separate
+compilation, in this CEP we introduce a notion of Coq interface files, which we
+will call a `.vi` file, and which are inspired by OCaml's `.mli` files.
+Intuitively, a Coq interface file called `module.vi` defines the public
+interface for `module.v`. The `module.vi` interface shall enable developing and
+typechecking clients, even before `module.v` has been implemented.
 
-This CEP proposes the introduction of a Coq interface file (which we will call a `.vi` file) that makes it possible to ascribe a module type to a top-level, i.e. declared as a file, module.
-The semantics of a `.vi` file would resemble today's opaque ascription with module types, while reducing boilerplate. Clients would only see the interface declared in the `.vi` file, but would neither see see the definitions of the `.v` file, nor its non-logical side effects such as hints.
-Unlike today, `.vi` interfaces would hide not just `Import`-bound side effects, but also `Require`-bound ones.
+If both `module.vi` and `module.v` are present, `module.vi` shall act as an
+opaque ascription for the top-level module defined by `module.v`; this opaque
+ascription ensures that clients that typecheck against `module.vi` shall still
+typecheck against the combination of `module.vi` and `module.v`, regardless of
+the implementation details of `module.v`, including any non-logical side effects
+such as hints.
+(except for universe constraints, as we discuss later).
 
-NOTE: In this proposal we use the extension `.vi` to be analog to `.mli` (derived from `.ml`). Similarly, we use `.vio` as what it compiles to. The `.vio` extension is already used for `-quick` build, so we could use `.vix` or anything else here. Or, remove `-quick` builds entirely and re-purpose the name.
+This has a few advantages:
+- it enables separate development: after agreeing `module.vi`, `module.v` and
+  its clients can be developed independently. To ensure this, unlike today's
+  opaque ascription, `.vi` files can even hide side effects due to `Require`.
+- it reduces compile-time dependencies and improves compile times, even compared
+  to today's `vos` builds (initial builds can be more parallel, and incremental
+  builds need to recompile fewer files).
+
+NOTE: For concreteness, in this CEP we use the `.vi` extension for for interface
+source files, and the `.vio` extension for interface object files. However,
+`.vio` files should not be confused with `.vio` files produced by `-quick`
+builds: to avoid confusion, we could choose other file extensions or remove
+`-quick` builds entirely.
 
 ## Background
 

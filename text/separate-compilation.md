@@ -37,10 +37,6 @@ source files, and the `.vio` extension for interface object files. However,
 builds: to avoid confusion, we could choose other file extensions or remove
 `-quick` builds entirely.
 
-## Background
-
-The goal of `.vi` files is to support separate compilation in Cardelli's sense: implementation changes that preserve the interface cannot affect clients. More formally, modules can be typechecked separately, and successful typechecking guarantees successful linking (again, up to universe checking; see below). For clarity, we intend "typechecking" to include all of elaboration, including the execution of proof scripts. If a client `bar.v` of a `foo.vi` interface elaborates correctly to a compiled file (`bar.vo` or `bar.vok`), and if `foo.v` satisfies its interface, 
-
 # Proposal
 
 This proposal introduces the concept of an interface file with a `.vi` extension.

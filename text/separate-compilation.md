@@ -8,7 +8,7 @@ Coq provides a module system that can be used explicitly through commands such
 as `Module` and `Module Type`. These can be quite heavyweight in many instances,
 and have some limitations when it comes to separately compiling files and
 building generic libraries.
-To address these problems, and support information hiding and separate
+To address these problems, and support information hiding and Cardelli-style separate
 compilation, in this CEP we introduce a notion of Coq interface files, which we
 will call a `.vi` file, and which are inspired by OCaml's `.mli` files.
 Intuitively, a Coq interface file called `module.vi` defines the public
@@ -19,15 +19,14 @@ If both `module.vi` and `module.v` are present, `module.vi` shall act as an
 opaque ascription for the top-level module defined by `module.v`; this opaque
 ascription ensures that clients that typecheck against `module.vi` shall still
 typecheck against the combination of `module.vi` and `module.v`, regardless of
-the implementation details of `module.v`, including any non-logical side effects
-such as hints.
-(except for universe constraints, as we discuss later).
+the implementation details of `module.v`,[^intro-universes] including any
+non-logical side effects such as hints (but excluding [universes](#universes)).
 
-This has a few advantages:
-- it enables separate development: after agreeing `module.vi`, `module.v` and
+This has a few advantages compared to Coq's state of the art:
+- It enables separate development: after agreeing `module.vi`, `module.v` and
   its clients can be developed independently. To ensure this, unlike today's
   opaque ascription, `.vi` files can even hide side effects due to `Require`.
-- it reduces compile-time dependencies and improves compile times, even compared
+- It reduces compile-time dependencies and improves compile times, even compared
   to today's `vos` builds (initial builds can be more parallel, and incremental
   builds need to recompile fewer files).
 

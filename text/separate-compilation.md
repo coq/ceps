@@ -21,6 +21,9 @@ ascription ensures that clients that typecheck against `module.vi` shall still
 typecheck against the combination of `module.vi` and `module.v`, regardless of
 the implementation details of `module.v`,[^intro-universes] including any
 non-logical side effects such as hints (but excluding [universes](#universes)).
+Instead, without interfaces, adding implementations is sufficient to break
+clients, and changing implementations can break clients again, hindering modular
+development.
 
 This has a few advantages compared to Coq's state of the art:
 - It enables separate development: after agreeing `module.vi`, `module.v` and

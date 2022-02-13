@@ -146,29 +146,6 @@ If only a `.v` file is available, Coq's semantics should be the same as today:
 the entire implementation shall be exposed in full builds, and it shall be
 hidden in `vos` builds.
 
-TODO(Paolo): at this point, the rest of this section is unmotivated: it answers no
-questions beyond the paragraph above. I am leaving it alone, but we need to
-either explain why the different interfaces matter (which might be explained
-later), or delete the rest of the section.
-
-It is crucial that having a `.v` file without a corresponding interface does *not* change the the current behavior of Coq.
-In Gallina, this is analogous to having a `Module` without a `Module Type` ascription.
-
-In order to provide a uniform semantic understanding, we opt to reduce this to the previous situation in which both files exist, but note explicitly that an implementation may not do this. For example, in Ocaml, a single `.ml` file does *not* generate a `.cmi` file.
-
-The existance of dependent types and opaque definitions makes this question more subtle than the basic Ocaml solution.
-We see three solutions:
-
-1. *Verbatim* Synthesize the interface (the `.vi`) file using the *verbatim* contents of the `.v` file. This includes *all* definitions, hints, and other side effects. In particular it also includes the bodies of opaque (e.g. `Qed`d) defintions. While somewhat counter-intuitive, including the bodies of opaque definitions (as opposed to just their signature) means that we recover the exact semantics that we would get from including the implementation directly.
-2. Synthesize the interface (the `.vi`) file using the contents of the `.v` file where opaque defintions (e.g. those that are `Qed`-d are replaced by `Parameter`s. There are two ways to do this: exactly and approximately.
-   - The *exact* characterization does not expose the body of the definition, but it does include its *full* characterization including universe constraints. Note that universe constraints may not be apparent from the type of the definition but they must still be included.
-   - The *approximate* characterization follows what a user would get from textually copying the type of the definition and converting it from a defined symbol to an assumed symbol, e.g. a `Parameter`.
-   
-   In this setup, the *exact* characterization is effectively the same as the first proposal, it simply changes the way that the opaque ascription is provided, i.e. from using `Qed` to using an opaque module ascription.
-   The *approximate* characterization follows (more closely) the semantics of `-vos` builds. This enables build parallelism at the cost of delayed universe checks (and all of the consequences of this).
-   
-We note that both the *verbatim* proposal and the *exact* proposal are _effectively_ the same in the math. Aesthetically, we believe that the *exact* proposal seems cleaner, opting to hide more details from clients and use a more uniform sealing mechanism. The *Verbatim* option, on the other hand, seems more natural to understand and potentially implement.
-
 ## Universes
 
 As some readers will anticipate, universe checks do not admit fully separate compilation; module bodies might add constraints absent from interfaces. This is already an issue with `.vos` builds today, and is a problem inherent to parallel builds, so any solutions to this problem could be shared.
@@ -187,11 +164,6 @@ We have two problems:
 A further issue is that universe inference does not seem to be prone to parallelism. Without seeing `producer.v`, 
 
 
-### "Link-time" Universe Checking
-
-TODO(Paolo): to remove? The above seems an (incomplete) rewrite.
-
-Cardelli's separate compilation has a further demand: in this example, if `consumer.v` typechecks, and `producer.v` satisfies its interface, the two shall link successfully. In Coq this is true except for universe constraints, like for existing `.vos` builds. To alleviate this problem, we propos`extending `.vok` outputs to i`lude proof terms, or at least universe constraint`so that we can r` a "link-time checker" that loads the whole program and checks whether combined universe constraints are satisfiable`The above assumes that universes and universe constraints for a term can be generated in isolation. However, universe inference is sometimes too greedy: when compiling `consumer.v` without the universe constraints from `producer.v`, Coq will sometimes produce different terms`for instance, some Ltac c` fail with an universe inconsistency and backtrack (as mentioned in https://coq.zulipchat.com/#narrow/stream/237977-Coq-users/topic/vos.2Fvok.20and.20link-time.20universe.20check); we propose that the extra constraints be hidden at this stage. Sometimes, Coq also seems to produce stricter universe constraints than strictly needed, as Gaëtan shows in https://coq.zulipchat.com/#narrow/stream/237977-Coq-users/topic/Why.20does.20my.20fix.20for.20a.20universe.20problem.20work.3F/near/264903292. It'd be nice if the constraints were produced modularly, even if this might produce bigger graphs (hopefully in a tolerable way), or might require manual eta-expansion (we'd need Coq to give a warning/error when it must eta-expand, suggesting the user do that by hand).
 
 ### "Full compilation" Semantics
 

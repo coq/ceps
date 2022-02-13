@@ -200,10 +200,11 @@ The implementation would require (at least) the following:
 
 1. Extending the build infrastructure to support `.vi` compilation.
 2. Modifying the implementation of `Require` to search for `.vio` files in
-   addition to `.vo` files. For backwards compatibility, we believe it would be
-   important to search for both `.vio` and `.vo` files *simultaneously* rather
-   than first searching for a `.vio` and then for a `.vo` because the later
-   would mean that adding a `.vi` files could change the library that is used.
+   addition to `.vo` files. For backwards compatibility, we believe it is
+   necessary to search for both `.vio` and `.vo` files *simultaneously* rather
+   than first searching for a `.vio` everywhere and then for a `.vo` everywhere
+   because the later would mean that adding a `.vi` files could change the
+   library that is used.
 3. We believe that the bit-level representation of `.vio` could be the same as
    `.vo` files, though an alternative would be to leverage the representation of
    `.vos` files (which might be the same).

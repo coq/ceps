@@ -118,7 +118,7 @@ lib`, even if this might not be guaranteed by ``lib_composed.v`.
 It is crucial that having a `.v` file without a corresponding interface does *not* change the the current behavior of Coq.
 In Gallina, this is analagous to having a `Module` without a `Module Type` ascription.
 
-In order to provide a uniform semantic understanding, we opt to reduce this to the previous situation in which both files exist, but note explictly that an implementation may not do this. For example, in Ocaml, a single `.ml` file does *not* generate a `.cmi` file.
+In order to provide a uniform semantic understanding, we opt to reduce this to the previous situation in which both files exist, but note explicitly that an implementation may not do this. For example, in Ocaml, a single `.ml` file does *not* generate a `.cmi` file.
 
 The existance of dependent types and opaque definitions makes this question more subtle than the basic Ocaml solution.
 We see three solutions:

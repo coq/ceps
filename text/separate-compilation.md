@@ -62,17 +62,17 @@ For concreteness, consider the following example:
 ```coq
 (* lib.vi *)
 Global Open Scope Z_scope.
-Parameter value : nat.
-Axiom value_is_42 : value = 42%nat.
+Parameter answer : nat.
+Axiom answer_is_42 : answer = 42%nat.
 
 (* lib.v *)
 Require Import stdpp.prelude.
 Global Open Scope N_scope.
 
-Definition value : nat := 42.
-Definition value_is_42 : value = 42%nat := ltac:(reflexivity).
+Definition answer : nat := 42.
+Definition answer_is_42 : answer = 42%nat := ltac:(reflexivity).
 
-Definition other_value : N := 42.
+Definition other_answer : N := 42 + 1.
 ```
 
 Here, `lib.v` contains both the implementation of `lib.vi` and some commands
@@ -87,16 +87,16 @@ following Coq source:
 (* lib_composed.v: *)
 Module Type __LIB.
   Global Open Scope Z_scope.
-  Parameter value : nat.
-  Axiom value_is_42 : value = 42.
+  Parameter answer : nat.
+  Axiom answer_is_42 : answer = 42.
 End __LIB.
 
 Module __lib : __LIB.
   Require Import stdpp.prelude.
   Global Open Scope N_scope.
 
-  Definition value : nat := 42.
-  Definition value_is_42 : value = 42%nat := ltac:(reflexivity).
+  Definition answer : nat := 42.
+  Definition answer_is_42 : answer = 42%nat := ltac:(reflexivity).
 End __lib.
 
 Export __lib. (* make the declarations from lib available from [Import]ing lib (rather that lib.lib *)
@@ -141,6 +141,7 @@ Concretely,
 
 ```coq
 (* lib.vi *)
+Global Open Scope Z_scope.
 Parameter answer : nat.
 Axiom answer_is_42 : answer = 42.
 ```
@@ -149,13 +150,14 @@ would be "translated" to:
 
 ```coq
 (* lib.v *)
-Module Type LIB.
+Module Type __LIB.
+  Global Open Scope Z_scope.
   Parameter answer : nat.
   Axiom answer_is_42 : answer = 42.
-End LIB.
+End __LIB.
 
-Declare Module lib : LIB.
-Export lib.
+Declare Module __lib : __LIB.
+Export __lib.
 ```
 
 ## Universes

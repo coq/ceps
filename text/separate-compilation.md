@@ -52,8 +52,8 @@ As a key principle: `.vi` interfaces are meant to hide implementations and suppo
 More concretely, our semantics for compiling top-level module (say, `lib`)
 distinguishes three scenarios, depending on the existence of:
 - both `lib.vi` and `lib.v`;
-- only `lib.v`;
-- or only `lib.vi`.
+- only `lib.vi`;
+- or only `lib.v`.
 
 ## Both a `.vi` and `.v` File
 
@@ -113,26 +113,6 @@ only `Global Open Scope Z_scope`. As we only `Require` stdpp.prelude in the
 module body, we intend this to be **hidden** from clients that perform `Require
 lib`, even if this might not be guaranteed by ``lib_composed.v`.
 
-## Only a `.v` File
-
-It is crucial that having a `.v` file without a corresponding interface does *not* change the the current behavior of Coq.
-In Gallina, this is analagous to having a `Module` without a `Module Type` ascription.
-
-In order to provide a uniform semantic understanding, we opt to reduce this to the previous situation in which both files exist, but note explicitly that an implementation may not do this. For example, in Ocaml, a single `.ml` file does *not* generate a `.cmi` file.
-
-The existance of dependent types and opaque definitions makes this question more subtle than the basic Ocaml solution.
-We see three solutions:
-
-1. *Verbatim* Synthesize the interface (the `.vi`) file using the *verbatim* contents of the `.v` file. This includes *all* definitions, hints, and other side effects. In particular it also includes the bodies of opaque (e.g. `Qed`d) defintions. While somewhat counter-intuitive, including the bodies of opaque definitions (as opposed to just their signature) means that we recover the exact semantics that we would get from including the implementation directly.
-2. Synthesize the interface (the `.vi`) file using the contents of the `.v` file where opaque defintions (e.g. those that are `Qed`-d are replaced by `Parameter`s. There are two ways to do this: exactly and approximately.
-   - The *exact* characterization does not expose the body of the definition, but it does include its *full* characterization including universe constraints. Note that universe constraints may not be apparent from the type of the definition but they must still be included.
-   - The *approximate* characterization follows what a user would get from textually copying the type of the definition and converting it from a defined symbol to an assumed symbol, e.g. a `Parameter`.
-   
-   In this setup, the *exact* characterization is effectively the same as the first proposal, it simply changes the way that the opaque ascription is provided, i.e. from using `Qed` to using an opaque module ascription.
-   The *approximate* characterization follows (more closely) the semantics of `-vos` builds. This enables build parallelism at the cost of delayed universe checks (and all of the consequences of this).
-   
-We note that both the *verbatim* proposal and the *exact* proposal are _effectively_ the same in the math. Aesthetically, we believe that the *exact* proposal seems cleaner, opting to hide more details from clients and use a more uniform sealing mechanism. The *Verbatim* option, on the other hand, seems more natural to understand and potentially implement.
-
 ## Only a `.vi` File
 
 When only an interface file exists, there is (potentially) no underlying implementation, but the existance of the interface should still provide definite references to an implementation.
@@ -159,6 +139,26 @@ End __LIB.
 Declare Module __lib : __LIB.
 Export __lib.
 ```
+
+## Only a `.v` File
+
+It is crucial that having a `.v` file without a corresponding interface does *not* change the the current behavior of Coq.
+In Gallina, this is analagous to having a `Module` without a `Module Type` ascription.
+
+In order to provide a uniform semantic understanding, we opt to reduce this to the previous situation in which both files exist, but note explicitly that an implementation may not do this. For example, in Ocaml, a single `.ml` file does *not* generate a `.cmi` file.
+
+The existance of dependent types and opaque definitions makes this question more subtle than the basic Ocaml solution.
+We see three solutions:
+
+1. *Verbatim* Synthesize the interface (the `.vi`) file using the *verbatim* contents of the `.v` file. This includes *all* definitions, hints, and other side effects. In particular it also includes the bodies of opaque (e.g. `Qed`d) defintions. While somewhat counter-intuitive, including the bodies of opaque definitions (as opposed to just their signature) means that we recover the exact semantics that we would get from including the implementation directly.
+2. Synthesize the interface (the `.vi`) file using the contents of the `.v` file where opaque defintions (e.g. those that are `Qed`-d are replaced by `Parameter`s. There are two ways to do this: exactly and approximately.
+   - The *exact* characterization does not expose the body of the definition, but it does include its *full* characterization including universe constraints. Note that universe constraints may not be apparent from the type of the definition but they must still be included.
+   - The *approximate* characterization follows what a user would get from textually copying the type of the definition and converting it from a defined symbol to an assumed symbol, e.g. a `Parameter`.
+   
+   In this setup, the *exact* characterization is effectively the same as the first proposal, it simply changes the way that the opaque ascription is provided, i.e. from using `Qed` to using an opaque module ascription.
+   The *approximate* characterization follows (more closely) the semantics of `-vos` builds. This enables build parallelism at the cost of delayed universe checks (and all of the consequences of this).
+   
+We note that both the *verbatim* proposal and the *exact* proposal are _effectively_ the same in the math. Aesthetically, we believe that the *exact* proposal seems cleaner, opting to hide more details from clients and use a more uniform sealing mechanism. The *Verbatim* option, on the other hand, seems more natural to understand and potentially implement.
 
 ## Universes
 

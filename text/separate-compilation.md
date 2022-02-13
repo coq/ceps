@@ -142,6 +142,15 @@ Export __lib.
 
 ## Only a `.v` File
 
+If only a `.v` file is available, Coq's semantics should be the same as today:
+the entire implementation shall be exposed in full builds, and it shall be
+hidden in `vos` builds.
+
+TODO(Paolo): at this point, the rest of this section is unmotivated: it answers no
+questions beyond the paragraph above. I am leaving it alone, but we need to
+either explain why the different interfaces matter (which might be explained
+later), or delete the rest of the section.
+
 It is crucial that having a `.v` file without a corresponding interface does *not* change the the current behavior of Coq.
 In Gallina, this is analagous to having a `Module` without a `Module Type` ascription.
 
@@ -179,6 +188,8 @@ A further issue is that universe inference does not seem to be prone to parallel
 
 
 ### "Link-time" Universe Checking
+
+TODO(Paolo): to remove? The above seems an (incomplete) rewrite.
 
 Cardelli's separate compilation has a further demand: in this example, if `consumer.v` typechecks, and `producer.v` satisfies its interface, the two shall link successfully. In Coq this is true except for universe constraints, like for existing `.vos` builds. To alleviate this problem, we propos`extending `.vok` outputs to i`lude proof terms, or at least universe constraint`so that we can r` a "link-time checker" that loads the whole program and checks whether combined universe constraints are satisfiable`The above assumes that u`verses and universe constraints for a term can be generated in isolation. However, universe inference is sometimes too greedy: when compiling `consumer.v` without the universe constraints from `producer.v`, Coq will sometimes produce different terms`for instance, some Ltac c` fail with an universe inconsistency and backtrack (as mentioned in https://coq.zulipchat.com/#narrow/stream/237977-Coq-users/topic/vos.2Fvok.20and.20link-time.20universe.20check); we propose that the extra constraints be hidden at this stag`sometimes, Coq also seems t`produce stricter universe constraints than strictly needed, as Gaëtan shows in https://coq.zulipchat.com/#narrow/stream/237977-Coq-users/topic/Why.20does.20my.20fix.20for.20a.20universe.20problem.20work.3F/near/264903292. It'd be nice if the constraints were produced modularly, even if this might produce bigger graphs (hopefully in a tolerable way), or might require manual eta-expansion (we'd need Coq to give a warning/error when it must eta-expand, suggesting the user do that by hand)`
 

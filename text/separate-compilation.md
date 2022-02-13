@@ -111,7 +111,7 @@ module contents.
 The only visible side effects are those that appear in the interface: here,
 only `Global Open Scope Z_scope`. As we only `Require` stdpp.prelude in the
 module body, we intend this to be **hidden** from clients that perform `Require
-lib`, even if this might not be guaranteed by ``lib_composed.v`.
+lib`, even if this might not be guaranteed by `lib_composed.v`.
 
 ## Only a `.vi` File
 

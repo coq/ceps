@@ -193,6 +193,14 @@ elaborating the resulting `.vio` file with universe constraints introduced by th
 implementation. It is important that nothing but universe constraints (say
 hints, tactics or plugin requirements) leak from `.vo` files into `.vio` files.
 
+Alternatively, the extra universe constraints could be fetched directly from
+`.vo` files without altering the `.vio` files: again, nothing but universe
+constraints should leak from implementations to clients.
+
+In this case, we could maybe ensure that `.vio` files coincide across separate
+builds and "full" builds.
+To this end, processing `Require library` when building `client.vio` file might
+have to not load constraints from `library.vo`, even in a full build.
 
 # Implementation
 

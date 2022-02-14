@@ -216,6 +216,8 @@ The implementation would require (at least) the following:
 3. We believe that the bit-level representation of `.vio` could be the same as
    `.vo` files, though an alternative would be to leverage the representation of
    `.vos` files (which might be the same).
+4. Build support for the new mode; ideally, some code could be shared with
+   support for `vos` builds.
 
 
 # Footnotes

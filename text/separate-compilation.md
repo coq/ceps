@@ -189,9 +189,9 @@ the problem.
 The notion of full compilation semantics, i.e. a sound full-build semantics akin
 to a "vo-style" build can be achieved (at the cost of build parallelism) by
 introducing a dependency between the `.vio` file and the `.vo` file and
-elaboring the resulting `.vio` file with universe constraints introduced by the
-implementation. It is important that this does not include other side-effects
-from the `.vo` such as hints, tactics, or plugin requirements.
+elaborating the resulting `.vio` file with universe constraints introduced by the
+implementation. It is important that nothing but universe constraints (say
+hints, tactics or plugin requirements) leak from `.vo` files into `.vio` files.
 
 
 # Implementation

@@ -7,8 +7,8 @@
 # Summary
 
 In addition to variables for universe levels, we generalize the type of sorts to
-also contain quality variables, allowing to delay the choice between Prop, Type
-and SProp made by the unification. This CEP is only concerned about unification,
+also contain quality variables, allowing delaying the choice between Prop, Type
+and SProp made by unification. This CEP is only concerned about unification,
 although the kernel structures need to be modified accordingly, the kernel
 treats undefined quality variables as an error, similarly to evars.
 
@@ -33,13 +33,13 @@ The introduction of `SProp` makes the problem even more salient. Long story shor
 
 # Detailed design
 
-This CEP introduces a trivial idea to sort out the mess. Namely, in addition to the well-known universe *levels* one now also has access to sorts *qualities*. While levels are basically integers, qualities are the nature of the sort itself, i.e. `Prop`, `Type` or `SProp`. Since we want to have unification on this first-order signature, we also freely add variables. They are just tracked in the evarmap in a way similar to levels. The most generic type is thus `QSort (α, u)` where `α` is a sort quality and `u` an algebraic universe.
+This CEP introduces a trivial idea to sort out the mess. Namely, in addition to the well-known universe *levels* one now also has access to sort *qualities*. While levels are basically integers, qualities are the nature of the sort itself, i.e. `Prop`, `Type` or `SProp`. Since we want to have unification on this first-order signature, we also freely add variables. They are just tracked in the evarmap in a way similar to levels. The most generic type is thus `QSort (α, u)` where `α` is a sort quality and `u` an algebraic universe.
 
-Since this affects pervasive data structures, we need to change the kernel definitions. But similarly to evars, the kernel currently does not know anything about undefined sort variables, apart for their relevance which is needed for conversion.
+Since this affects pervasive data structures, we need to change the kernel definitions. But similarly to evars, the kernel currently does not know anything about undefined sort variables, apart from their relevance which is needed for conversion.
 
 In order for the system to work, we have constraints and quotients going on.
 - The type of a sort `QSort (α, u)` is always `Type(u+1)`, i.e. the sort of a sort must have a `Type` quality. This is true in current Coq since `Prop : Type`, `SProp : Type` and `Type : Type`.
-- The type of a product `forall x : A, B : QSort(α, u)` is such that `α` is the quality of the sort of `B`, and u the max of levels (as usual). This is also true in Coq, and is designed to make impredicativity work.
+- The type of a product `forall x : A, B : QSort(α, u)` is such that `α` is the quality of the sort of `B`, and `u` the max of levels (as usual). This is also true in Coq, and is designed to make impredicativity work.
 - Impredicative sorts have a degenerate level structure, i.e. `QSort(Prop, u) ≡ Prop` and similarly for `SProp`. This ensures that we can make unification of sort qualities commute with impredicative typing.
 
 The current unification of sorts is very conservative, but it could easily be enhanced to be more expressive. We just add a union-find state of unification variables to the `UState.t` record and tweak universe unification by eagerly unifiying sorts when the qualities involved in a constraint are not ground. For instance, when asked `QSort(α, u) ≤ QSort(β, v)` we set `α := β`. This is not complete for `≤` constraints, but is simpler to implement.

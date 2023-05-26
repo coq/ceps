@@ -62,11 +62,11 @@ The two projects are based on different architectural choices and allow explorin
 
 When Coq LSP support becomes stable enough, maintainers of IDE support packages for Coq (e.g., Proof General for Emacs, Coqtail for Vim) will be encouraged to migrate to using this protocol. We expect that Coqtail will be one of the first IDEs to migrate, as it currently depends on coqidetop and the XML protocol (and such a migration has already [seen experiments](https://github.com/whonore/Coqtail/pull/323)).
 
-When no major IDE besides CoqIDE relies on the XML protocol anymore, the Coq team will start considering removal of coqidetop from the Coq repository. It will then become time for CoqIDE maintainers to decide what to do regarding the long-term future of CoqIDE. At this point, several options will be available:
+When no major IDE besides CoqIDE relies on the XML protocol anymore, the Coq team will start considering removal of coqidetop from the Coq repository. The decision to remove coqidetop will be made after first evaluating whether all the important features that the Coq team wishes to continue supporting have been made available in other IDEs or through other IDE-related protocols. At this point, it will then become time for CoqIDE maintainers to decide what to do regarding the long-term future of CoqIDE. Several options will be available:
 
 - declare the end of the CoqIDE maintenance,
 - migrate CoqIDE to rely on LSP instead of the XML protocol, following the example of other IDEs, but without the support of standard parts of LSP being natively suported in the editor,
-- keep maintaining coqidetop for as long as the required APIs / components are there in Coq. 
+- keep maintaining coqidetop in the CoqIDE repository for as long as the required APIs / components are there in Coq. 
 
 Note that coqidetop depends on the STM, and that the STM will be eventually removed from Coq (or features from the STM will be gradually removed) as STM users are gradually migrated off it or deprecated. (Besides coqidetop, another major STM user is [SerAPI](https://github.com/ejgallego/coq-serapi), on which [Alectryon](https://github.com/cpitclaudel/alectryon) is built, but there are already plans to migrate Alectryon off SerAPI and deprecating SerAPI in favor of coq-lsp.) At this point, if CoqIDE requires specific APIs that the Coq developers do not want to maintain, they won't hesitate to remove CoqIDE from Coq's CI.
 

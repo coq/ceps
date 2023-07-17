@@ -89,7 +89,8 @@ to add and remove items, to reflect the evolution of the project.
 
 #### Rewrite rules
 
-- Yann ?, Théo Winterhalter
+- Yann Leray, Théo Winterhalter
+- 3 to 6 month
 
 #### Primitive projections
 

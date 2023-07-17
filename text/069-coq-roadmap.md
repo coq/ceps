@@ -1,6 +1,6 @@
 - Title: Coq roadmap
 
-- Drivers: Théo Zimmermann (@Zimmi48)
+- Drivers: Nicolas Tabareau (@tabareau), Théo Zimmermann (@Zimmi48)
 
 ----
 

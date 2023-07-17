@@ -1,6 +1,6 @@
 - Title: Coq roadmap
 
-- Drivers: Théo Zimmermann
+- Drivers: Théo Zimmermann (@Zimmi48)
 
 ----
 
@@ -53,11 +53,25 @@ work on it, and that they have resources available to do so, including the
 reviews, so the work should not stall because of lack of resources or lack
 of interest.
 
+The description of each item of the roadmap will include the available
+resources, the expected duration of the work, and the expected outcome,
+including any blocking issues that will need to be resolved to complete
+the work, and any still unresolved questions to be answered.
+
 Rules :
 
 - An item cannot be part of the roadmap if it is not supported by at least
   two persons, including at least one Coq maintainer to review the changes.
 - No one should be committed to work on more than two items at the same time.
+
+Each Coq Call will start with a roundtable about progress on items of the
+roadmap.
+
+Gaëtan Gilbert will be the technical coordinator of the roadmap, overseeing
+progress being made.
+
+Théo Zimmermann will be the editorial coordinator of the roadmap, proposing
+to add and remove items, to reflect the evolution of the project.
 
 ## Priorities and resources
 
@@ -87,21 +101,9 @@ Debate on the design to be had between Hugo Herbelin and Pierre-Marie Pédrot.
 
 - Gaëtan Gilbert, Pierre-Marie Pédrot
 
-#### AST / interpretation
-
-- Emilio? (probably to remove because other Emilio commitments)
-
 #### Arbitrary recursive notations
 
 - Hugo Herbelin, Pierre Roux
-
-#### Bi-dimensional notations
-
-- Emilio Jésus Gallego Arias, ??? (missing buddy)
-
-#### Nametab / libobject
-
-- Emilio Jésus Gallego Arias, ??? (missing buddy)
 
 ### Tools
 
@@ -116,15 +118,7 @@ Would require work on:
 - Module dependency analysis
 - Hugo Herbelin + Yannick Forster
 
-### Libraries and community
-
-#### Promote the Coq Platform
-
-- Théo Zimmermann, ???
-
-Editorial work + documentation
-
-## Other axes, without resources
+## Other axes, without sufficient resources
 
 ### Kernel, theory
 
@@ -142,6 +136,18 @@ Editorial work + documentation
 
 ### Surface language
 
+#### AST / interpretation
+
+- Emilio?
+
+#### Bi-dimensional notations
+
+- Emilio Jésus Gallego Arias, ??? (missing buddy)
+
+#### Nametab / libobject
+
+- Emilio Jésus Gallego Arias, ??? (missing buddy)
+
 #### Removing clenv
 
 #### Unifall
@@ -158,6 +164,12 @@ Editorial work + documentation
 
 ### Libraries and community
 
+#### Promote the Coq Platform
+
+- Théo Zimmermann, ???
+
+Editorial work + documentation
+
 #### Demote stdlib
 
 - Separation of the prelude
@@ -169,12 +181,13 @@ Editorial work + documentation
 
 # Drawbacks
 
-Is the proposed change affecting any other component of the system? How?
+TODO
 
 # Alternatives
 
-Yes, do the related works.  What do other systems do?
+TODO
 
 # Unresolved questions
 
-Questions about the design that could not find an answer.
+- How to update the roadmap? Should this CEP be updated, or should we create new CEPs every few months to produce a new roadmap? Should we
+also maintain a wiki page with the roadmap, to cover the live progress?

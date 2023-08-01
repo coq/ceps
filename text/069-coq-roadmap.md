@@ -89,11 +89,21 @@ to add and remove items, to reflect the evolution of the project.
 
 #### Rewrite rules
 
-The goal is to add (unsafe) user-defined rewrite rules. This features allows users to add computation rules to axioms which can be useful for prototyping. It also allows for different kinds of computation rules with respect to what Coq currently permits: non-linearity, overlapping left-hand sides (*eg* one can write an addition on natural numbers that reduces on both sides: `0 + n` and `n + 0` both reducing to `n`).
+The goal is to add (unsafe) user-defined rewrite rules. This features allows
+users to add computation rules to axioms which can be useful for prototyping.
+It also allows for different kinds of computation rules with respect to what Coq
+currently permits: non-linearity, overlapping left-hand sides (*eg* one can write
+an addition on natural numbers that reduces on both sides: `0 + n` and `n + 0`
+both reducing to `n`).
 
-It would be deactivated by default and be optionally on by *eg* setting `Rewrite Rules On`. They should be supported by unification and the main reduction machines (not `vm_compute` and `native_compute` for now, Coq should give a warning when those are used with rewrite rules on). Rewrite rules would propagate to any module that requires the module that defines them.
+It would be deactivated by default and be optionally on by *eg* setting
+`Rewrite Rules On`. They should be supported by unification and the main
+reduction machines (not `vm_compute` and `native_compute` for now, Coq
+should give a warning when those are used with rewrite rules on). Rewrite
+rules would propagate to any module that requires the module that defines them.
 
-- Working Coq fork: https://github.com/Yann-Leray/coq (examples in https://github.com/Yann-Leray/coq/blob/rewrite-rules/test-suite/success/rewrule.v).
+- Working Coq fork: https://github.com/Yann-Leray/coq (examples in
+https://github.com/Yann-Leray/coq/blob/rewrite-rules/test-suite/success/rewrule.v).
 - CEP: https://github.com/coq/ceps/pull/50
 - Yann Leray, Théo Winterhalter
 - 3 to 6 month

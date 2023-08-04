@@ -183,14 +183,54 @@ Would require work on:
 
 #### Promote the Coq Platform
 
-- Théo Zimmermann, ???
+The Coq Platform is already the officially recommended installation method.
+We would like to make it clear to users that they are encouraged to rely on
+the packages that it provides, and that libraries in the Platform should be
+generally considered as a collaborative extended standard library for Coq
+(the historical stdlib being only a part of this).
 
-Editorial work + documentation
+As part of this effort we should do:
+
+- Editorial work for curation of packages included in the Coq Platform
+  (to bring guarantees on their level of quality).
+
+- Consolidation of documentation, so that it is easy for users to find
+  documentation about the included packages, ideally with a consistant
+  presentation.
+
+- Infrastructure / automation work to stabilize the release process of
+  the Coq Platform and ensure that releases are more consistently
+  delivered according to a predefined schedule.
 
 #### Demote stdlib
 
-- Separation of the prelude
-- Make stdlib a normal library
+As part of the promotion effort around the Coq Platform, we would like to
+ensure that the stdlib does not enjoy special status and that Coq can be
+used without it. We should consider stdlib components as libraries to
+advertise for their own values as part of the Coq Platform packages, but
+without their historical origin, or their development and release process
+being tied to Coq, (mis)leading users to consider them as the only
+officially recommended libraries.
+
+In particular, we should:
+
+- Identify consistent stdlib components that can be used independently
+  from each other and that would be worth distributing as separate
+  packages. Identify their maintainers and give them freedom to define
+  the future of the components they maintain, in the limits set by the
+  Coq Platform charter. Allow maintainers to extract stdlib components
+  to maintain and evolve them outside the core Coq repository and to have
+  their own release schedule and versioning scheme, in case they wish to
+  do so.
+
+- Extract the prelude + a minimum set of components that alternative
+  general libraries like MathComp and coq-stdpp need as a basis.
+  Make sure that this reduced core stdlib component can evolve to allow
+  other libraries to use newer features of Coq (like universe polymorphism,
+  SProp and primitive projections).
+  Stop including any other stdlib components as part of the `coq` opam
+  package and encourage maintainers of Coq packages in other distributions
+  to do the same.
 
 #### Tooling for building libraries
 

@@ -195,7 +195,7 @@ As part of this effort we should do:
   (to bring guarantees on their level of quality).
 
 - Consolidation of documentation, so that it is easy for users to find
-  documentation about the included packages, ideally with a consistant
+  documentation about the included packages, ideally with a consistent
   presentation.
 
 - Infrastructure / automation work to stabilize the release process of

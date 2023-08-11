@@ -71,4 +71,10 @@ For an inductive type `[... Ii : Δi -> si := {... Cij : Ωij -> Ii δij ...} ..
   ————————————————————————————————————————————————————————————————————————————————————————————————————
                 Γ ⊢ (match t as x in Ii y return P with ... Cij z as w => uij ... end) : P δ
 ```
-Then, for the guard condition, the new variable `w` is considered of the size of `t`.
+and new reduction rule is:
+```
+match (Cij u) as x in Ii y return P with ... Cij z as w => uij ... end
+ →
+uij[z,w:=u,Cij u]
+```
+while, for the guard condition, the new variable `w` is considered of the size of `t`.

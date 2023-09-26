@@ -143,7 +143,7 @@ The objective of the first step is to have coqc and coqtop not depend on the STM
 Sub items:
 
 - fix the kernel w.r.t. side effects and code paths in the stm. That is revive https://github.com/coq/coq/pull/16367
-- `par:` implemented using SEL (already done in vscoqtop, to be ported to Coq). Currently `par:` does not use the STM, but uses its code to spawn workers, it depends on `-thread` etc.
+- `par:` implemented using [SEL](https://github.com/gares/sel) (already done in vscoqtop, to be ported to Coq). Currently `par:` does not use the STM, but uses its code to spawn workers, it depends on `-thread` etc.
 - make coqc-vio and coqc-vos legacy binaries using the stm library
 
 Resources:

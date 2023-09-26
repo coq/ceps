@@ -84,7 +84,27 @@ to add and remove items, to reflect the evolution of the project.
 
 #### Algebraic universes
 
-- Matthieu Sozeau, Pierre-Marie Pédrot
+The goal is to support arbitrary universes (e.g. max(u+k, l)) in any position,
+while generalizing the constraint resolution system to support more complex constraints
+(e.g. v <= max(u + k, l)). The inference and checking algorithms are quite different from
+the current one and will be less performant by at least an order of magnitude on the current 
+developments that are mostly using global universes. It should however be competitive on 
+universe-polymorphic code (with much less universes and constraints to consider by definition). 
+
+This should enable a more user-friendly interface to universe
+polymorphism, by reducing the number of "dummy" generated universes and constraints that 
+are here only to deal with the current limitation. Also, we would get rid of the mandatory 
+"refresh_universes" on the Coq API side, allowing to freely use inferered types and terms 
+in tactics/tactic languages.
+
+On the user side this mostly adds an enriched language to describe universes with +n's and max(). 
+Small syntactic incompatibilities related to universe declarations (e.g `@{u v + | u <= v +}` change
+to `@{u v ?| u <= v + 2 ?}`.
+
+- Matthieu Sozeau, Pierre-Marie Pédrot. Joint work with Marc Bezem on the constraint
+ inference/checking algorithms.
+- CEP: todo
+- PR: https://github.com/coq/coq/pull/16022
 - 1 year
 
 #### Rewrite rules

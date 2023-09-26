@@ -81,6 +81,10 @@ uij[z,w:=u,Cij u]
 ```
 while, for the guard condition, the new variable `w` is considered of the size of `t`.
 
+# Alternative solution for the guard condition
+
+Instead of adding an `as` clause, the guard condition could also detect subterms of the right-hand side that are syntactically equal (or even convertible) to the constructor and consider them automatically of the same size as the term being matched (proposal of G.M.). Then, the user would not have to care about whether it expands or not the right-hand side.
+
 # Generality of the design
 
 The proposal is useful for the guard condition to better scale to recursion on inductive families, but it makes sense also outside the context of the guard.

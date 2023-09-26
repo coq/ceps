@@ -63,6 +63,8 @@ Fixpoint is_sub (n : nat) (Pn : is_nat n) (m : nat) (Pm : is_nat m) : is_nat (Na
 ```
 with `p` of the same type as the constructor but recognized as a subterm for the guard condition.
 
+Note: for the record, the way `sub` is defined allows the guard to define `gcd` with a recursive call for `S a` on `sub a b` for some `b`. The way `is_sub` is defined (without the `as`) prevents the guard to define the parametricity for `gcd` with the same criterion. To define `gcd` using a recursor, a commutative cut would be needed in the theory, or `gcd` passed as a continuation to `sub`.
+
 # Details about the design
 
 For an inductive type `[... Ii : Δi -> si := {... Cij : Ωij -> Ii δij ...} ...]`, the proposed new typing rule is:
@@ -78,3 +80,52 @@ match (Cij u) as x in Ii y return P with ... Cij z as w => uij ... end
 uij[z,w:=u,Cij u]
 ```
 while, for the guard condition, the new variable `w` is considered of the size of `t`.
+
+# Generality of the design
+
+The proposal is useful for the guard condition to better scale to recursion on inductive families, but it makes sense also outside the context of the guard.
+
+Consider a recursor such as:
+```
+nat_rect : forall P : nat -> Type, P 0 -> (forall n : nat, P n -> P (S n)) -> forall n : nat, P n
+```
+It is easy to define a function which e.g. turns 0 into 1 and otherwise is the identity:
+```
+Definition f n := nat_rect (fun _ => nat) 1 (fun _ _ => n) n.
+```
+
+Consider now the recursor for the property of being a `nat`:
+```
+Inductive is_nat : nat -> Type :=
+    is_O : is_nat 0
+  | is_S : forall H : nat, is_nat H -> is_nat (S H).
+(*
+is_nat_rect : forall P : forall s1 : nat, is_nat s1 -> Type,
+       P 0 is_O ->
+       (forall (n : nat) (P_ : is_nat n),
+        P n P_ -> P (S n) (is_S n P_)) ->
+       forall (s1 : nat) (i : is_nat s1), P s1 i
+*)
+```
+We can't do the same with the ordinary recursor:
+```
+Fail Definition is_f n (is_n : is_nat n) :=
+  is_nat_rect (fun n _ => is_nat (f n))
+    (is_S 0 is_O)
+    (fun _ _ _ => is_n) is_n.
+```
+To do it, one would need a recursor with an `as` clause, that is a recursor of this type:
+```
+is_nat_rect_with_alias : forall P : forall s1 : nat, is_nat s1 -> Type,
+       (P 0 is_O -> P 0 is_O) ->
+       (forall (n : nat) (P_ : is_nat n),
+        P n P_ -> P (S n) (is_S n P_) -> P (S n) (is_S n P_)) ->
+       forall (s1 : nat) (i : is_nat s1), P s1 i
+```
+so that we can write:
+```
+Definition is_f n (is_n : is_nat n) :=
+  is_nat_rect_with_alias (fun n _ => is_nat (f n))
+    (fun _ => is_S 0 is_O)
+    (fun _ _ _ is_n => is_n) n is_n.
+```

@@ -141,13 +141,20 @@ Would require work on:
 
 #### Observational type theory
 
-#### Global fixpoints
+#### Fixpoints
+
+- Global fixpoints: Hugo less convinced of the importance of global fixpoints vs modifying the fix/cofix rules of CIC so that they unfold for named fixpoints on the name rather than the body of the fix
+- Fixpoints able to treat nested inductive types as mutual inductive types (recomputing the recursive structure dynamically), Hugo (PR #17950), a few weeks
+- Guard condition able to detect uniform parameters of inner fixpoints, Hugo (PR #17986), a few weeks
+- Expanded constructors of a branch in a `match` considered smaller for the guard condition (CEP #73)
 
 #### Primitive projections
 
 - Removal of compatibility layer
 
 #### Sections
+
+- Design of a way to refer to the generalized version of a constant/inductive from within the inside of a section
 
 #### Modules
 

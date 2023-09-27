@@ -81,6 +81,19 @@ to add and remove items, to reflect the evolution of the project.
 
 - Gaëtan Gilbert, Nicolas Tabareau
 - 3 to 6 months
+- ongoing PR https://github.com/coq/coq/pull/17836 (will need a followup for inductives)
+
+Extension of universe polymorphism to sort qualities. It becomes possible to have global references quantified over 
+sort qualities eg `foo@{s | u | } : Type@{s | u}` which could be instantiated to `foo@{SProp | v} : SProp` 
+(the quantification syntax needs both `|` to avoid ambiguity).
+
+This should allow having for instance a common inductive for SProp, Prop and Type instantations of sigma types 
+(instead of the current `sigT` `sig` `ex` and variations depending on if each of the 2 parameters and the output are SProp).
+
+Eventually may allow using a common implementation for Type and Prop setoid rewriting machinery 
+(Morphisms vs CMorphisms, RelationClasses vs CRelationsClasses).
+
+May also be useful when doing Observational Type Theory.
 
 #### Algebraic universes
 

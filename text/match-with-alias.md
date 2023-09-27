@@ -63,7 +63,7 @@ Fixpoint is_sub (n : nat) (Pn : is_nat n) (m : nat) (Pm : is_nat m) : is_nat (Na
 ```
 with `p` of the same type as the constructor but recognized as a subterm for the guard condition.
 
-Note: for the record, the way `sub` is defined allows the guard to define `gcd` with a recursive call for `S a` on `sub a b` for some `b`. The way `is_sub` is defined (without the `as`) prevents the guard to define the parametricity for `gcd` with the same criterion. To define `gcd` using a recursor, a commutative cut would be needed in the theory, or `gcd` passed as a continuation to `sub`.
+Note: for the record, the way `sub` is defined allows the guard to define `gcd` with a recursive call for `S a` on `sub a b` for some `b`. The way `is_sub` is defined (without the `as`) prevents the guard to define the parametricity for `gcd` with the same criterion. To define `gcd` using a recursor, a commutative cut would be needed in the theory, or `gcd` passed as a continuation to `sub` (see LPCIC/coq-elpi#493 for details).
 
 # Details about the design
 

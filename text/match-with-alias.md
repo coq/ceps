@@ -13,7 +13,7 @@ We propose to extend the context of each branch of `match` in the Calculus of In
 When writing fixpoints in inductive types with indices, there is a standard conflict between referring to the expansion of a variable being matched (so that its type corresponds to the type in the branch) or referring to the variable so that it is compatible with the guard when the fixpoint is later used in another fixpoint. A typical example (even without indices) is `Nat.sub`:
 ```coq
 Fixpoint sub (n m : nat) {struct n} : nat :=
-  match n with
+  match n, m with
   | S k, S l => sub k l
   | _, _ => n
   end

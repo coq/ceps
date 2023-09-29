@@ -168,6 +168,22 @@ Would require work on:
 - Module dependency analysis
 - Hugo Herbelin + Yannick Forster
 
+### Cleanup
+
+#### Retiring the STM, step 1
+
+The objective of the first step is to have coqc and coqtop not depend on the STM, while keeping coqidetop, coqc-vio and coqc-vos depend on it.
+Sub items:
+
+- fix the kernel w.r.t. side effects and code paths in the stm. That is revive https://github.com/coq/coq/pull/16367
+- `par:` implemented using [SEL](https://github.com/gares/sel) (already done in vscoqtop, to be ported to Coq). Currently `par:` does not use the STM, but uses its code to spawn workers, it depends on `-thread` etc.
+- make coqc-vio and coqc-vos legacy binaries using the stm library
+
+Resources:
+
+- Enrico Tassi, ??? I need a code reviewer
+- 1 month of work, 6 months timeframe
+
 ## Other axes, without sufficient resources
 
 ### Kernel, theory

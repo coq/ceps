@@ -40,7 +40,7 @@ Our goal is to clean up the Reals library. In particular:
 
 We encountered Reals when writing a small course for undergraduate students.
 While we were seduced by its simplicity, some aspects were very frustrating.
-This lead to a first PR (#17036) with a better `RIneq.v`.
+This lead to a first PR (coq/coq#17036) with a better `RIneq.v`.
 After that, we tried to clean up other files but got carried away. And indeed,
 we believe that a substantial change is off the scale of small pull requests.
 
@@ -91,7 +91,8 @@ extend, backward compatibility.
 - Giving alternative (better) definitions could lead to increase unreasonably
   the number of lemmas, this will have to be carefully balanced.
 - Having less files *could* lead, in a heavily multithreaded environment to
-  increased compilation time (but we deem it unlikely).
+  increased compilation time (but we deem it unlikely). We will have
+  coq/coq#17877 in mind and try to break dependencies when we can.
 
 # Alternatives
 
@@ -103,24 +104,26 @@ extend, backward compatibility.
   axioms. It would be beautiful but it does not solve our issues.
 - The library `mathcomp-analysis` is a very advanced analysis library built on
   top of Mathcomp, ssreflect and Hierarchy Builder.
-  A definition of the real numbers is given (taken, if we're not mistaken from
-  the pre-existing library coq-alternate-reals) but is seldom, if ever, used.
-  Its lemmas are very general and do not rely on a specific construction of the
-  real numbers, but are parameterized by instances of type `realType`.
-  Its logic is stronger than that of Reals, assuming not only functional
-  extensionality but also propositional extentionality and constructive
-  indefinite description (which in turn imply the excluded middle in its
-  strongest form). Most basic lemmas are instead very general lemmas about, say,
-  abelian groups or ordered fields of which real numbers are just another
-  instance. While it certainly is a very carefully written library, it is very
-  involved and, in our opinion, demanding for the average Coq user. We would not
-  use it with first year undergraduate students for instance. Furthermore,
-  unless Flocq and Coquelicot are in a large part rewritten, they will still
-  depend on Reals. So I think mathcomp-analysis and Reals should coexist, as
-  they target very different users and have very different philosophies.
+  The definition of real numbers is never used. Instead, at this time, the
+  lemmas do not rely on a specific construction of the real numbers, but are
+  parameterized by instances of type `realType`. Its logic is stronger than that
+  of Reals, assuming not only functional extensionality but also propositional
+  extentionality and constructive indefinite description (which in turn imply
+  the excluded middle in its strongest form). Most basic lemmas are instead very
+  general lemmas about, say, abelian groups or ordered fields of which real
+  numbers are just another instance. While it certainly is a very carefully
+  written library, it is very involved and, in our opinion, demanding for the
+  average Coq user. We would not use it with first year undergraduate students
+  for instance. Furthermore, unless Flocq and Coquelicot are in a large part
+  rewritten, they will still depend on Reals. So I think mathcomp-analysis and
+  Reals should coexist, as they target very different users and have very
+  different philosophies.
 - The library C-Corn is another analysis library with constructions of real
-  numbers. It focuses mostly on constructive analysis so is probably less
-  practical for a classical introductory mathematics course.
+  numbers. It focuses mostly on constructive analysis. The C-corn library
+  is itself based on Math-classes, a library of abstract interfaces for
+  mathematical structures, using Coq's type classes. It certainly is a very
+  interesting library, but is probably less practical for a classical
+  introductory mathematics course.
 
 # Unresolved questions
 
@@ -128,6 +131,6 @@ extend, backward compatibility.
   been discussed. It is used to define the real numbers but never after.
   Maybe it is to keep Reals independent of this particular construction.
 - The same question holds for Setoids. They are used in the definition of real
-  numbers.  This allows to use `setoid_rewrite` during the development, which
-  can be very handy (we can rewrite under `forall` and `exists`).  With
-  functional extensionality and Setoids, we could rewrite under `fun` too.
+  numbers. This allows to use `setoid_rewrite` during the development, which can
+  be very handy (we can rewrite under `forall` and `exists`). With functional
+  extensionality and Setoids, we could rewrite under `fun` too.

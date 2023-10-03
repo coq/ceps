@@ -181,7 +181,7 @@ Sub items:
 
 Resources:
 
-- Enrico Tassi, ??? I need a code reviewer
+- Enrico Tassi, Gaetan Gilbert
 - 1 month of work, 6 months timeframe
 
 ## Other axes, without sufficient resources

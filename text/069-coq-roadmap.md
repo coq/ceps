@@ -184,7 +184,7 @@ Sub items:
 
 Resources:
 
-- Enrico Tassi, Gaetan Gilbert
+- Enrico Tassi, Gaëtan Gilbert
 - 1 month of work, 6 months timeframe
 
 ### Libraries and community

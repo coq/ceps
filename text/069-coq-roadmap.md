@@ -150,6 +150,9 @@ Debate on the design to be had between Hugo Herbelin and Pierre-Marie Pédrot.
 #### Ltac2
 
 - Gaëtan Gilbert, Pierre-Marie Pédrot
+- long term
+
+The goal is to get to the point where we can recommend new developments be Ltac2 only (no Ltac1).
 
 #### Arbitrary recursive notations
 

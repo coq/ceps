@@ -189,7 +189,7 @@ Resources:
 
 ### Libraries and community
 
-#### Move stdlib to coq-community
+#### Demote stdlib
 
 As part of the promotion effort around the Coq Platform, we would like to
 ensure that the stdlib does not enjoy special status and that Coq can be

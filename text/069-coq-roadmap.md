@@ -171,6 +171,41 @@ Would require work on:
 - Module dependency analysis
 - Hugo Herbelin + Yannick Forster
 
+### Ltac* debugger
+
+#### Ltac2 support and enhancements
+
+- Jim Fehrle, reviewer TBD
+- Ready for initial review in ~1 month (Nov 2023)
+
+- Support debugging Ltac2 tactics
+- Support debugging scripts that combine Ltac1 and Ltac2
+- History mechanism that lets users examine previous steps in tactics (no re-execution)
+- Other usability enhancements
+- Mininal changes to CoqIDE (e.g. added menu items and key bindings)
+
+#### Debugger support in vsCoq2
+
+- Jim Fehrle (OCaml code), TBD (Typescript code in vsCoq2)
+- Most of the work is likely in vsCoq2
+- AFAIK no work has been done and no discussion yet
+
+### Enabling GUI enhancements for vsCoq2, Proof General, etc.
+
+- developers TBD
+
+A number of GUI enhancements require support from Coq.  Given that
+vsCoq2, Proof General and coqtail are written in different languages,
+these should be made available through new calls in the GUI protocol
+to maximize the potential for code reuse.
+
+These include:
+- Data on where symbols are defined and used so users can jump to a symbol definition, etc.
+- Incrementally rebuilding the project (identifying what relevant files have changed)
+- Parsing the _CoqProject file should be done in Coq, then the result should be returned
+  to the GUI.  (Currently each GUI has a separate parser for the file--a waste of limited
+  developer resources.)
+
 ### Cleanup
 
 #### Retiring the STM, step 1

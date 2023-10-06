@@ -30,8 +30,8 @@ Producing a roadmap for the Coq project is important for several reasons:
   efficient, by making sure that their work will be supported by other
   developers, including reviewers.
 
-- It helps contributors to know what are the important axes where their
-  contribution is most likely to be welcome and where they can expect
+- It helps contributors to know in what areas their
+  contribution is likely to get
   the most support from the Coq developers.
 
 - It helps highlighting the axes where more resources are needed, and

@@ -141,6 +141,17 @@ https://github.com/Yann-Leray/coq/blob/rewrite-rules/test-suite/success/rewrule.
 - Yann Leray, Théo Winterhalter
 - 3 to 6 month
 
+#### Guard condition
+
+- Guard condition able to treat nested inductive types as mutual inductive types (recomputing the recursive structure dynamically), Hugo (PR #17950), a few weeks for discussions and reviewing
+- Guard condition able to detect uniform parameters of inner fixpoints, Hugo (PR #17986), a few weeks for discussions and reviewing
+- Expanded constructors of a branch in a `match` considered smaller for the guard condition (CEP #73), a few weeks depending on discussions
+- Refinement of the guard condition through `match` constructs (PR #14359), a few weeks for discussions and reviewing
+
+#### Sections
+
+- Design of a way to refer to the generalized version of a constant/inductive from within the inside of a section (depends on the time needed to reach a consensus on the design)
+
 #### Primitive projections
 
 Debate on the design to be had between Hugo Herbelin and Pierre-Marie Pédrot.
@@ -230,12 +241,9 @@ Resources:
 
 #### Observational type theory
 
-#### Fixpoints
+#### Global fixpoints
 
-- Global fixpoints: Hugo less convinced of the importance of global fixpoints vs modifying the fix/cofix rules of CIC so that they unfold for named fixpoints on the name rather than the body of the fix
-- Fixpoints able to treat nested inductive types as mutual inductive types (recomputing the recursive structure dynamically), Hugo (PR #17950), a few weeks
-- Guard condition able to detect uniform parameters of inner fixpoints, Hugo (PR #17986), a few weeks
-- Expanded constructors of a branch in a `match` considered smaller for the guard condition (CEP #73)
+- Hugo less convinced of the importance of global fixpoints vs modifying the fix/cofix rules of CIC so that they unfold for named fixpoints on the name rather than the body of the fix
 
 #### Primitive projections
 

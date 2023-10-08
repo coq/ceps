@@ -165,7 +165,9 @@ Debate on the design to be had between Hugo Herbelin and Pierre-Marie Pédrot.
 
 The goal is to get to the point where we can recommend new developments be Ltac2 only (no Ltac1).
 
-#### Arbitrary recursive notations
+#### General recursive notations
+
+The objective is to grant wish coq/coq#7959 (see there for details).
 
 - Hugo Herbelin, Pierre Roux
 

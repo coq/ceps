@@ -174,6 +174,8 @@ able to define global tables with several kind of indices through a vernacular
 and extend them after the fact. With this feature, mutable definitions are just
 a specific case of tables with a unit index.
 
+`coqdoc` needs to understand Ltac2 (link to definitions, skip bodies).
+
 - Gaëtan Gilbert, Pierre-Marie Pédrot, (Enrico Tassi for the SSR part)
 - long term
 

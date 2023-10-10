@@ -190,8 +190,9 @@ The objective is to grant wish coq/coq#7959 (see there for details).
 - Yannick Forster, Matthieu Sozeau
 - 6 months to 1 year
 
-Would require work on:
+Replacement of Coq's current extraction mechanism (implemented as an OCaml plugin) by a re-implementation from scratch based on MetaCoq (and thus implemented in Coq itself). This new extraction framework already supports *verified* type and proof erasure based on the intermediate language LambdaBox,  several verified intermediate compilation steps, and extraction to OCaml cmx files via [Malfunction](github.com/stedolan/malfunction). The goal is to support unverified extraction to the current back-ends OCaml, Haskell, Scheme, and JSON. To fully replace the current extraction mechanism several parts of it have to be re-implemented, including mli generation as well as Haskell, Scheme, and JSON file generation.
 
+Other aspects that need re-examination because they are problematic already in the current extraction mechanism include
 - Prop included in Type
 - Module dependency analysis
 - Hugo Herbelin + Yannick Forster

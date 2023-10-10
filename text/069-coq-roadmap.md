@@ -160,10 +160,22 @@ Debate on the design to be had between Hugo Herbelin and Pierre-Marie Pédrot.
 
 #### Ltac2
 
+The overarching goal is to get to the point where we can recommend new
+developments to only use Ltac2 (without having to load Ltac1). There are several
+fronts on which to make progress.
+
+One major point is to make available in Ltac2 all the basic tactics from Ltac1.
+The main missing part is currently the ssreflect framework. Exposing it in Ltac2
+implies writing a good chunk of boilerplate binding code for the Ltac2-OCaml FFI
+and defining the corresponding grammar rules for the Ltac2 language.
+
+Another important thing for extensibility is the table feature. One should be
+able to define global tables with several kind of indices through a vernacular
+and extend them after the fact. With this feature, mutable definitions are just
+a specific case of tables with a unit index.
+
 - Gaëtan Gilbert, Pierre-Marie Pédrot
 - long term
-
-The goal is to get to the point where we can recommend new developments be Ltac2 only (no Ltac1).
 
 #### General recursive notations
 

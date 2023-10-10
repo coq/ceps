@@ -143,10 +143,10 @@ https://github.com/Yann-Leray/coq/blob/rewrite-rules/test-suite/success/rewrule.
 
 #### Guard condition
 
-- Guard condition able to treat nested inductive types as mutual inductive types (recomputing the recursive structure dynamically), Hugo (PR #17950), a few weeks for discussions and reviewing
-- Guard condition able to detect uniform parameters of inner fixpoints, Hugo (PR #17986), a few weeks for discussions and reviewing
+- Guard condition able to treat nested inductive types as mutual inductive types (recomputing the recursive structure dynamically), Hugo (PR coq/coq#17950), a few weeks for discussions and reviewing
+- Guard condition able to detect uniform parameters of inner fixpoints, Hugo (PR coq/coq#17986), a few weeks for discussions and reviewing
 - Expanded constructors of a branch in a `match` considered smaller for the guard condition (CEP #73), a few weeks depending on discussions
-- Refinement of the guard condition through `match` constructs (PR #14359), a few weeks for discussions and reviewing
+- Refinement of the guard condition through `match` constructs (PR coq/coq#14359), a few weeks for discussions and reviewing
 
 #### Sections
 

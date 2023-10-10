@@ -174,7 +174,7 @@ able to define global tables with several kind of indices through a vernacular
 and extend them after the fact. With this feature, mutable definitions are just
 a specific case of tables with a unit index.
 
-- Gaëtan Gilbert, Pierre-Marie Pédrot
+- Gaëtan Gilbert, Pierre-Marie Pédrot, (Enrico Tassi for the SSR part)
 - long term
 
 #### General recursive notations

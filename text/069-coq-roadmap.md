@@ -239,7 +239,7 @@ Resources:
 
 ### Libraries and community
 
-#### Demote stdlib
+#### Boost stdlib development
 
 As part of the promotion effort around the Coq Platform, we would like to
 ensure that the stdlib does not enjoy special status and that Coq can be
@@ -268,6 +268,12 @@ In particular, we should:
   Stop including any other stdlib components as part of the `coq` opam
   package and encourage maintainers of Coq packages in other distributions
   to do the same.
+
+The technical details (prelude content, split into packages, logpath,
+mono/multi repo, call for maintainers, documentation, test-suite,
+CI,...) will be discussed in a [CEP](https://github.com/coq/ceps/) to
+ensure a reasonnable agreement is reached on those points before
+implementing any actual change.
 
 Resources:
 

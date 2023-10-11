@@ -75,9 +75,9 @@ to add and remove items, to reflect the evolution of the project.
 
 ## Priorities and resources
 
-### Change of Name: Coq -> Rocq
+### Change of Name: `Coq` -> `Rocq`
 
-- Yves Bertot, Nicolas TAbareau
+- Yves Bertot, Nicolas Tabareau
 - 3 to 6 months
 
 The Coq developer team has validated the renaming of Coq into Rocq. There are several steps to make this happen. 

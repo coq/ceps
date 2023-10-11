@@ -75,6 +75,28 @@ to add and remove items, to reflect the evolution of the project.
 
 ## Priorities and resources
 
+### Change of Name: Coq -> Rocq
+
+- Yves Bertot, Nicolas TAbareau
+- 3 to 6 months
+
+The Coq developer team has validated the renaming of Coq into Rocq. There are several steps to make this happen. 
+
+#### Legal issues 
+
+We are checking that we can actually use the new name from a legal point of view. 
+
+#### Visual identity and website
+
+The change of name is an opportunity to redesign the visual identity of Rocq
+and to give a fresher look to the historical website of Coq. 
+
+#### Technical issues 
+
+On the technical issues, the renaming practically means a huge amount of search&replace 
+in many parts of the code base and website links. We may ask also for user contributions 
+for more peripherical changes. 
+
 ### Kernel, theory
 
 #### Sort polymorphism

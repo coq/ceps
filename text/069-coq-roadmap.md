@@ -222,6 +222,13 @@ Other aspects that need re-examination because they are problematic already in t
 - Module dependency analysis
 - Hugo Herbelin + Yannick Forster
 
+#### Attaching comments to declarations
+
+- Hugo Herbelin + ??
+- time needed to converge on the design
+
+PR [#18193](https://github.com/coq/coq/pull/18193) implements a table for binding comments to declarations, but it lacks surface syntax.
+
 ### Cleanup
 
 #### Retiring the STM, step 1

@@ -36,7 +36,7 @@ Producing a roadmap for the Coq project is important for several reasons:
   to receive the most support from the Coq developers.
 
 - It helps highlighting other priorities where progress is not possible for
-  lack of resources are needed, and where the Coq project should aim to find
+  lack of resources, and where the Coq project should aim to find
   more resources.
 
 # Detailed design

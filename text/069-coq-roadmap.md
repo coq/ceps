@@ -6,12 +6,14 @@
 
 # Summary
 
-This CEP aims to establish a roadmap for the Coq project.
+This CEP aims to establish a short term roadmap for the Coq project (while
+also stating the need for a medium and long term roadmap as well).
+
 It highlights both:
 
-- what are considered as important axes to work on in the future,
-- what resources are available to work on these axes, and which axes we commit
-  to work on based on these resources.
+- what are considered as priorities for the short term future,
+- what priorities we commit to make progress on, based on the available
+  resources.
 
 Resources mean availability of persons to conduct the work. For technical axes,
 requiring changes in the Coq system, it includes availability of persons to
@@ -26,18 +28,58 @@ Producing a roadmap for the Coq project is important for several reasons:
   part of next releases, and what changes are more likely to be delayed
   because of lack of resources.
 
-- It helps Coq developers to focus on important axes, and to be more
-  efficient, by making sure that their work will be supported by other
-  developers, including reviewers.
+- It helps Coq developers to choose priorities together, and to work more
+  efficiently toward those by making sure that their work will be supported
+  by other developers, including reviewers.
 
-- It helps contributors to know in what areas their
-  contribution is likely to get
-  the most support from the Coq developers.
+- It helps contributors to know in what areas their contribution is likely
+  to receive the most support from the Coq developers.
 
-- It helps highlighting the axes where more resources are needed, and
-  where the Coq project should try to find more resources.
+- It helps highlighting other priorities where progress is not possible for
+  lack of resources are needed, and where the Coq project should aim to find
+  more resources.
 
 # Detailed design
+
+The Coq roadmap is declined at three levels: short, medium and long term.
+Each of these levels address different needs, but they should be checked
+for consistency with each other.
+
+- The short term roadmap is focused on priorities on which we are committed
+  to progress in the coming months and that are thus the most likely to
+  actually happen. We define a commitment from the Coq team as a commitment
+  of several (at least two) contributors, including at least one relevant
+  maintainer to review the work proposed by other contributors. The work
+  can include implementation work when the design is already clear, work on
+  the design from ideas that are well understood, or even exploratory work,
+  but we should only list the parts that are likely to converge in the
+  specified time-frame (i.e., if it is not clear if exploratory work will
+  lead to a solution that can be implemented, we should only commit on the
+  exploratory work).
+
+- The medium term roadmap is focused on areas where we see important progress
+  being needed, which could take several years to complete, and for which we
+  do not always have the ressources needed. It is used to guide the renewal
+  of the short term roadmap, but also the search for new resources to make
+  progress in these areas. The medium term roadmap should contains high level
+  descriptions of the areas requiring progress, but can contain rough plans
+  for how to proceed to make progress in these areas if the team already has a
+  vision about the steps needed.
+
+- The long term roadmap is focused on what our vision for the future of Coq is
+  and not necessarily how we are going to achieve it. It is used to provide
+  general ideas that we can check our medium and short term roadmaps against,
+  and to give users more clarity on what the future of Coq could look like. It
+  should include our vision of what kind of users Coq will target in the future.
+
+As creating a roadmap and keeping it updated and aligned with the actual goals
+of the team members requires a change of culture, we do not try to create all
+of these levels at the same time. In this CEP, we aim to produce a complete
+short term roadmap, and to start a sketch of the medium term roadmap. We will
+use our experience building the short term roadmap and keeping it up-to-date
+to improve the process and to start building more precisely the other levels.
+
+## Detailed design for the short term roadmap
 
 This roadmap is a consolidated view created by the Coq developers, based on
 their shared understanding of the priorities of the project and of the
@@ -73,7 +115,22 @@ progress being made.
 Théo Zimmermann will be the editorial coordinator of the roadmap, proposing
 to add and remove items, to reflect the evolution of the project.
 
-## Priorities and resources
+Once adopted through the CEP process, the roadmap will be kept up-to-date
+in a living document on the wiki (while the merged step will represent a
+point in time). From time to time, we will go back to using the CEP process
+to trigger a discussion with the community on the updated roadmap (and also
+to address more precisely the medium and long term levels of the roadmap).
+
+## Short term roadmap
+
+As this short term roadmap is focused on priorities for which we have
+committed resources, it should not be considered as an exhaustive list of
+the important aspects on which we hope Coq to progress in the future (more
+can be found in the medium term roadmap). Rather, it gives clarity of what
+should be the upcoming changes in the next releases. Yet, some changes may
+still find their way in the next releases without being listed first in
+this short term roadmap (although for significant changes, it would be
+better if they would).
 
 ### Change of Name: `Coq` -> `The Rocq Prover`
 
@@ -288,7 +345,9 @@ Resources:
 - Cyril Cohen, Pierre Roux
 - 6 months to 1 year
 
-## Other axes, without sufficient resources
+## Medium term roadmap
+
+TODO: clean up and restructure this part.
 
 ### Kernel, theory
 
@@ -365,13 +424,21 @@ As part of this effort we should do:
 
 # Drawbacks
 
-TODO
+Creating and updating a roadmap requires significant work in itself. Our
+view is that this work should be nonetheless useful by making the rest of
+the work around Coq more efficient.
 
 # Alternatives
 
-TODO
+We could either do nothing, or try to coordinate work on selected topics
+only, without creating a global overview and unified process. However,
+experience leads us to believe that this global overview and unified
+process is needed to create a shared understanding of the priorities of
+the project and to make significant progress toward them.
 
 # Unresolved questions
 
-- How to update the roadmap? Should this CEP be updated, or should we create new CEPs every few months to produce a new roadmap? Should we
-also maintain a wiki page with the roadmap, to cover the live progress?
+We leave many questions for future work, including the frequency of the
+CEPs needed to update the roadmap, how the regular discussion of the work
+on roadmap priorities will take place, and how to build the medium and
+long term roadmap.

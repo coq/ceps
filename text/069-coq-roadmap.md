@@ -202,7 +202,7 @@ to `@{u v ?| u <= v + 2 ?}`.
 
 #### Rewrite rules
 
-The goal is to add (unsafe) user-defined rewrite rules. This features allows
+The goal is to add (unsafe) user-defined rewrite rules. This feature allows
 users to add computation rules to axioms which can be useful for prototyping.
 It also allows for different kinds of computation rules with respect to what Coq
 currently permits: non-linearity, overlapping left-hand sides (*eg* one can write

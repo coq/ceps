@@ -259,11 +259,31 @@ a specific case of tables with a unit index.
 - Gaëtan Gilbert, Pierre-Marie Pédrot, (Enrico Tassi for the SSR part)
 - long term
 
-#### General recursive notations
-
-The objective is to grant wish coq/coq#7959 (see there for details).
+#### Notations
 
 - Hugo Herbelin, Pierre Roux
+
+##### General recursive notations
+
+The objective is to grant wish [#7959](https://github.com/coq/coq/issues/7959)
+(see there for details).
+
+##### Parsing
+
+We plan to remove the recovery mechanism of the camlp5/coqpp parsing
+engine (see [#17876](https://github.com/coq/coq/pull/17876)). This
+will make the parser simpler and easier to understand and will enable
+to actually implement `no associativity`, which is currently just an
+alias for `left associativity`. This should also pave the way to lift
+the restriction that a same parsing level cannot be both left and
+right associative, avoiding conflicts between libraries. See
+[CEP 71](https://github.com/coq/ceps/pull/71) for more details.
+
+We will finally precise the design of a more liberal handling of
+associativity levels, based on arbitrary strings and ordering
+constraints (alike universe constraints) rather than the current 0 to
+100 integers. This should ease combination of various libraries by
+limiting the current conflicts on notations.
 
 ### Tools
 

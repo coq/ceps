@@ -41,7 +41,7 @@ Producing a roadmap for the Coq project is important for several reasons:
 
 # Detailed design
 
-The Coq roadmap is declined at three levels: short, medium and long term.
+The Coq roadmap is defined at three levels: short, medium and long term.
 Each of these levels address different needs, but they should be checked
 for consistency with each other.
 
@@ -59,7 +59,7 @@ for consistency with each other.
 
 - The medium term roadmap is focused on areas where we see important progress
   being needed, which could take several years to complete, and for which we
-  do not always have the ressources needed. It is used to guide the renewal
+  do not always have the resources needed. It is used to guide the renewal
   of the short term roadmap, but also the search for new resources to make
   progress in these areas. The medium term roadmap should contains high level
   descriptions of the areas requiring progress, but can contain rough plans

@@ -104,7 +104,9 @@ Rules :
 
 - An item cannot be part of the roadmap if it is not supported by at least
   two persons, including at least one Coq maintainer to review the changes.
-- No one should be committed to work on more than two items at the same time.
+- No one should commit to more work than they can realistically undertake
+  at the same time (which will be a different amount depending on whether
+  someone can work full time on Coq or not).
 
 Each Coq Call will start with a roundtable about progress on items of the
 roadmap.
@@ -171,11 +173,17 @@ This should allow having for instance a common inductive for SProp, Prop and Typ
 (instead of the current `sigT` `sig` `ex` and variations depending on if each of the 2 parameters and the output are SProp).
 
 Eventually may allow using a common implementation for Type and Prop setoid rewriting machinery 
-(Morphisms vs CMorphisms, RelationClasses vs CRelationsClasses).
+(`Morphisms` vs `CMorphisms`, `RelationClasses` vs `CRelationsClasses`).
 
 May also be useful when doing Observational Type Theory.
 
 #### Algebraic universes
+
+- Matthieu Sozeau, Pierre-Marie Pédrot. Joint work with Marc Bezem on the constraint
+ inference/checking algorithms.
+- CEP: todo
+- PR: https://github.com/coq/coq/pull/16022
+- 1 year
 
 The goal is to support arbitrary universes (e.g. max(u+k, l)) in any position,
 while generalizing the constraint resolution system to support more complex constraints
@@ -194,13 +202,13 @@ On the user side this mostly adds an enriched language to describe universes wit
 Small syntactic incompatibilities related to universe declarations (e.g `@{u v + | u <= v +}` change
 to `@{u v ?| u <= v + 2 ?}`.
 
-- Matthieu Sozeau, Pierre-Marie Pédrot. Joint work with Marc Bezem on the constraint
- inference/checking algorithms.
-- CEP: todo
-- PR: https://github.com/coq/coq/pull/16022
-- 1 year
-
 #### Rewrite rules
+
+- Working Coq fork: https://github.com/Yann-Leray/coq (examples in
+https://github.com/Yann-Leray/coq/blob/rewrite-rules/test-suite/success/rewrule.v).
+- CEP: https://github.com/coq/ceps/pull/50
+- Yann Leray, Théo Winterhalter
+- 3 to 6 month
 
 The goal is to add (unsafe) user-defined rewrite rules. This feature allows
 users to add computation rules to axioms which can be useful for prototyping.
@@ -215,49 +223,15 @@ reduction machines (not `vm_compute` and `native_compute` for now, Coq
 should give a warning when those are used with rewrite rules on). Rewrite
 rules would propagate to any module that requires the module that defines them.
 
-- Working Coq fork: https://github.com/Yann-Leray/coq (examples in
-https://github.com/Yann-Leray/coq/blob/rewrite-rules/test-suite/success/rewrule.v).
-- CEP: https://github.com/coq/ceps/pull/50
-- Yann Leray, Théo Winterhalter
-- 3 to 6 month
-
-#### Guard condition
-
-- Guard condition able to treat nested inductive types as mutual inductive types (recomputing the recursive structure dynamically), Hugo (PR coq/coq#17950), a few weeks for discussions and reviewing
-- Guard condition able to detect uniform parameters of inner fixpoints, Hugo (PR coq/coq#17986), a few weeks for discussions and reviewing
-- Expanded constructors of a branch in a `match` considered smaller for the guard condition (CEP #73), a few weeks depending on discussions
-- Refinement of the guard condition through `match` constructs (PR coq/coq#14359), a few weeks for discussions and reviewing
-
-#### Sections
-
-- Design of a way to refer to the generalized version of a constant/inductive from within the inside of a section (depends on the time needed to reach a consensus on the design)
-
-#### Primitive projections
-
-Debate on the design to be had between Hugo Herbelin and Pierre-Marie Pédrot.
-
 ### Surface language
 
-#### Ltac2
+#### Make SSReflect available in Ltac2
 
-The overarching goal is to get to the point where we can recommend new
-developments to only use Ltac2 (without having to load Ltac1). There are several
-fronts on which to make progress.
-
-One major point is to make available in Ltac2 all the basic tactics from Ltac1.
-The main missing part is currently the ssreflect framework. Exposing it in Ltac2
+The main missing tactics in Ltac2 are currently those of SSReflect. Exposing them in Ltac2
 implies writing a good chunk of boilerplate binding code for the Ltac2-OCaml FFI
 and defining the corresponding grammar rules for the Ltac2 language.
 
-Another important thing for extensibility is the table feature. One should be
-able to define global tables with several kind of indices through a vernacular
-and extend them after the fact. With this feature, mutable definitions are just
-a specific case of tables with a unit index.
-
-`coqdoc` needs to understand Ltac2 (link to definitions, skip bodies).
-
-- Gaëtan Gilbert, Pierre-Marie Pédrot, (Enrico Tassi for the SSR part)
-- long term
+- Enrico Tassi and Pierre-Marie Pédrot
 
 #### Notations
 
@@ -299,16 +273,12 @@ Other aspects that need re-examination because they are problematic already in t
 - Module dependency analysis
 - Hugo Herbelin + Yannick Forster
 
-#### Attaching comments to declarations
-
-- Hugo Herbelin + ??
-- time needed to converge on the design
-
-PR [#18193](https://github.com/coq/coq/pull/18193) implements a table for binding comments to declarations, but it lacks surface syntax.
-
 ### Cleanup
 
 #### Retiring the STM, step 1
+
+- Enrico Tassi, Gaëtan Gilbert
+- 1 month of work, 6 months timeframe
 
 The objective of the first step is to have coqc and coqtop not depend on the STM, while keeping coqidetop, coqc-vio and coqc-vos depend on it.
 Sub items:
@@ -317,14 +287,12 @@ Sub items:
 - `par:` implemented using [SEL](https://github.com/gares/sel) (already done in vscoqtop, to be ported to Coq). Currently `par:` does not use the STM, but uses its code to spawn workers, it depends on `-thread` etc.
 - make coqc-vio and coqc-vos legacy binaries using the stm library
 
-Resources:
-
-- Enrico Tassi, Gaëtan Gilbert
-- 1 month of work, 6 months timeframe
-
 ### Libraries and community
 
 #### Boost stdlib development
+
+- Cyril Cohen, Pierre Roux
+- 6 months to 1 year
 
 As part of the promotion effort around the Coq Platform, we would like to
 ensure that the stdlib does not enjoy special status and that Coq can be
@@ -360,16 +328,40 @@ CI,...) will be discussed in a [CEP](https://github.com/coq/ceps/) to
 ensure a reasonnable agreement is reached on those points before
 implementing any actual change.
 
-Resources:
-
-- Cyril Cohen, Pierre Roux
-- 6 months to 1 year
-
 ## Medium term roadmap
 
-TODO: clean up and restructure this part.
+This part should be considered as a sketch, so not everything in there
+is presented at the same level of detail yet.
 
 ### Kernel, theory
+
+#### Streamline the use of `SProp`
+
+Short-term work on sort polymorphism should make it easier to adapt
+all tactics and libraries so that `SProp` becomes actually usable.
+
+#### Guard condition
+
+There are several ways to make the guard condition evolve. Some
+usability issues today could be lifted if they are properly
+justified as not extending the theoretical set of functions that can
+be defined. The guard condition could be made more flexible by
+allowing to choose between a very safe mode, a normal / legacy mode,
+an experimental / extended mode, and the disabled mode that can
+already been set today.
+
+Here are some of the items that could possibly be worked on in the
+relative short-term depending on availability of reviewers and
+consensus on how to handle them:
+
+- Guard condition able to treat nested inductive types as mutual inductive types (recomputing the recursive structure dynamically), Hugo (PR coq/coq#17950), a few weeks for discussions and reviewing
+- Guard condition able to detect uniform parameters of inner fixpoints, Hugo (PR coq/coq#17986), a few weeks for discussions and reviewing
+- Expanded constructors of a branch in a `match` considered smaller for the guard condition (CEP #73), a few weeks depending on discussions
+- Refinement of the guard condition through `match` constructs (PR coq/coq#14359), a few weeks for discussions and reviewing
+
+#### Sections
+
+- Design of a way to refer to the generalized version of a constant/inductive from within the inside of a section (depends on the time needed to reach a consensus on the design)
 
 #### Observational type theory
 
@@ -377,7 +369,11 @@ TODO: clean up and restructure this part.
 
 - Hugo less convinced of the importance of global fixpoints vs modifying the fix/cofix rules of CIC so that they unfold for named fixpoints on the name rather than the body of the fix
 
-#### Primitive projections
+#### Streamline the use of primitive projections
+
+Some discussions still need to happen to create a precise plan on how to proceed.
+
+One item that is often discussed is the following:
 
 - Removal of compatibility layer
 
@@ -389,17 +385,34 @@ TODO: clean up and restructure this part.
 
 ### Surface language
 
-#### AST / interpretation
+#### Ltac2
 
-- Emilio?
+The overarching goal is to get to the point where we can recommend new
+developments to only use Ltac2 (without having to load Ltac1). There are several
+fronts on which to make progress.
+
+One major point is to make available in Ltac2 all the basic tactics from Ltac1.
+The main missing part is currently the ssreflect framework.
+
+Another important thing for extensibility is the table feature. One should be
+able to define global tables with several kind of indices through a vernacular
+and extend them after the fact. With this feature, mutable definitions are just
+a specific case of tables with a unit index.
+
+`coqdoc` needs to understand Ltac2 (link to definitions, skip bodies).
+
+#### Attaching comments to declarations
+
+- Hugo Herbelin + ??
+- time needed to converge on the design
+
+PR [#18193](https://github.com/coq/coq/pull/18193) implements a table for binding comments to declarations, but it lacks surface syntax.
+
+#### AST / interpretation
 
 #### Bi-dimensional notations
 
-- Emilio Jésus Gallego Arias, ??? (missing buddy)
-
 #### Nametab / libobject
-
-- Emilio Jésus Gallego Arias, ??? (missing buddy)
 
 #### Removing clenv
 
@@ -414,6 +427,12 @@ TODO: clean up and restructure this part.
 #### Reactive elaboration
 
 #### Functionalisation
+
+### Tools
+
+#### Remove CoqIDE
+
+See [068-coqide-split.md](068-coqide-split.md).
 
 ### Libraries and community
 

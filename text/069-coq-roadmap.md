@@ -162,7 +162,7 @@ for more peripherical changes, for instance on user contributions.
 #### Sort polymorphism
 
 - Gaëtan Gilbert, Nicolas Tabareau
-- 3 to 6 months
+- DONE (8.19)
 - ongoing PR https://github.com/coq/coq/pull/17836 (will need a followup for inductives)
 
 Extension of universe polymorphism to sort qualities. It becomes possible to have global references quantified over 

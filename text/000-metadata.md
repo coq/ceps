@@ -30,6 +30,8 @@ documentation generation, and build database for Coq libraries.
   ```coq
   #[alias="forall x y, x * y = y * x"]
   Lemma mulrC : commutative mul. ...
+
+  Search (_ * _ = _ * _). (* mulrC appears *)
   ```
   or
   ```coq

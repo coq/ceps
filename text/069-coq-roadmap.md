@@ -386,6 +386,9 @@ a specific case of tables with a unit index.
 
 #### Parsing
 
+- Hugo Herbelin, Pierre Roux
+- 2 years
+
 We plan to remove the recovery mechanism of the camlp5/coqpp parsing
 engine (see [#17876](https://github.com/coq/coq/pull/17876)). This
 will make the parser simpler and easier to understand and will enable

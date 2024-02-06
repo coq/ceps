@@ -242,23 +242,6 @@ and defining the corresponding grammar rules for the Ltac2 language.
 The objective is to grant wish [#7959](https://github.com/coq/coq/issues/7959)
 (see there for details).
 
-##### Parsing
-
-We plan to remove the recovery mechanism of the camlp5/coqpp parsing
-engine (see [#17876](https://github.com/coq/coq/pull/17876)). This
-will make the parser simpler and easier to understand and will enable
-to actually implement `no associativity`, which is currently just an
-alias for `left associativity`. This should also pave the way to lift
-the restriction that a same parsing level cannot be both left and
-right associative, avoiding conflicts between libraries. See
-[CEP 71](https://github.com/coq/ceps/pull/71) for more details.
-
-We will finally precise the design of a more liberal handling of
-associativity levels, based on arbitrary strings and ordering
-constraints (alike universe constraints) rather than the current 0 to
-100 integers. This should ease combination of various libraries by
-limiting the current conflicts on notations.
-
 ### Tools
 
 #### Proved extraction
@@ -400,6 +383,33 @@ and extend them after the fact. With this feature, mutable definitions are just
 a specific case of tables with a unit index.
 
 `coqdoc` needs to understand Ltac2 (link to definitions, skip bodies).
+
+#### Parsing
+
+We plan to remove the recovery mechanism of the camlp5/coqpp parsing
+engine (see [#17876](https://github.com/coq/coq/pull/17876)). This
+will make the parser simpler and easier to understand and will enable
+to actually implement `no associativity`, which is currently just an
+alias for `left associativity`. This should also pave the way to lift
+the restriction that a same parsing level cannot be both left and
+right associative, avoiding conflicts between libraries. See
+[CEP 71](https://github.com/coq/ceps/pull/71) for more details.
+
+A first step required in this direction is to enable declaring
+notations at the same level than previous notations with a common
+prefix, without knowing the said level. This will make it possible to
+modify levels of notations without breaking backward compatibility
+with their dependencies. Once this first step done, users will need
+wait to require the Coq version implementing it, then use it to
+finally enable changing levels of notations that currently use the
+recovery mechanism. Fixing the levels of those notations will
+eventually enable to remove the recovery mechanism.
+
+We will finally precise the design of a more liberal handling of
+associativity levels, based on arbitrary strings and ordering
+constraints (alike universe constraints) rather than the current 0 to
+100 integers. This should ease combination of various libraries by
+limiting the current conflicts on notations.
 
 #### Attaching comments to declarations
 

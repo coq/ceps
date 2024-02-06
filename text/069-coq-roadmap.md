@@ -324,7 +324,7 @@ In particular, we should:
 
 The technical details (prelude content, split into packages, logpath,
 mono/multi repo, call for maintainers, documentation, test-suite,
-CI,...) will be discussed in a [CEP](https://github.com/coq/ceps/) to
+CI,...) will be discussed in this CEP: https://github.com/coq/ceps/pull/83 to
 ensure a reasonnable agreement is reached on those points before
 implementing any actual change.
 

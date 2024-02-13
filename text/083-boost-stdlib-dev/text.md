@@ -45,9 +45,17 @@ In particular, we should:
 ## Prelude
 
 We will keep a prelude shipped with Coq itself. Let's go with the
-content of the `theories/Init` directory of Coq to start with. This
-means that the scope of the standard library, adressed below, is
-everything but `Init` in the `theories` directory.
+content of the `theories/Init` directory of Coq to start with.
+To this we add `theories/Program/Basics.v`,
+`theories/Program/Tactics.v`, `theories/Classes/Morphisms.v`,
+`theories/Classes/SetoidTactics.v`, `theories/Classes/CMorphisms.v`,
+`theories/Classes/Equivalence.v`,
+`theories/Classes/RelationClasses.v`,
+`theories/Classes/Morphisms_Prop.v`, `theories/Classes/Init.v`,
+`theories/Classes/CRelationClasses.v`, `theories/Setoids/Setoid.v`,
+and `theories/Relations/Relation_Definitions.v`.
+This means that the scope of the standard library, adressed below, is
+everything but `theories/Init` and the above files.
 
 ## Packages
 
@@ -85,30 +93,23 @@ changes enabling these dependencies.
     Namespace `Coq.Program`
   * <details><summary>contains:</summary> Program/Syntax.v,
     Program/Equality.v, Program/Subset.v, Program/Program.v,
-    Program/Basics.v, Program/Tactics.v, Program/Combinators.v,
+    Program/Combinators.v,
     Program/Wf.v, Program/Utils.v</details>
 * coq-roots-relations
   * The Coq standard library, relations
   * Relations (definitions and basic results).
     Namespace `Coq.Relatons`
   * <details><summary>contains:</summary>
-    Relations/Relation_Operators.v, Relations/Relation_Definitions.v,
+    Relations/Relation_Operators.v,
     Relations/Operators_Properties.v, Relations/Relations.v</details>
 * coq-roots-classes
   * The Coq standard library, classes
   * Most of namespace `Coq.Classes`
   * <details><summary>contains:</summary>
     Classes/Morphisms_Relations.v, Classes/RelationPairs.v,
-    Classes/Init.v, Classes/CMorphisms.v, Classes/SetoidTactics.v,
-    Classes/Equivalence.v, Classes/Morphisms.v, Classes/SetoidClass.v,
-    Classes/Morphisms_Prop.v, Classes/CEquivalence.v,
-    Classes/CRelationClasses.v, Classes/DecidableClass.v,
-    Classes/RelationClasses.v</details>
-* coq-roots-setoids
-  * The Coq standard library, setoids
-  * This is required to use the `setoid_rewrite` tactic.
-    Namespace `Coq.Setoids`.
-  * <details><summary>contains:</summary> Setoids/Setoid.v</details>
+    Classes/SetoidClass.v,
+    Classes/CEquivalence.v,
+    Classes/DecidableClass.v</details>
 * coq-roots-bool
   * The Coq standard library, boolean arithmetic
   * Booleans (basic functions and results). Most of namespace `Coq.Bool`.

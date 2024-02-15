@@ -88,8 +88,8 @@ changes enabling these dependencies.
     Logic/RelationalChoice.v</details>
 * coq-roots-program
   * The Coq standard library, program
-  * Support for dependently-typed programming.
-    This is required to use the `Program` command.
+  * Additional support for dependently-typed programming.
+    This can be useful in addition to the `Program` command from stdlib.
     Namespace `Coq.Program`
   * <details><summary>contains:</summary> Program/Syntax.v,
     Program/Equality.v, Program/Subset.v, Program/Program.v,
@@ -97,13 +97,13 @@ changes enabling these dependencies.
     Program/Wf.v, Program/Utils.v</details>
 * coq-roots-relations
   * The Coq standard library, relations
-  * Relations (definitions and basic results).
+  * Relations (definitions and basic results) in addition to the ones from stdlib.
     Namespace `Coq.Relatons`
   * <details><summary>contains:</summary>
     Relations/Relation_Operators.v,
     Relations/Operators_Properties.v, Relations/Relations.v</details>
 * coq-roots-classes
-  * The Coq standard library, classes
+  * The Coq standard library, classes in addition to the ones from stdlib.
   * Most of namespace `Coq.Classes`
   * <details><summary>contains:</summary>
     Classes/Morphisms_Relations.v, Classes/RelationPairs.v,
@@ -119,16 +119,17 @@ changes enabling these dependencies.
   * The Coq standard library, structures
   * Basic "algebraic" structures: types with decidable equality and with order.
     Most of namespace `Coq;Structures`.
-    More developped algebra canbe found in the mathematical components library: https://github.com/math-comp/math-comp
+    Instances can be found in the coq-roots-orders-ex package.
+    More developped algebra can be found in the mathematical components library: https://github.com/math-comp/math-comp
   * <details><summary>contains:</summary> Structures/GenericMinMax.v,
     Structures/Equalities.v, Structures/Orders.v,
     Structures/OrdersFacts.v, Structures/OrdersTac.v</details>
-* coq-roots-arith
+* coq-roots-arith-base
   * The Coq standard library, natural number arithmetic
   * Basic Peano Arithmetic. Everything can be loaded with
     `From Coq Require Import Arith_base`. Most of namespace `Coq.Arith`. To enjoy
     the `ring` and `lia` automatic tactic, you additionally need the
-    coq-roots-nzarith package and `From Coq Require Import Arith Lia.`
+    coq-roots-arith package and `From Coq Require Import Arith Lia.`
   * <details><summary>contains:</summary>
     theories/Numbers/NumPrelude.v, Numbers/NatInt/NZBase.v,
     Numbers/NatInt/NZOrder.v, Numbers/NatInt/NZProperties.v,
@@ -159,7 +160,7 @@ changes enabling these dependencies.
     Arith/EqNat.v, Arith/Compare.v, Arith/PeanoNat.v,
     Arith/Arith_base.v, Arith/Cantor.v, Arith/Euclid.v,
     Arith/Factorial.v, Arith/Between.v, Arith/Wf_nat.v,
-    Arith/Compare_dec.v, Arith/Bool_nat.v, Arith/Peano_dec.v</details>
+    Arith/Compare_dec.v, Arith/Bool_nat.v, Arith/Peano_dec.v, Bool/Zerob.v</details>
 * coq-roots-positive
   * The Coq standard library, binary positive integers
   * Binary representation of positive integers for efficient
@@ -187,74 +188,141 @@ changes enabling these dependencies.
   * <details><summary>contains:</summary> Vectors/VectorEq.v,
     Vectors/VectorDef.v, Vectors/Vector.v, Vectors/Fin.v,
     Vectors/VectorSpec.v, Bool/Bvector.v, Logic/FinFun.v</details>
-* coq-roots-nzarith
-  * The Coq standard library, binary natural numbers and integers
-  * Binary encoding of integer. This binary encoding was initially
+* coq-roots-narith
+  * The Coq standard library, binary natural numbers base package.
+    Use coq-roots-zarith for more functionalities with the `ring`
+    and `Lia` tactics. Namespace `Coq.NArith`.
+  * <details><summary>contains:</summary> theories/NArith/BinNatDef.v,
+    theories/NArith/BinNat.v, theories/NArith/Nnat.v,
+    theories/NArith/Ndigits.v, theories/NArith/Ndiv_def.v,
+    theories/NArith/Ndist.v, theories/NArith/Ndec.v,
+    theories/NArith/Ngcd_def.v, theories/NArith/Nsqrt_def.v,
+    theories/NArith/NArith.v</details>
+* coq-roots-zarith-base
+  * The Coq standard library, binary integers base package.
+    Use coq-roots-zarith for more functionalities with the `ring`
+    and `Lia` tactics. Namespace `Coq.ZArith`.
+  * <details><summary>contains:</summary>
+    theories/Numbers/Integer/Abstract/ZSgnAbs.v,
+    theories/Numbers/Integer/Abstract/ZAxioms.v,
+    theories/Numbers/Integer/Abstract/ZAddOrder.v,
+    theories/Numbers/Integer/Abstract/ZProperties.v,
+    theories/Numbers/Integer/Abstract/ZDivTrunc.v,
+    theories/Numbers/Integer/Abstract/ZParity.v,
+    theories/Numbers/Integer/Abstract/ZMul.v,
+    theories/Numbers/Integer/Abstract/ZPow.v,
+    theories/Numbers/Integer/Abstract/ZAdd.v,
+    theories/Numbers/Integer/Abstract/ZDivFloor.v,
+    theories/Numbers/Integer/Abstract/ZMulOrder.v,
+    theories/Numbers/Integer/Abstract/ZDivEucl.v,
+    theories/Numbers/Integer/Abstract/ZMaxMin.v,
+    theories/Numbers/Integer/Abstract/ZGcd.v,
+    theories/Numbers/Integer/Abstract/ZLt.v,
+    theories/Numbers/Integer/Abstract/ZLcm.v,
+    theories/Numbers/Integer/Abstract/ZBase.v,
+    theories/Numbers/Integer/Abstract/ZBits.v,
+    theories/ZArith/BinIntDef.v, theories/ZArith/BinInt.v,
+    theories/ZArith/Zcompare.v, theories/ZArith/Zorder.v,
+    theories/ZArith/Zminmax.v, theories/ZArith/Zmin.v,
+    theories/ZArith/Zmax.v, theories/ZArith/Znat.v,
+    theories/ZArith/ZArith_dec.v, theories/ZArith/Zabs.v,
+    theories/ZArith/auxiliary.v, theories/ZArith/Zbool.v,
+    theories/ZArith/Zmisc.v, theories/ZArith/Wf_Z.v,
+    theories/ZArith/Zhints.v, theories/ZArith/ZArith_base.v,
+    theories/ZArith/Zeven.v, theories/ZArith/Zpow_alt.v,
+    theories/ZArith/Zeuclid.v, theories/ZArith/Int.v</details>
+* coq-roots-ring
+  * The Coq standard library, `ring` tactic.
+    Namespace `Coq.setoid_ring`.
+  * <details><summary>contains:</summary>
+    theories/ZArith/Ring/Zpow_def.v,
+    theories/ZArith/Ring/Znumtheory.v,
+    theories/ZArith/Ring/Zcomplements.v, theories/ZArith/Ring/Zdiv.v,
+    theories/setoid_ring/Ncring_polynom.v,
+    theories/setoid_ring/Rings_Z.v,
+    theories/setoid_ring/Ncring_initial.v,
+    theories/setoid_ring/Ring_polynom.v,
+    theories/setoid_ring/ZArithRing.v,
+    theories/setoid_ring/Integral_domain.v,
+    theories/setoid_ring/Ring_base.v, theories/setoid_ring/BinList.v,
+    theories/setoid_ring/Ncring.v, theories/setoid_ring/Ring.v,
+    theories/setoid_ring/Algebra_syntax.v,
+    theories/setoid_ring/InitialRing.v, theories/setoid_ring/Cring.v,
+    theories/setoid_ring/Ncring_tac.v,
+    theories/setoid_ring/Ring_tac.v, theories/setoid_ring/ArithRing.v,
+    theories/setoid_ring/NArithRing.v,
+    theories/setoid_ring/Ring_theory.v</details>
+* coq-roots-arith
+  * The Coq standard library, unary natural numbers.
+    Namespace `Coq.Arith`.
+  * <details><summary>contains:</summary>
+    theories/Arith/Arith.v</detail>
+* coq-roots-lia
+  * The Coq standard library, `lia` tactic.
+    Namespace `Coq.micromega`.
+  * <details><summary>contains:</summary>
+    theories/omega/OmegaLemmas.v, theories/omega/PreOmega.v,
+    theories/micromega/ZifyN.v, theories/micromega/ZifyComparison.v,
+    theories/micromega/ZifyClasses.v, theories/micromega/ZifyNat.v,
+    theories/micromega/ZifyPow.v, theories/micromega/ZifyBool.v,
+    theories/micromega/Zify.v, theories/micromega/ZifyInst.v,
+    theories/micromega/DeclConstantZ.v,
+    theories/micromega/OrderedRing.v, theories/micromega/Tauto.v,
+    theories/micromega/Env.v, theories/micromega/Refl.v,
+    theories/micromega/ZArith_hints.v,
+    theories/micromega/ZMicromega.v, theories/micromega/EnvRing.v,
+    theories/micromega/Lia.v, theories/micromega/VarMap.v,
+    theories/micromega/Ztac.v, theories/micromega/ZCoeff.v,
+    theories/micromega/RingMicromega.v</detail>
+* coq-roots-zarith
+  * The Coq standard library, binary integers
+  * Binary encoding of integers. This binary encoding was initially
     developped to enable efficient computations, compared to the unary
     encoding of `nat`. Proofs were then added making the types usable
     for mathematical proofs, although this was not the initial
-    intent. If even more efficient computations are needed, look at
-    the coq-roots-primitive-int for 63 bits machine arithmetic or the
+    intent. If even-more efficient computations are needed, look at
+    the coq-roots-primitive-int package for 63 bits machine arithmetic or the
     coq-bignums package for arbitrary precision machine
     arithmetic. Everything can be imported with `From Coq Require
     Import NArith` or `From Coq Require Import ZArith`. Also contains
     the migromega tactic that can be loaded with `From Coq Require
     Import Lia.`. Most of namespaces `Coq.NArith` and `Coq.ZArith`.
-  * <details><summary>contains:</summary> theories/NArith/BinNat.v,
-    NArith/Ndiv_def.v, NArith/Ndigits.v, NArith/BinNatDef.v,
-    NArith/Ndist.v, NArith/Nnat.v, NArith/Ndec.v, NArith/Ngcd_def.v,
-    NArith/NArith.v, NArith/Nsqrt_def.v,
-    Numbers/Natural/Binary/NBinary.v, ZArith/Zpower.v,
-    ZArith/Zpow_def.v, ZArith/Znumtheory.v, ZArith/Zquot.v,
-    ZArith/Zmin.v, ZArith/ZArith_dec.v, ZArith/Zeven.v,
-    ZArith/BinIntDef.v, ZArith/Zorder.v, ZArith/Zabs.v,
-    ZArith/ZArith_base.v, ZArith/BinInt.v, ZArith/Zdiv.v,
-    ZArith/Zpow_facts.v, ZArith/Zpow_alt.v, ZArith/Zcomplements.v,
-    ZArith/Zgcd_alt.v, ZArith/Zeuclid.v, ZArith/Zmisc.v,
-    ZArith/Zmax.v, ZArith/Wf_Z.v, ZArith/Zwf.v, ZArith/Zbool.v,
-    ZArith/ZArith.v, ZArith/Zbitwise.v, ZArith/Zhints.v,
-    ZArith/Zcompare.v, ZArith/auxiliary.v, ZArith/Int.v,
-    ZArith/Zminmax.v, ZArith/Znat.v, Numbers/Integer/Binary/ZBinary.v,
-    Numbers/Integer/Abstract/ZSgnAbs.v,
-    Numbers/Integer/Abstract/ZAxioms.v,
-    Numbers/Integer/Abstract/ZAddOrder.v,
-    Numbers/Integer/Abstract/ZProperties.v,
-    Numbers/Integer/Abstract/ZDivTrunc.v,
-    Numbers/Integer/Abstract/ZParity.v,
-    Numbers/Integer/Abstract/ZMul.v, Numbers/Integer/Abstract/ZPow.v,
-    Numbers/Integer/Abstract/ZAdd.v,
-    Numbers/Integer/Abstract/ZDivFloor.v,
-    Numbers/Integer/Abstract/ZMulOrder.v,
-    Numbers/Integer/Abstract/ZDivEucl.v,
-    Numbers/Integer/Abstract/ZMaxMin.v,
-    Numbers/Integer/Abstract/ZGcd.v, Numbers/Integer/Abstract/ZLt.v,
-    Numbers/Integer/Abstract/ZLcm.v, Numbers/Integer/Abstract/ZBase.v,
-    Numbers/Integer/Abstract/ZBits.v,
-    Numbers/Integer/NatPairs/ZNatPairs.v, Numbers/DecimalN.v,
-    Numbers/DecimalNat.v, Numbers/DecimalZ.v, Numbers/DecimalFacts.v,
-    Numbers/DecimalPos.v, Numbers/HexadecimalN.v,
-    Numbers/HexadecimalNat.v, Numbers/HexadecimalZ.v,
-    Numbers/HexadecimalFacts.v, Numbers/HexadecimalPos.v,
-    setoid_ring/Ncring_polynom.v, setoid_ring/Rings_Z.v,
-    setoid_ring/Ncring_initial.v, setoid_ring/Ring_polynom.v,
-    setoid_ring/ZArithRing.v, setoid_ring/Integral_domain.v,
-    setoid_ring/Ring_base.v, setoid_ring/BinList.v,
-    setoid_ring/Ncring.v, setoid_ring/Ring.v,
-    setoid_ring/Algebra_syntax.v, setoid_ring/InitialRing.v,
-    setoid_ring/Cring.v, setoid_ring/Ncring_tac.v,
-    setoid_ring/Ring_tac.v, setoid_ring/ArithRing.v,
-    setoid_ring/NArithRing.v, setoid_ring/Ring_theory.v,
-    Arith/Arith.v, btauto/Algebra.v, btauto/Reflect.v,
-    btauto/Btauto.v, omega/OmegaLemmas.v, omega/PreOmega.v,
-    micromega/DeclConstantZ.v, micromega/ZifyN.v,
-    micromega/ZifyComparison.v, micromega/OrderedRing.v,
-    micromega/ZifyClasses.v, micromega/Tauto.v, micromega/Env.v,
-    micromega/Refl.v, micromega/ZifyNat.v, micromega/ZifyPow.v,
-    micromega/ZArith_hints.v, micromega/ZMicromega.v,
-    micromega/EnvRing.v, micromega/Lia.v, micromega/VarMap.v,
-    micromega/ZifyBool.v, micromega/Zify.v, micromega/ZifyInst.v,
-    micromega/Ztac.v, micromega/ZCoeff.v,
-    micromega/RingMicromega.v</details>
+  * <details><summary>contains:</summary>
+    theories/Numbers/Natural/Binary/NBinary.v,
+    theories/ZArith/Zpower.v, theories/ZArith/Zquot.v,
+    theories/ZArith/Zpow_facts.v, theories/ZArith/Zgcd_alt.v,
+    theories/ZArith/Zwf.v, theories/ZArith/ZArith.v,
+    theories/ZArith/Zbitwise.v,
+    theories/Numbers/Integer/Binary/ZBinary.v,
+    theories/Numbers/Integer/NatPairs/ZNatPairs.v,
+    theories/Numbers/DecimalN.v, theories/Numbers/DecimalNat.v,
+    theories/Numbers/DecimalZ.v, theories/Numbers/DecimalFacts.v,
+    theories/Numbers/DecimalPos.v, theories/Numbers/HexadecimalN.v,
+    theories/Numbers/HexadecimalNat.v,
+    theories/Numbers/HexadecimalZ.v,
+    theories/Numbers/HexadecimalFacts.v,
+    theories/Numbers/HexadecimalPos.v, theories/btauto/Algebra.v,
+    theories/btauto/Reflect.v, theories/btauto/Btauto.v</details>
+* coq-roots-qarith-base
+  * The Coq standard library, binary rational numbers base package.
+    Use coq-roots-qarith for more functionalities with the `field`
+    and `Lqa` tactics. Namespace `Coq.QArith`.
+  * <details><summary>contains:</summary>theories/QArith/Qreduction.v,
+    theories/QArith/Qminmax.v, theories/QArith/QOrderedType.v,
+    theories/QArith/QArith_base.v</details>
+* coq-roots-field
+  * The Coq standard library, `field` tactic.
+  * <details><summary>contains:</summary> theories/QArith/Qfield.v,
+    theories/QArith/Qround.v, theories/QArith/Qring.v,
+    theories/QArith/Qpower.v, theories/QArith/Qcanon.v,
+    theories/setoid_ring/Field_theory.v,
+    theories/setoid_ring/Field_tac.v, theories/setoid_ring/Rings_Q.v,
+    theories/setoid_ring/Field.v</details>
+* coq-roots-lqa
+  * The Coq standard library, `lqa` tactic.
+  * <details><summary>contains:</summary>
+    theories/micromega/QMicromega.v, theories/micromega/Lqa.v,
+    theories/micromega/DeclConstant.v</details>
 * coq-roots-qarith
   * The Coq standard library, binary rational numbers
   * Binary rational numbers made on top of the coq-roots-nzarith
@@ -268,15 +336,10 @@ changes enabling these dependencies.
     much more comfortable, although they don't enjoy efficient
     computation (coq-coqeal offers a refinement with coq-bignums that
     enables to enjoy both aspects).
-  * <details><summary>contains:</summary> QArith/Qreduction.v,
-    QArith/Qfield.v, QArith/Qminmax.v, QArith/QOrderedType.v,
-    QArith/Qcabs.v, QArith/Qround.v, QArith/Qring.v, QArith/Qpower.v,
-    QArith/Qabs.v, QArith/QArith.v, QArith/QArith_base.v,
-    QArith/Qcanon.v, setoid_ring/Field_theory.v,
-    setoid_ring/Field_tac.v, setoid_ring/Rings_Q.v,
-    setoid_ring/Field.v, Numbers/DecimalQ.v, Numbers/HexadecimalQ.v,
-    micromega/QMicromega.v, micromega/Lqa.v,
-    micromega/DeclConstant.v</details>
+  * <details><summary>contains:</summary> theories/QArith/Qcabs.v,
+    theories/QArith/Qabs.v, theories/QArith/QArith.v,
+    theories/Numbers/DecimalQ.v,
+    theories/Numbers/HexadecimalQ.v</details>
 * coq-roots-classical-logic
   * The Coq standard library, classical logic
   * Most of namespace `Coq.Logic`.
@@ -430,7 +493,10 @@ changes enabling these dependencies.
     coq-roots-structures. Namespace `Coq.Structures`.
   * <details><summary>contains:</summary> Bool/BoolOrder.v,
     Structures/OrdersEx.v, Structures/OrdersLists.v,
-    Structures/EqualitiesFacts.v</details>
+    Structures/EqualitiesFacts.v, Structures/OrderedTypeAlt.v,
+    Structures/DecidableType.v, Structures/OrderedTypeEx.v,
+    Structures/OrdersAlt.v, Structures/DecidableTypeEx.v,
+    Structures/OrderedType.v</details>
 * coq-roots-set-map
   * The Coq standard library, finite sets and maps
   * Modular implementation of finite sets/maps using lists or
@@ -447,10 +513,7 @@ changes enabling these dependencies.
     MSets/MSets.v, MSets/MSetWeakList.v, MSets/MSetGenTree.v,
     MSets/MSetAVL.v, MSets/MSetInterface.v, MSets/MSetFacts.v,
     MSets/MSetProperties.v, MSets/MSetRBT.v, MSets/MSetPositive.v,
-    MSets/MSetToFiniteSet.v, MSets/MSetEqProperties.v, Bool/Zerob.v,
-    Structures/OrderedTypeAlt.v, Structures/DecidableType.v,
-    Structures/OrderedTypeEx.v, Structures/OrdersAlt.v,
-    Structures/DecidableTypeEx.v, Structures/OrderedType.v</details>
+    MSets/MSetToFiniteSet.v, MSets/MSetEqProperties.v</details>
 * coq-roots-compat
   * The Coq standard library, compatibility files
   * Some compatibility files with older versions. Namespace `Coq.Compat`.

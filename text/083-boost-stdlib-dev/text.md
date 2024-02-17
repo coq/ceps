@@ -53,7 +53,17 @@ To this we add `theories/Program/Basics.v`,
 `theories/Classes/RelationClasses.v`,
 `theories/Classes/Morphisms_Prop.v`, `theories/Classes/Init.v`,
 `theories/Classes/CRelationClasses.v`, `theories/Setoids/Setoid.v`,
-and `theories/Relations/Relation_Definitions.v`.
+`theories/Relations/Relation_Definitions.v`,
+`theories/Numbers/BinNums.v`, (part of) `theories/PArith/BinPosDef.v`,
+(part of) `theories/NArith/BinNatDef.v`,
+(part of) `theories/ZArith/BinIntDef.v`,
+`theories/Numbers/Cyclic/Abstract/CarryType.v`,
+(part of) `theories/Numbers/Cyclic/Int63/Uint63.v`,
+(part of) `theories/Numbers/Cyclic/Int63/Sint63.v`,
+`theories/Floats/FloatClass.v`, `theories/Floats/PrimFloat.v`,
+`theories/Floats/FloatOps.v`, `theories/Floats/SpecFloat.v`,
+`theories/Floats/FloatAxioms.v` and
+(part of) `theories/Array/PArray.v`.
 This means that the scope of the standard library, adressed below, is
 everything but `theories/Init` and the above files.
 
@@ -166,7 +176,7 @@ changes enabling these dependencies.
   * Binary representation of positive integers for efficient
     computation.  Namespace `Coq.PArith`. You may also want the
     coq-roots-nzarith package for N and Z built on top of positive.
-  * <details><summary>contains:</summary> Numbers/BinNums.v,
+  * <details><summary>contains:</summary>
     Numbers/AltBinNotations.v, PArith/Pnat.v, PArith/POrderedType.v,
     PArith/BinPos.v, PArith/PArith.v, PArith/BinPosDef.v</details>
 * coq-roots-list
@@ -417,7 +427,6 @@ changes enabling these dependencies.
     Numbers/Cyclic/Int63/Cyclic63.v, Numbers/Cyclic/Int63/Uint63.v,
     Numbers/Cyclic/Int63/Ring63.v, Numbers/Cyclic/Abstract/NZCyclic.v,
     Numbers/Cyclic/Abstract/DoubleType.v,
-    Numbers/Cyclic/Abstract/CarryType.v,
     Numbers/Cyclic/Abstract/CyclicAxioms.v, micromega/ZifyUint63.v,
     micromega/ZifySint63.v</details>
 * coq-primitive-array
@@ -432,10 +441,8 @@ changes enabling these dependencies.
     usable alone. Look at the coq-flocq package for an actual model of
     floating-point arithmetic, including links to coq-roots-reals and
     the current coq-primitive-floats. Namespace `Coq.Floats`
-  * <details><summary>contains:</summary> Floats/FloatOps.v,
-    Floats/Floats.v, Floats/SpecFloat.v, Floats/PrimFloat.v,
-    Floats/FloatLemmas.v, Floats/FloatAxioms.v,
-    Floats/FloatClass.v</details>
+  * <details><summary>contains:</summary> Floats/Floats.v, 
+    Floats/FloatLemmas.v</details>
 * coq-roots-string
   * The Coq standard library, strings
   * Implementation of string as list of ASCII characters. Namespace

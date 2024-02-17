@@ -86,6 +86,7 @@ changes enabling these dependencies.
   * Contains basic facts from Coq standard library in the namespace Coq.Logic
     Look at coq-roots-classical-logic for more elaborate results in namespace
     `Coq.Logic`.
+  * 21 files, 3.7 kloc
   * <details><summary>contains:</summary> Logic/Adjointification.v,
     Logic/Eqdep_dec.v, Logic/JMeq.v, Logic/SetIsType.v,
     Logic/Berardi.v, Logic/ExtensionalFunctionRepresentative.v,
@@ -101,6 +102,7 @@ changes enabling these dependencies.
   * Additional support for dependently-typed programming.
     This can be useful in addition to the `Program` command from stdlib.
     Namespace `Coq.Program`
+  * 7 files, 1.0 kloc
   * <details><summary>contains:</summary> Program/Syntax.v,
     Program/Equality.v, Program/Subset.v, Program/Program.v,
     Program/Combinators.v,
@@ -109,12 +111,14 @@ changes enabling these dependencies.
   * The Coq standard library, relations
   * Relations (definitions and basic results) in addition to the ones from stdlib.
     Namespace `Coq.Relatons`
+  * 3 files, 0.7 kloc
   * <details><summary>contains:</summary>
     Relations/Relation_Operators.v,
     Relations/Operators_Properties.v, Relations/Relations.v</details>
 * coq-roots-classes
   * The Coq standard library, classes in addition to the ones from stdlib.
   * Most of namespace `Coq.Classes`
+  * 5 files, 0.6 kloc
   * <details><summary>contains:</summary>
     Classes/Morphisms_Relations.v, Classes/RelationPairs.v,
     Classes/SetoidClass.v,
@@ -123,6 +127,7 @@ changes enabling these dependencies.
 * coq-roots-bool
   * The Coq standard library, boolean arithmetic
   * Booleans (basic functions and results). Most of namespace `Coq.Bool`.
+  * 4 files, 1.1 kloc
   * <details><summary>contains:</summary> Bool/IfProp.v, Bool/Bool.v,
     Bool/DecBool.v, Bool/BoolEq.v</details>
 * coq-roots-structures
@@ -131,6 +136,7 @@ changes enabling these dependencies.
     Most of namespace `Coq;Structures`.
     Instances can be found in the coq-roots-orders-ex package.
     More developped algebra can be found in the mathematical components library: https://github.com/math-comp/math-comp
+  * 5 files, 2.0 kloc
   * <details><summary>contains:</summary> Structures/GenericMinMax.v,
     Structures/Equalities.v, Structures/Orders.v,
     Structures/OrdersFacts.v, Structures/OrdersTac.v</details>
@@ -140,6 +146,7 @@ changes enabling these dependencies.
     `From Coq Require Import Arith_base`. Most of namespace `Coq.Arith`. To enjoy
     the `ring` and `lia` automatic tactic, you additionally need the
     coq-roots-arith package and `From Coq Require Import Arith Lia.`
+  * 53 files, 13.5 kloc
   * <details><summary>contains:</summary>
     theories/Numbers/NumPrelude.v, Numbers/NatInt/NZBase.v,
     Numbers/NatInt/NZOrder.v, Numbers/NatInt/NZProperties.v,
@@ -176,6 +183,7 @@ changes enabling these dependencies.
   * Binary representation of positive integers for efficient
     computation.  Namespace `Coq.PArith`. You may also want the
     coq-roots-nzarith package for N and Z built on top of positive.
+  * 6 files, 3.2 kloc
   * <details><summary>contains:</summary>
     Numbers/AltBinNotations.v, PArith/Pnat.v, PArith/POrderedType.v,
     PArith/BinPos.v, PArith/PArith.v, PArith/BinPosDef.v</details>
@@ -183,6 +191,7 @@ changes enabling these dependencies.
   * The Coq standard library, lists and streams
   * Polymorphic (simply linked) lists and streams (infinite sequences).
     Most of namespace `Coq.Lists`.
+  * 9 files, 5.4 kloc
   * <details><summary>contains:</summary> Lists/ListDec.v,
     Lists/Streams.v, Lists/List.v, Lists/StreamMemo.v,
     Lists/ListSet.v, Lists/ListTactics.v, Numbers/NaryFunctions.v,
@@ -195,6 +204,7 @@ changes enabling these dependencies.
     proof about its length, as provided by the `tuple` type in package
     coq-mathcomp-ssreflect, allowing almost transparent mixing with
     lists.
+  * 7 files, 2.0 kloc
   * <details><summary>contains:</summary> Vectors/VectorEq.v,
     Vectors/VectorDef.v, Vectors/Vector.v, Vectors/Fin.v,
     Vectors/VectorSpec.v, Bool/Bvector.v, Logic/FinFun.v</details>
@@ -202,6 +212,7 @@ changes enabling these dependencies.
   * The Coq standard library, binary natural numbers base package.
     Use coq-roots-zarith for more functionalities with the `ring`
     and `Lia` tactics. Namespace `Coq.NArith`.
+  * 10 files, 3.2 kloc
   * <details><summary>contains:</summary> theories/NArith/BinNatDef.v,
     theories/NArith/BinNat.v, theories/NArith/Nnat.v,
     theories/NArith/Ndigits.v, theories/NArith/Ndiv_def.v,
@@ -212,6 +223,7 @@ changes enabling these dependencies.
   * The Coq standard library, binary integers base package.
     Use coq-roots-zarith for more functionalities with the `ring`
     and `Lia` tactics. Namespace `Coq.ZArith`.
+  * 38 files, 12.9 kloc
   * <details><summary>contains:</summary>
     theories/Numbers/Integer/Abstract/ZSgnAbs.v,
     theories/Numbers/Integer/Abstract/ZAxioms.v,
@@ -244,6 +256,7 @@ changes enabling these dependencies.
 * coq-roots-ring
   * The Coq standard library, `ring` tactic.
     Namespace `Coq.setoid_ring`.
+  * 22 files, 7.6 kloc
   * <details><summary>contains:</summary>
     theories/ZArith/Ring/Zpow_def.v,
     theories/ZArith/Ring/Znumtheory.v,
@@ -265,11 +278,13 @@ changes enabling these dependencies.
 * coq-roots-arith
   * The Coq standard library, unary natural numbers.
     Namespace `Coq.Arith`.
+  * 1 file, 0.0 kloc
   * <details><summary>contains:</summary>
     theories/Arith/Arith.v</detail>
 * coq-roots-lia
   * The Coq standard library, `lia` tactic.
     Namespace `Coq.micromega`.
+  * 23 files, 9.3 kloc
   * <details><summary>contains:</summary>
     theories/omega/OmegaLemmas.v, theories/omega/PreOmega.v,
     theories/micromega/ZifyN.v, theories/micromega/ZifyComparison.v,
@@ -297,6 +312,7 @@ changes enabling these dependencies.
     Import NArith` or `From Coq Require Import ZArith`. Also contains
     the migromega tactic that can be loaded with `From Coq Require
     Import Lia.`. Most of namespaces `Coq.NArith` and `Coq.ZArith`.
+  * 23 files, 6.5 kloc
   * <details><summary>contains:</summary>
     theories/Numbers/Natural/Binary/NBinary.v,
     theories/ZArith/Zpower.v, theories/ZArith/Zquot.v,
@@ -317,11 +333,13 @@ changes enabling these dependencies.
   * The Coq standard library, binary rational numbers base package.
     Use coq-roots-qarith for more functionalities with the `field`
     and `Lqa` tactics. Namespace `Coq.QArith`.
+  * 4 files, 1.8 kloc
   * <details><summary>contains:</summary>theories/QArith/Qreduction.v,
     theories/QArith/Qminmax.v, theories/QArith/QOrderedType.v,
     theories/QArith/QArith_base.v</details>
 * coq-roots-field
   * The Coq standard library, `field` tactic.
+  * 9 files, 3.8 kloc
   * <details><summary>contains:</summary> theories/QArith/Qfield.v,
     theories/QArith/Qround.v, theories/QArith/Qring.v,
     theories/QArith/Qpower.v, theories/QArith/Qcanon.v,
@@ -330,6 +348,7 @@ changes enabling these dependencies.
     theories/setoid_ring/Field.v</details>
 * coq-roots-lqa
   * The Coq standard library, `lqa` tactic.
+  * 3 files, 0.4 kloc
   * <details><summary>contains:</summary>
     theories/micromega/QMicromega.v, theories/micromega/Lqa.v,
     theories/micromega/DeclConstant.v</details>
@@ -346,6 +365,7 @@ changes enabling these dependencies.
     much more comfortable, although they don't enjoy efficient
     computation (coq-coqeal offers a refinement with coq-bignums that
     enables to enjoy both aspects).
+  * 5 files, 1.3 kloc
   * <details><summary>contains:</summary> theories/QArith/Qcabs.v,
     theories/QArith/Qabs.v, theories/QArith/QArith.v,
     theories/Numbers/DecimalQ.v,
@@ -353,6 +373,7 @@ changes enabling these dependencies.
 * coq-roots-classical-logic
   * The Coq standard library, classical logic
   * Most of namespace `Coq.Logic`.
+  * 15 files, 3.2 kloc
   * <details><summary>contains:</summary>
     Logic/IndefiniteDescription.v, Logic/Classical_Pred_Type.v,
     Logic/Classical_Prop.v, Logic/ClassicalFacts.v, Logic/Classical.v,
@@ -367,6 +388,7 @@ changes enabling these dependencies.
     an be loaded with `From Coq Require Import Reals.`. Also contains
     the micromega tactics, loadable with `From Coq Require Import
     Lra.`  and `From Coq Require Import Psatz`.
+  * 92 files, 51.5 kloc
   * <details><summary>contains:</summary> Reals/Rtrigo_facts.v,
     Reals/Ranalysis2.v, Reals/Rbase.v, Reals/Reals.v,
     Reals/ArithProp.v, Reals/Rgeom.v, Reals/Exp_prop.v,
@@ -409,11 +431,13 @@ changes enabling these dependencies.
 * coq-roots-nsatz
   * The Coq standard library, nsatz tactic
   * Nullstellensatz tactic nsatz. Namespace `Coq.nsatz`.
+  * 2 files, 0.6 kloc
   * <details><summary>contains:</summary> nsatz/Nsatz.v,
     nsatz/NsatzTactic.v</details>
 * coq-roots-unicode
   * The Coq standard library, unicode alternative notations
   * Unicode alternative notations. Namespace `Coq.Unicode`.
+  * 2 files, 0.1 kloc
   * <details><summary>contains:</summary> Unicode/Utf8_core.v,
     Unicode/Utf8.v</details>
 * coq-roots-primitive-int
@@ -422,6 +446,7 @@ changes enabling these dependencies.
     OCaml garbage collector). This enables very efficient arithmetic,
     for developing tactics for proofs by reflection for
     instance. Namespace `Coq.Numbers.Cyclic`.
+  * 9 files, 3.8 kloc
   * <details><summary>contains:</summary>
     Numbers/Cyclic/Int63/PrimInt63.v, Numbers/Cyclic/Int63/Sint63.v,
     Numbers/Cyclic/Int63/Cyclic63.v, Numbers/Cyclic/Int63/Uint63.v,
@@ -433,6 +458,7 @@ changes enabling these dependencies.
   * The Coq standard library, primitive persistent arrays
   * Imperative arrays with a functionnal interface. Enables efficient
     computations with arrays. Namespace `Coq.Array`.
+  * 2 files, 0.0 kloc
   * <details><summary>contains:</summary> Array/PArray.v</details>
 * coq-primitive-floats
   * The Coq standard library, primitive floats
@@ -441,12 +467,14 @@ changes enabling these dependencies.
     usable alone. Look at the coq-flocq package for an actual model of
     floating-point arithmetic, including links to coq-roots-reals and
     the current coq-primitive-floats. Namespace `Coq.Floats`
+  * 2 files, 0.1 kloc
   * <details><summary>contains:</summary> Floats/Floats.v, 
     Floats/FloatLemmas.v</details>
 * coq-roots-string
   * The Coq standard library, strings
   * Implementation of string as list of ASCII characters. Namespace
     `Coq.Strings`.
+  * 9 files, 3.2 kloc
   * <details><summary>contains:</summary> Strings/ByteVector.v,
     Strings/HexString.v, Strings/Ascii.v, Strings/String.v,
     Strings/OctalString.v, Strings/Byte.v, Strings/BinaryString.v,
@@ -455,6 +483,7 @@ changes enabling these dependencies.
   * The Coq standard library, extraction
   * Interface to the extraction module, load with
     `From Coq Require Extraction.`. Namespace `Coq.extraction`.
+  * 21 files, 1.1 kloc
   * <details><summary>contains:</summary> extraction/Extraction.v,
     extraction/ExtrHaskellZInteger.v, extraction/ExtrHaskellZInt.v,
     extraction/ExtrHaskellNatNum.v, extraction/ExtrHaskellString.v,
@@ -469,11 +498,13 @@ changes enabling these dependencies.
     extraction/ExtrHaskellNatInteger.v</details>
 * coq-roots-micromega-extraction
   * The Coq standard library, extraction of micromega
+  * 1 file, 0.1 kloc
   * <details><summary>contains:</summary>
     micromega/MExtraction.v</details>
 * coq-roots-funind
   * The Coq standard library, funind
   * Interface for the funind plugin. Namespace `Coq.funind`
+  * 2 files, 0.1 kloc
   * <details><summary>contains:</summary> funind/FunInd.v,
     funind/Recdef.v</details>
 * coq-roots-sets
@@ -482,9 +513,7 @@ changes enabling these dependencies.
     alternatives can be found in coq-mathcomp-ssreflect (for finite
     sets) and coq-mathcomp-classical (for classical sets) or
     coq-stdpp. Namespace `Coq.Sets`.
-* coq-roots-sorting
-  * The Coq standard library, sorting algorithms
-  * Axiomatizations of sorts. Namespace `Coq.Sorting`.
+  * 22 files, 3.6 kloc
   * <details><summary>contains:</summary> Sets/Partial_Order.v,
     Sets/Multiset.v, Sets/Uniset.v, Sets/Relations_2.v, Sets/Image.v,
     Sets/Relations_3.v, Sets/Relations_1.v, Sets/Classical_sets.v,
@@ -494,10 +523,20 @@ changes enabling these dependencies.
     Sets/Relations_1_facts.v, Sets/Constructive_sets.v,
     Sets/Infinite_sets.v, Sets/Relations_2_facts.v,
     Sets/Relations_3_facts.v, Sets/Cpo.v</details>
+* coq-roots-sorting
+  * The Coq standard library, sorting algorithms
+  * Axiomatizations of sorts. Namespace `Coq.Sorting`.
+  * 10 files, 4.1 kloc
+  * <details><summary>contains:</summary> Sorting/CPermutation.v,
+    Sorting/Permutation.v, Lists/SetoidList.v, Sorting/Sorting.v,
+    Sorting/Heap.v, Sorting/PermutEq.v, Lists/SetoidPermutation.v,
+    Sorting/Mergesort.v, Sorting/PermutSetoid.v,
+    Sorting/Sorted.v</details>
 * coq-roots-orders-ex
   * The Coq standard library, sorting algorithms
   * Instances of order structures from
     coq-roots-structures. Namespace `Coq.Structures`.
+  * 10 files, 2.5 kloc
   * <details><summary>contains:</summary> Bool/BoolOrder.v,
     Structures/OrdersEx.v, Structures/OrdersLists.v,
     Structures/EqualitiesFacts.v, Structures/OrderedTypeAlt.v,
@@ -508,6 +547,7 @@ changes enabling these dependencies.
   * The Coq standard library, finite sets and maps
   * Modular implementation of finite sets/maps using lists or
     efficient trees. Namespaces `Coq.FSets` and `Coq.MSets`.
+  * 34 files, 27.3 kloc
   * <details><summary>contains:</summary> FSets/FMapInterface.v,
     FSets/FSetInterface.v, FSets/FSetWeakList.v, FSets/FSetAVL.v,
     FSets/FSetCompat.v, FSets/FSetDecide.v, FSets/FSetList.v,
@@ -524,22 +564,26 @@ changes enabling these dependencies.
 * coq-roots-compat
   * The Coq standard library, compatibility files
   * Some compatibility files with older versions. Namespace `Coq.Compat`.
+  * 5 files, 0.1 kloc
   * <details><summary>contains:</summary> Compat/AdmitAxiom.v,
     Compat/Coq817.v, Compat/Coq819.v, Compat/Coq818.v,
     Compat/Coq820.v</details>
 * coq-roots-derive
   * The Coq standard library, derive
   * Namespace `Coq.derive`
+  * 1 file, 0.0 kloc
   * <details><summary>contains:</summary>
     theories/derive/Derive.v</details>
 * coq-roots-rtauto
   * The Coq standard library, rtauto
   * Namespace `Coq.rtauto`
+  * 2 files, 0.8 kloc
   * <details><summary>contains:</summary> rtauto/Bintree.v,
     rtauto/Rtauto.v</details>
 * coq-roots-wellfounded
   * The Coq standard library, wellfounded
   * Namespace `Coq.wellfounded`
+  * 9 files, 0.9 kloc
   * <details><summary>contains:</summary> Wellfounded/Inclusion.v,
     Wellfounded/Wellfounded.v, Wellfounded/Union.v,
     Wellfounded/Transitive_Closure.v, Wellfounded/Well_Ordering.v,
@@ -550,6 +594,7 @@ changes enabling these dependencies.
   * The Coq standard library
   * A metapackage for all coq-roots-* packages constituting
     the historical Coq standard library, that used to be shipped with Coq.
+  * 508 files, 183.4 kloc
 
 theories/ssr and theories/ssrmatching should go back into mathcomp
 (either in coq-mathcomp-ssreflect or in a new coq-mathcomp-ssr

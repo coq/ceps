@@ -208,7 +208,7 @@ to `@{u v ?| u <= v + 2 ?}`.
 https://github.com/Yann-Leray/coq/blob/rewrite-rules/test-suite/success/rewrule.v).
 - CEP: https://github.com/coq/ceps/pull/50
 - Yann Leray, Théo Winterhalter
-- 3 to 6 month
+- DONE (8.20)
 
 The goal is to add (unsafe) user-defined rewrite rules. This feature allows
 users to add computation rules to axioms which can be useful for prototyping.
@@ -276,6 +276,7 @@ Sub items:
 
 - Cyril Cohen, Pierre Roux
 - 6 months to 1 year
+- [CEP #83](https://github.com/coq/ceps/pull/83)
 
 As part of the promotion effort around the Coq Platform, we would like to
 ensure that the stdlib does not enjoy special status and that Coq can be
@@ -322,6 +323,8 @@ is presented at the same level of detail yet.
 
 Short-term work on sort polymorphism should make it easier to adapt
 all tactics and libraries so that `SProp` becomes actually usable.
+
+For tactics it's mostly a matter of waiting for bugs to be reported so we know what it broken.
 
 #### Guard condition
 

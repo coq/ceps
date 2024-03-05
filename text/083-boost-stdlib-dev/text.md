@@ -42,7 +42,53 @@ In particular, we should:
 
 # Detailed design
 
-## Prelude
+## Mono vs Dual Repository
+
+- In the current situation (let's call it *monorepo*), Coq and the
+  stdlib live int the same repository (i.e. https://github.com/coq/coq ).
+  Pros:
+  - Coq and the stdlib are naturally kept in sync, without the
+    need for any overlay mechanism (although developments of other
+    libraries proves that this is more a matter of comfort than a vital
+    requirement).
+- The current CEP offers to split most of the current stdlib into another
+  repo (let's call it *dualrepo*). Pros:
+  - Coq and stdlib development teams are mostly disjoint, the two repos
+    would reflect that and enable both teams to focus on their main point 
+    of interest (the small intersection could of course remain active in
+    both teams).
+  - The current Coq repo is scary for potential new stdlib contributors:
+    it contains lot of OCaml code, enforces heavy development processes
+    and the few stdlib PRs that get opened anyway often don't get timely
+    reviews because most Coq developers don't care about them. We thus
+    likely loose most potential new contributors to the stdlib and most
+    Coq users end up with the feeling that the stdlib is not something
+    that can be practically improved, do their own developments on their
+    side, and never contribute anything back. Having its own repo would
+    make the stdlib more welcoming for newcomers and hopefully help
+    get it out of this mostly-stale situation it is suffering for years.
+  - Separate repos enable each team to roll out their own release schedule
+    independently. Stdlib developers no longer need to wait for the next
+    Coq release, neither are they forced to release every time Coq does
+    (provided the last stdlib release remains compatible with the new Coq release).
+  - Minor point: a separate repo wouldn't force Coq developers to compile
+    the stdlib everytime, for instance just to run the test-suite.
+  - Maybe most importantly: currently the stdlib cannot depend on anything
+    else than Coq itself. For instance it is not possible to use
+    coq-elpi/Equations/paramcoq anywhere in the stdlib (and, at least
+    currently, coq-elpi couldn't live in the Coq repo, as this would put
+    way too many constraints on its release schedule). This hinders
+    the development of the stdlib, for instance if we want to merge
+    it with parts of mathcomp (which uses elpi).
+
+It seems most advantages of dualrepo could be obtained with monorepo +
+some appropriate tooling, but we have to work with the current tooling
+and features of github, which is not very monorepo-friendly (for
+instance it is not possible to watch only a subset of a repo (let's
+say stdlib but not Coq) currently, at least not before becoming a
+maintainer).
+
+### Prelude
 
 We will keep a prelude shipped with Coq itself. Let's go with the
 content of the `theories/Init` directory of Coq to start with.
@@ -67,7 +113,68 @@ To this we add `theories/Program/Basics.v`,
 This means that the scope of the standard library, adressed below, is
 everything but `theories/Init` and the above files.
 
+### Test Suite
+
+We need to split the current `test-suite` directory of Coq between
+tests that are actually testing Coq and tests that only test the
+standard library, or crucially need it. A first quick look seems to
+indicate that among the about 2500 tests currently in `test-suite/`,
+less than 500 fall in the second category and about 100 are ssreflect
+specific, while the remaining could remain in Coq without requiring
+the stdlib.
+
+### CI
+
+Have an initial CI setup including all things using the stdlib in
+current Coq CI (that is virtually the whole Coq CI currently). Coq CI
+should then require that anything applying for inclusion there,
+and using the stdlib, should first enter the stdlib CI, in order to
+ensure that development of the standard library doesn't break Coq CI.
+
+### Documentation
+
+Keep the current coqdoc documentation plus the small part of the
+sphinx refman. Links on Coq website will need to be updated.
+
+### Logpath
+
+We'll need to keep `From Coq Require ...` for a bit, at least for
+backward compatibility. But it's unclear we ultimately want to keep
+`Coq` as logpath, particularly with the forthcoming renaming to Rocq.
+
 ## Packages
+
+Somewhat orthogonally to the previous mono/dual-repo discussion,
+the stdlib would benefit from being split into clear subpackages.
+This can happen at multiple levels (each requiring the previous ones
+but none being mandatory):
+1. Logical level: make the dependency between subparts of the stdlib
+  clearer and enforcing this structure in the CI, this would help
+  stdlib developers better understand and keep the structure of the
+  library (current distribution into directories is purely indicative
+  and doesn't enforce anything (i.e., we can have, and actually have
+  multiple instances of, files `A/f0.v`, `A/f1.v`, `B/f2.v` and `B/f3.v`
+  with `A/f1.v` requiring both `A/f0.v` and `B/f3.v` whereas `B/f4.v`
+  itself requires both `A/f0.v` and `B/f3.v`)). This would be
+  transparent for users who wouldn't see it.
+2. Distribution level: distribute packages for each subpart. This would
+  enable users to specifically require a part of the stdlib while making
+  sure they don't accidentally use another part (and as a minor benefit,
+  save a bit of installation time with source based package managers
+  such as opam). A metapackage depending on all subpackages would make
+  this transparent for users still wanting to use the entire library.
+  Having (= version) dependencies would make this troublefree for
+  developers as each subpackage will only be compatible with other
+  subpackages of the exact same version (like the coq-core and coq-stdlib
+  packages already are for instance).
+3. Multirepo: actually move some packages to their own repo, like
+  was already done with bignums.
+
+It seems 1. is regarded as being of general interest. When 1. is done,
+2. seems like not much more effort for the benefits it brings, but 3.
+seems more far fetched.
+Thus this CEP currently offers to do 2., then stdlib maintainers
+could agree on further repo split if need be.
 
 ### Proof of concept
 
@@ -600,40 +707,15 @@ theories/ssr and theories/ssrmatching should go back into mathcomp
 (either in coq-mathcomp-ssreflect or in a new coq-mathcomp-ssr
 containing only that).
 
-## Mono/multi repo
+### Documentation
 
-Let's start with a mono repo with all above packages, then maintainers
-could agree on further repo split if need be.
+Need to document the above split in packages (could help structure the doc).
 
 ## Maintainers
 
 We should do an open call for maintainers. Current maintainers (stdlib
 team from Coq on github) will become roots maintainer, they can of
 course opt out at any time.
-
-## Documentation
-
-Keep the current coqdoc documentation plus the small part of the
-sphinx refman. Also need to document the above split in packages
-(could help structure the doc). Links on Coq website will need to be
-updated.
-
-## Test Suite
-
-We need to split the current `test-suite` directory of Coq between
-tests that are actually testing Coq and tests that only test the
-standard library, or crucially need it. A first quick look seems to
-indicate that among the about 2500 tests currently in `test-suite/`,
-about 500 should go in roots and about 100 in ssreflect, while the
-remaining could remain in Coq without requiring the stdlib.
-
-## CI
-
-Have an initial CI setup including all things using the stdlib in
-current Coq CI (that is virtually the whole Coq CI currently). Coq CI
-should then require that anything applying for inclusion there,
-and using the stdlib, should first enter the stdlib CI, in order to
-ensure that development of the standard library doesn't break Coq CI.
 
 # Drawbacks
 

@@ -45,7 +45,7 @@ In particular, we should:
 ## Mono vs Dual Repository
 
 - In the current situation (let's call it *monorepo*), Coq and the
-  stdlib live int the same repository (i.e. https://github.com/coq/coq ).
+  stdlib live in the same repository (i.e. https://github.com/coq/coq ).
   Pros:
   - Coq and the stdlib are naturally kept in sync, without the
     need for any overlay mechanism (although developments of other
@@ -464,10 +464,10 @@ changes enabling these dependencies.
   * Binary rational numbers made on top of the coq-roots-nzarith
     package. These enable efficient computations in arbitrary
     precision exact rational arithmetic. Namespace `Coq.QArith`. These
-    are known to be difficult to use for mathematical roofs because
+    are known to be difficult to use for mathematical proofs because
     there is no canonical representation (2/3 and 4/6 are not equal
     for instance). For even more efficient computation, look at the
-    coq-bignums package which uses machine integers. For mathematic
+    coq-bignums package which uses machine integers. For mathematical
     proofs, the `rat` type of the coq-mathcomp-algebra package are
     much more comfortable, although they don't enjoy efficient
     computation (coq-coqeal offers a refinement with coq-bignums that

@@ -12,7 +12,45 @@ an actual library, as listed in the
 
 # Motivation
 
-As part of the promotion effort around the Coq Platform, we would like to
+Acknowledging that:
+
+- Many parts of the current standard library
+  are no longer *standard*, including parts whose use is discouraged.
+
+- The stdlib remains used in many, if not most of, Coq developments.
+
+- The development process of the stdlib seems in practice mostly stuck
+  for years: additions or changes are not openly encouraged and the
+  few wannabe contributors that are bold enough to open PRs often see
+  them left unattended.
+
+- The Coq repository may look intimidating for someone interested in
+  contributing to the library: heavy validation processes,
+  lots of OCaml code.
+
+- The teams interested in developing Coq itself and the stdlib are
+  largely disjoint, with most Coq developers having neither interest
+  nor time to significantly contribute to the stdlib.
+  
+We aim at:
+
+- Making sure that the stdlib components that people actively rely on
+  are efficiently maintained by interested parties.
+
+- Ensuring that potential new contributors to the library feel welcome.
+
+- Enabling the development of an evolved or different official "stdlib"
+  which embraces what could be agreed as current best practices for
+  library development.
+
+- Enabling the sharing of a larger basis between important general
+  libraries in the ecosystem.
+
+- Being sure that users are properly discouraged to rely on parts of the
+  stdlib that are considered subpar, especially when recommended
+  alternatives are available through the Coq Platform.
+
+To this end, we would like to
 ensure that the stdlib does not enjoy special status and that Coq can be
 used without it. We should consider stdlib components as libraries to
 advertise for their own values as part of the Coq Platform packages, but

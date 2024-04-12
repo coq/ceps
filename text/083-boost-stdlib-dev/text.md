@@ -763,6 +763,16 @@ it will remain an integral part of the Coq Platform.
 
 # Alternatives
 
+The technical changes proposed here can stand on their own merits, and can be adopted without ratifying the perspective presented for motivating them. Further, each of the three splits discussed under [Packages](https://github.com/proux01/ceps/blob/boost-stdlib-dev/text/083-boost-stdlib-dev/text.md#packages) could be performed without the other ones, with or without the broader vision that led to them.
+
+1. The logical structure of the library could be split into packages, enforced by the build system, without user-visible structural changes or renaming of stdlib.
+2. The standandard library could be moved to its own repository without changing its user-facing relationship with Coq and non-stdlib packaes.
+3. Specific parts of the standard library could be spun out to their own repositories without changing the rest.
+
+Out of these, 1. has the advantage that it retains most of the technical refactoring done for this CEP, and achieves some of the technical goals listed here such as allowing users to `Require` only a known subset, while minimizing disruption to users in the face of multiple possible futures for the standard library more generally. In particular, keeping the boundaries between subparts of the standard library internal to Coq as opposed to exposing them to users would simplify later changing them.
+
+For spinning out parts of the standard library, one possible heuristic to use is that components with dedicated maintainers could become independent at the initiative of these maintainers. On the other hand, if a part of the standard library is to be separated out without a new maintainer stepping up, this could be handled as a deprecation and removal, not a refactoring.
+
 Other split in multiple repositories would be possible, could still
 happen in the future, maybe not needed now. The extreme opposite would
 be to lean toward a huge monorepo with everything from the platform,
@@ -770,5 +780,7 @@ probably not very practical, and wouldn't bring much since the
 platform already ensures uniform releases bundling everything.
 To our knowledge the monorepo approach has exactly one advantage:
 it is easier to backport changes from one package to an upstream package.
-It also has one major drawback: it makes it harder to have the following dependencies:
-`coq-roots-A <- coq-extralib-B <- coq-roots-C`.
+It also has one major constraint (considered an advantage by some and a drawback by others): it makes it harder to have the following dependencies:
+`coq-roots-A <- coq-extralib-B <- coq-roots-C`. 
+
+The most concrete technical advantage of moving stdlib to its own repo, the ability to subscribe to stdlib changes, could also be achieved using a coqbot feature that @-s a specific team of stdlib subscribers.

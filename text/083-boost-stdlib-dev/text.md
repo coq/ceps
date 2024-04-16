@@ -60,14 +60,18 @@ officially recommended libraries.
 
 In particular, we should:
 
-- Identify consistent stdlib components that can be used independently
-  from each other and that would be worth distributing as separate
-  packages. Identify their maintainers and give them freedom to define
-  the future of the components they maintain, in the limits set by the
-  Coq Platform charter. Allow maintainers to extract stdlib components
-  to maintain and evolve them outside the core Coq repository and to have
-  their own release schedule and versioning scheme, in case they wish to
-  do so.
+- Allow maintainers to evolve the library, outside the core Coq
+  repository, and to have their own release schedule and versioning
+  scheme, in case they wish to do so. Identify consistent stdlib
+  components that can be used independently from each other and that
+  would be worth displaying as separate packages (although those would
+  still all be released together). Identify their maintainers and give
+  them freedom to define the future of the components they maintain,
+  in the limits set by the Coq Platform charter. In the future,
+  maintainers of subcomponents could choose to maintain and evolve
+  them outside the library and to have their own release schedule and
+  versioning scheme, in case they wish to do so, although that's
+  outside the scope of this CEP.
 
 - Extract the prelude + a minimum set of components that alternative
   general libraries like MathComp and coq-stdpp need as a basis.

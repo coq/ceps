@@ -783,6 +783,23 @@ More precisely about above "some of the technical goals":
   stable or not they are, and specifically whether we may want to
   deprecate one or another component
 
+More precisely about above "disruption":
+* Risk of distribution for external package maintainers, although we
+  got reassuring words from the Debian maintainer of Coq, and the fact
+  that library subcomponents are not independently released may limit
+  them.
+* Decoupling the releases of stdlib and Coq could lead to dependency
+  or compat issues affecting them (nothing sp ecific to stdlib though,
+  and the library being very low in the dependency chain would
+  probably avoid most issues , it's true it kinds of "adds a layer" to
+  dependency chains of other developments though)
+* having stdlib need to work with multiple versions of Coq seems like
+  it would further increase rigidity in stdlib (no more nor less than
+  any other library though)
+* users with custom made scripts building coq will need to adapt them
+  (I don't think this should drive our decision, but it does increase
+  the cost of the change)
+
 For spinning out parts of the standard library, one possible heuristic to use is that components with dedicated maintainers could become independent at the initiative of these maintainers. On the other hand, if a part of the standard library is to be separated out without a new maintainer stepping up, this could be handled as a deprecation and removal, not a refactoring.
 
 Other split in multiple repositories would be possible, could still

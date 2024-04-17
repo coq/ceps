@@ -775,6 +775,14 @@ The technical changes proposed here can stand on their own merits, and can be ad
 
 Out of these, 1. has the advantage that it retains most of the technical refactoring done for this CEP, and achieves some of the technical goals listed here such as allowing users to `Require` only a known subset, while minimizing disruption to users in the face of multiple possible futures for the standard library more generally. In particular, keeping the boundaries between subparts of the standard library internal to Coq as opposed to exposing them to users would simplify later changing them.
 
+More precisely about above "some of the technical goals":
+* Making it clear what files are fair game to Require in each part of stdlib
+* Making it clear what will be brought in by a Require of some stdlib file
+* While this CEP makes no stability promises for these boundaries, at
+  least it gives names for the components so we can talk about how
+  stable or not they are, and specifically whether we may want to
+  deprecate one or another component
+
 For spinning out parts of the standard library, one possible heuristic to use is that components with dedicated maintainers could become independent at the initiative of these maintainers. On the other hand, if a part of the standard library is to be separated out without a new maintainer stepping up, this could be handled as a deprecation and removal, not a refactoring.
 
 Other split in multiple repositories would be possible, could still

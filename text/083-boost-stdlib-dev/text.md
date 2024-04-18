@@ -801,12 +801,11 @@ More precisely about above "disruption":
 * Requiring stdlib to work with multiple versions of Coq seems like
   it would further increase rigidity in stdlib (more than for any other
   library in cases it interfaces with ML plugins developed in Coq).
-  While stdlib could be in a separate repo and still build only with
-  coq master, that would not meet the goal of enabling contributions
-  without compiling Coq master.
 * Users with custom made scripts building coq will need to adapt them
   (I don't think this should drive our decision, but it does increase
   the cost of the change)
+
+Another possible alternative is to split stdlib into its own repository, but to keep its releases in lockstep with Coq and to only support the latest version of Coq. This would achieve the goal of avoiding ML code in the stdlib repo, but not the goal of allowing stdlib to be built without building coq.
 
 For spinning out parts of the standard library, one possible heuristic to use is that components with dedicated maintainers could become independent at the initiative of these maintainers. On the other hand, if a part of the standard library is to be separated out without a new maintainer stepping up, this could be handled as a deprecation and removal, not a refactoring.
 

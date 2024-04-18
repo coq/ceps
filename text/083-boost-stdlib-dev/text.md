@@ -773,7 +773,10 @@ The technical changes proposed here can stand on their own merits, and can be ad
 2. The standandard library could be moved to its own repository without changing its user-facing relationship with Coq and non-stdlib packaes.
 3. Specific parts of the standard library could be spun out to their own repositories without changing the rest.
 
-Out of these, 1. has the advantage that it retains most of the technical refactoring done for this CEP, and achieves some of the technical goals listed here such as allowing users to `Require` only a known subset, while minimizing disruption to users in the face of multiple possible futures for the standard library more generally. In particular, keeping the boundaries between subparts of the standard library internal to Coq as opposed to exposing them to users would simplify later changing them.
+Out of these, 1. has the advantage that it retains most of the technical refactoring done for this CEP,
+and achieves some of the technical goals listed here such as allowing users to `Require` only a known subset,
+while minimizing disruption to users in the face of multiple possible futures for the standard library more generally.
+In particular, keeping the boundaries between subparts of the standard library internal to Coq as opposed to exposing them to users would simplify later changing them.
 
 More precisely about above "some of the technical goals":
 * Making it clear what files are fair game to Require in each part of stdlib
@@ -784,19 +787,24 @@ More precisely about above "some of the technical goals":
   deprecate one or another component
 
 More precisely about above "disruption":
-* Risk of distribution for external package maintainers, although we
-  got reassuring words from the Debian maintainer of Coq, and the fact
-  that library subcomponents are not independently released may limit
-  them.
-* Decoupling the releases of stdlib and Coq could lead to dependency
-  or compat issues affecting them (nothing sp ecific to stdlib though,
-  and the library being very low in the dependency chain would
-  probably avoid most issues , it's true it kinds of "adds a layer" to
-  dependency chains of other developments though)
-* having stdlib need to work with multiple versions of Coq seems like
-  it would further increase rigidity in stdlib (no more nor less than
-  any other library though)
-* users with custom made scripts building coq will need to adapt them
+* Each [downstream](https://repology.org/project/coq/versions) of coq would need to create packages for stdlib components,
+  perhaps needing to script package creation for the first time in case this CEP moves the number of coq packages needed by the average user from a couple to 20+.
+  The Debian package maintainer specifically is not expecting issues,
+  and having all these packages versioned together also partially mitigates this risk.
+* Decoupling the repositories of stdlib and coqc could lead to broken-build issues
+  when synchronized changes are required between the two repositories.
+  We already see this kind of issues with existing Coq libraries in the CI,
+  but any issue with stdlib would affect all users.
+* Decoupling the releases of stdlib and coqc could make it more challenging
+  for users that rely on both to maintain compatibility across versions thereof.
+  The current Compat infrastructure relies on stdlib, standard plugins, and coqc being released in lockstep.
+* Requiring stdlib to work with multiple versions of Coq seems like
+  it would further increase rigidity in stdlib (more than for any other
+  library in cases it interfaces with ML plugins developed in Coq).
+  While stdlib could be in a separate repo and still build only with
+  coq master, that would not meet the goal of enabling contributions
+  without compiling Coq master.
+* Users with custom made scripts building coq will need to adapt them
   (I don't think this should drive our decision, but it does increase
   the cost of the change)
 

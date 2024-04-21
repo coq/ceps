@@ -791,21 +791,42 @@ More precisely about above "disruption":
   perhaps needing to script package creation for the first time in case this CEP moves the number of coq packages needed by the average user from a couple to 20+.
   The Debian package maintainer specifically is not expecting issues,
   and having all these packages versioned together also partially mitigates this risk.
+  Also note, that package maintainers are not forced to offer all the
+  subpackages, they can choose to only distribute the global
+  metapackage, in which case, nothing really changes for them.
 * Decoupling the repositories of stdlib and coqc could lead to broken-build issues
   when synchronized changes are required between the two repositories.
   We already see this kind of issues with existing Coq libraries in the CI,
   but any issue with stdlib would affect all users.
+  However, the need for such synchronized changes should never happen
+  (as is already the case with all other libraries around
+  (synchronized changes are only a plugin thing, but plugins will remain
+  in Coq repo)).
 * Decoupling the releases of stdlib and coqc could make it more challenging
   for users that rely on both to maintain compatibility across versions thereof.
   The current Compat infrastructure relies on stdlib, standard plugins, and coqc being released in lockstep.
+  Experience with other libraries shows that proper version management
+  is a reasonnable solution here.
 * Requiring stdlib to work with multiple versions of Coq seems like
   it would further increase rigidity in stdlib (more than for any other
   library in cases it interfaces with ML plugins developed in Coq).
+  More precisely, handling multiple Coq versions would slow down a bit
+  the library development, since new Coq features would only become
+  available when support for the last Coq version without it is
+  dropped (same thing for plugins). Anyway, how many Coq versions to
+  support (from only master to more) is up to library maintainers and
+  outside the scope of this CEP.
 * Users with custom made scripts building coq will need to adapt them
   (I don't think this should drive our decision, but it does increase
   the cost of the change)
 
-Another possible alternative is to split stdlib into its own repository, but to keep its releases in lockstep with Coq and to only support the latest version of Coq. This would achieve the goal of avoiding ML code in the stdlib repo, but not the goal of allowing stdlib to be built without building coq.
+Another possible alternative is to split stdlib into its own
+repository, but to keep its releases in lockstep with Coq and to only
+support the latest version of Coq. This would speed up use of new Coq
+features in the library (ML code will remain in Coq repo in any case),
+but not the goal of allowing stdlib to be built without building coq.
+This choice is up to library maintainers and outside the scope of the
+current CEP though.
 
 For spinning out parts of the standard library, one possible heuristic to use is that components with dedicated maintainers could become independent at the initiative of these maintainers. On the other hand, if a part of the standard library is to be separated out without a new maintainer stepping up, this could be handled as a deprecation and removal, not a refactoring.
 

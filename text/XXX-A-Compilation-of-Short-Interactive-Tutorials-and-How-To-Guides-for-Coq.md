@@ -9,19 +9,19 @@
 
 1. Summary
 2. Motivation
-   2.1 The lack of action-oriented documentation
-   2.2 Why it is important
+   - 2.1 The lack of action-oriented documentation
+   - 2.2 Why it is important
 3. A compilation of interactive tutorials and how-to guides
-   3.1 General Design
-   3.2 A Horizontal Documentation
-   3.3 Online interface
+   - 3.1 General Design
+   - 3.2 A Horizontal Documentation
+   - 3.3 Online interface
 4. Organisation
-   4.1 First Steps
-   4.2 Writing the documentation
-   4.3 Maintenance and evolution
-   4.4 Web Interface
-   4.5 Moving on to the official Coq repository and Coq's webpage
-   4.6 Human resources
+   - 4.1 First Steps
+   - 4.2 Writing the documentation
+   - 4.3 Maintenance and evolution
+   - 4.4 Web Interface
+   - 4.5 Moving on to the official Coq repository and Coq's webpage
+   - 4.6 Human resources
 
 
 ---

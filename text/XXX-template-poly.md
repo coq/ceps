@@ -63,6 +63,8 @@ We then check any constraints on the variables and do regular typechecking.
 
 ## Subject reduction
 
+### Inductive
+
 Consider `(fun X:Type@{u} => I X) (P:Type@{v}) (Q:Type@{w})`
 with `I@{i j | csts(i,j)} (p:Type@{i}) (q:Type@{j}) : Type@{f(i,j)}`
 and default instance `{i0 j0}` (which must verify `|= csts(i0, j0)`).
@@ -89,6 +91,50 @@ Meanwhile `f` must be built using the `max` and `+1` operators so is monotonous.
 Since `|= v <= u` and `|= w <= j0` we have `|= f(v,w) <= f(u,j0)`.
 
 The fully general proof of subject reduction should work with the same style of reasoning.
+
+#### PROBLEM
+
+Consider `(fun X:Type@{u} => I X) (P:Type@{v})`
+with `I@{i | csts(i)} (p:Type@{i}) (q:Type@{i}) : Type@{f(i)}`
+and default instance `{i0}` (which must verify `|= csts(i0)`).
+
+It has type `forall Type@{max(u,i0)}, Type@{f(u,i0)}` assuming
+- `|= csts(u, j0)`
+- `|= v <= u`
+
+The reduced value `I P` has type `forall Type@{max(v,i0)}, Type@{f(v,i0)}`
+which is NOT comparable to `forall Type@{max(u,i0)}, Type@{f(u,i0)}`!!
+
+### Constructor
+
+Consider `(fun X:Type@{u} => C X) (P:Type@{v}) (Q:Type@{w})`
+with `I@{i j | csts(i,j)} (p:Type@{i}) (q:Type@{j}) : Type@{f(i,j)}`
+and `C : forall p q, I p q`
+and default instance `{i0 j0}` (which must verify `|= csts(i0, j0)`).
+
+For the beta redex to be welltyped, we must have
+- `|= csts(u, j0)`
+- `|= v <= u`
+- `|= w <= j0`
+and it has type `I P Q`.
+
+The reduced value is `C P Q`.For subject reduction to hold we need
+- `|= csts(v,w)` (same reasoning as above)
+- `I P Q <= I P Q` (trivial)
+
+#### PROBLEM
+
+Consider `(fun X:Type@{u} => C X) (P:Type@{v})`
+with `I@{i | csts(i)} (p:Type@{i}) (q:Type@{i}) : Type@{f(i)}`
+and `C : forall p q, I p q`
+and default instance `{i0}` (which must verify `|= csts(i0)`).
+
+It has type `forall Q:Type@{max(u,i0)}, I P Q` assuming
+- `|= csts(u, j0)`
+- `|= v <= u`
+
+The reduced value `C P` has type `forall Q:Type@{max(v,i0)}, I P Q`
+which is NOT comparable to `forall Q:Type@{max(u,i0)}, I P Q`!!
 
 ## Note on nested templates and above Prop
 

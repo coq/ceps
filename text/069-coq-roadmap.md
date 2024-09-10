@@ -159,23 +159,21 @@ for more peripherical changes, for instance on user contributions.
 
 ### Kernel, theory
 
-#### Sort polymorphism
+#### Template polymorphism
 
-- Gaëtan Gilbert, Nicolas Tabareau
-- DONE (8.19)
-- ongoing PR https://github.com/coq/coq/pull/17836 (will need a followup for inductives)
+- Gaëtan Gilbert, Pierre Maria Pédrot
+- in progress (maybe done by 8.21)
+- notably https://github.com/coq/coq/pull/19228
 
-Extension of universe polymorphism to sort qualities. It becomes possible to have global references quantified over 
-sort qualities eg `foo@{s | u | } : Type@{s | u}` which could be instantiated to `foo@{SProp | v} : SProp` 
-(the quantification syntax needs both `|` to avoid ambiguity).
+Make template poly more usable and more robust, basing the metatheory on sort poly.
 
-This should allow having for instance a common inductive for SProp, Prop and Type instantations of sigma types 
-(instead of the current `sigT` `sig` `ex` and variations depending on if each of the 2 parameters and the output are SProp).
+TODO:
 
-Eventually may allow using a common implementation for Type and Prop setoid rewriting machinery 
-(`Morphisms` vs `CMorphisms`, `RelationClasses` vs `CRelationsClasses`).
-
-May also be useful when doing Observational Type Theory.
+- metatheory in metacoq (?)
+- allow template univs which don't appear in the conclusion
+  (eg `u` in `eq : forall A:Type@{u}, A -> A -> Prop`)
+- remove above-Prop restriction in template poly (?)
+- I feel like I forgot something but can't remember what
 
 #### Algebraic universes
 

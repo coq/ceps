@@ -42,7 +42,7 @@ Producing a roadmap for the Coq project is important for several reasons:
 # Detailed design
 
 The Coq roadmap is defined at three levels: short, medium and long term.
-Each of these levels address different needs, but they should be checked
+Each of these levels addresses different needs, but they should be checked
 for consistency with each other.
 
 - The short term roadmap is focused on priorities on which we are committed
@@ -61,7 +61,7 @@ for consistency with each other.
   being needed, which could take several years to complete, and for which we
   do not always have the resources needed. It is used to guide the renewal
   of the short term roadmap, but also the search for new resources to make
-  progress in these areas. The medium term roadmap should contains high level
+  progress in these areas. The medium term roadmap should contain high level
   descriptions of the areas requiring progress, but can contain rough plans
   for how to proceed to make progress in these areas if the team already has a
   vision about the steps needed.
@@ -118,7 +118,7 @@ Théo Zimmermann will be the editorial coordinator of the roadmap, proposing
 to add and remove items, to reflect the evolution of the project.
 
 Once adopted through the CEP process, the roadmap will be kept up-to-date
-in a living document on the wiki (while the merged step will represent a
+in a living document on the wiki (while the merged CEP will represent a
 point in time). From time to time, we will go back to using the CEP process
 to trigger a discussion with the community on the updated roadmap (and also
 to address more precisely the medium and long term levels of the roadmap).

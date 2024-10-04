@@ -5,7 +5,7 @@ Rocq Long Term Roadmap
 
 The Rocq Development Team, building on 40 years of experience with Coq, is pleased to announce the Rocq Prover, the next-generation proof assistant. The Rocq Prover is designed to empower a diverse range of users, from mathematicians seeking formal rigor to software engineers building high-assurance systems.
 
-While Rocq leverages the rich heritage of Coq, it embraces a more agile development philosophy. This allows us to deliver impactful changes more frequently, accelerating innovation and user experience improvements.
+While Rocq leverages the rich heritage of Coq, it aims to keep evolving: deliver impactful changes, enable new research and improve the user experience.
 
 This roadmap outlines our vision for Rocq's future, focusing on four key pillars:
 

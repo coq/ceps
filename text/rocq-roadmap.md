@@ -10,9 +10,9 @@ While Rocq leverages the rich heritage of Coq, it aims to keep evolving: deliver
 This roadmap outlines our vision for Rocq's future, focusing on four key pillars:
 
 + **Open and Accessible**: The Rocq Prover provides user-friendly installation, comprehensive educational resources, and a thriving community to ensure everyone can benefit from its power.
-+ **Trustworthy Proofs**: The Rocq Prover prioritizes self-verification and performance optimization, ensuring the highest level of trust and efficiency in your formal proofs.
-+ **Effortless Maintainability**: We are committed to a clean and streamlined codebase, simplifying future development and reducing the burden on users.
-+ **Enhanced Usability**: We will explore AI-powered features, streamlined domain-specific tools, and do our best to improve day-to-day usability for mathematicians, educators, and engineers alike.
++ **Trustworthy**: The Rocq Prover prioritizes self-verification and performance optimization, ensuring the highest level of trust and efficiency in your formal proofs.
++ **Maintainable**: We are committed to a clean and streamlined codebase, simplifying future development and reducing the burden on users.
++ **Usable**: We will explore AI-powered features, streamlined domain-specific tools, and do our best to improve day-to-day usability for mathematicians, educators, and engineers alike.
 
 *Join us in shaping the future of formal verification!*
 

@@ -38,7 +38,6 @@ This roadmap outlines our vision for Rocq's future, focusing on four key pillars
 ### 2. Trustworthy Proofs
 
 * **Certified Type Theory and Extraction:** The Rocq prover is based on the formal verification of its type theory implementation and extraction system, minimizing the trusted code base and increasing user confidence in results (C, D, E).
-* **Performance Optimization:** We keep identifying areas for performance improvement while maintaining stability (all audiences). 
 
 ### 3. Implementation Efficiency and Maintainability
 

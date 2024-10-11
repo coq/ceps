@@ -48,7 +48,7 @@ This roadmap outlines our vision for Rocq's future, focusing on four key pillars
 
 ### 4. Enhanced Usability
 
-* **Performance**: address performance limitations that impact projects that are widely used in industry and academia.
+* **Performance**: address performance limitations that impact projects that are widely used in industry and academia (C, D).
 * **AI-powered Features:** Leverage AI for improved suggestion mechanisms, proof search, information retrieval, error reporting, and visualization (A, B, C, E).
 * **Theory Transfer Support:** Develop tools for transferring proofs and concepts between different representations, *e.g.*, proof-oriented vs. computation-oriented structures (D, E).
 * **Library Integration:** Simplify collaboration and integration of existing and future libraries from diverse contributors (C, E).

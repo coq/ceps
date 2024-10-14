@@ -65,7 +65,7 @@ key pillars:
 
 - **Accessibilty:** The Rocq/Coq Platform delivers easy installation
   and package integration. We are also actively working on IDE
-  improvements for the various usages of the Rocq Prover.
+  improvements for the various usages of the Rocq Prover (all audiences).
 
 - **Documentation:** We strive to document best practices, tools, and
   packages, so as to enhance usability for newcomers and experienced

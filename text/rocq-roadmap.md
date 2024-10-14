@@ -142,7 +142,7 @@ key pillars:
 
 - **Balancing Generality with Domain Specificity:** Maintain a general
   framework with core libraries while simultaneously supporting
-  domain-specific libraries (*e.g.,* Iris) (all audience).
+  domain-specific libraries (*e.g.,* Iris) (all audiences).
 
 
 **_This roadmap represents our ongoing commitment to making the Rocq

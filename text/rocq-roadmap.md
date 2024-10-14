@@ -76,14 +76,14 @@ key pillars:
   community through initiatives like rocq/coq-community (all
   audiences).
 
-### 2. Trustworthy Proofs
+### 2. Trustworthy
 
 - **Certified Type Theory and Extraction:** The Rocq prover is based
   on the formal verification of its type theory implementation and
   extraction system, minimizing the trusted code base and increasing
   user confidence in results (C, D, E).
 
-### 3. Implementation Efficiency and Maintainability
+### 3. Maintainable
 
 - **Codebase Consolidation:** We are planning to streamline the
   codebase by selecting the best solutions from various experiments
@@ -107,7 +107,7 @@ key pillars:
 - **API Stability:** We ensure stable APIs for external tools like
   automation frameworks, interfaces, and plugins (C, D).
 
-### 4. Enhanced Usability
+### 4. Usable
 
 - **Performance**: address performance limitations that impact
   projects that are widely used in industry and academia (C, D).

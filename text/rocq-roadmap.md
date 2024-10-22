@@ -133,9 +133,6 @@ key pillars:
 - **Metaprogramming support:** Multiple platforms for metaprogramming
   tactics and terms manipulations (Ltac2, Elpi, MetaCoq) (C, D, E)
 
-- **Educational Resources:** Develop tutorials and documentation
-  highlighting features that save time and improve workflow (A, B, C).
-
 - **Improved Notation and Structuring Mechanisms:** Improve the
   notation system and structuring tools such as Hierarchy Builder (all
   audiences).

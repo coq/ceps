@@ -54,18 +54,18 @@ key pillars:
   components (*e.g,.* [BedRock System](https://bedrocksystems.com/)
   and [Formal Vindication](https://formalv.com/)).
 
-- **(D) Researchers in Computer Science**: Academics explore novel
+- **(D) Interactive Theorem Proving Research**: Academics explore novel
   applications, usage and extensions of the Rocq Prover.
 
-- **(E) And beyond**: The Rocq Prover is used as a research instrument
-  in a wide range of domains including fundamental mathematics,
+- **(E) Research users**: The Rocq Prover is used as a research instrument
+  in a wide range of domains including programming language research, fundamental mathematics,
   computer algebra, robotics, cryptography, hardware design, etc.
 
 ### 1. Open and Accessible
 
 - **Accessibilty:** The Rocq/Coq Platform delivers easy installation
   and package integration. We are also actively working on IDE
-  improvements for the various usages of the Rocq Prover.
+  improvements for the various usages of the Rocq Prover (all audiences).
 
 - **Documentation:** We strive to document best practices, tools, and
   packages, so as to enhance usability for newcomers and experienced
@@ -110,7 +110,7 @@ key pillars:
 ### 4. Usable
 
 - **Performance**: address performance limitations that impact
-  projects that are widely used in industry and academia (C, D).
+  projects that are widely used in industry and academia (C, D, E).
 
 - **AI-powered Features:** Leverage AI for improved suggestion
   mechanisms, proof search, information retrieval, error reporting,

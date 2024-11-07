@@ -20,7 +20,8 @@ key pillars:
 
 - **Open and Accessible**: The Rocq Prover provides user-friendly
   installation, comprehensive educational resources, and a thriving
-  community to ensure everyone can benefit from its power.
+  community to ensure everyone can benefit from its power. We also
+  explore AI-powered features to enhance usability and productivity.
 
 - **Trustworthy**: The Rocq Prover prioritizes self-verification,
   ensuring the highest level of trust in your formal proofs.
@@ -29,10 +30,9 @@ key pillars:
   codebase, simplifying future development and reducing the burden on
   users.
 
-- **Usable**: We do our best to improve day-to-day usability for
-  mathematicians, educators, and engineers alike. This includes
-  improving performance, exploring AI-powered features and streamlined
-  domain-specific tools.
+- **Widely applicable**: We do our best to improve the usability of
+  Rocq for diverse research and industrial applications. This includes
+  improving performance, streamlining domain-specific tools, etc.
 
 *Join us in shaping the future of formal verification!*
 
@@ -71,6 +71,10 @@ key pillars:
   packages, so as to enhance usability for newcomers and experienced
   users alike (all audiences).
 
+- **AI-powered Features:** Leverage AI for improved suggestion
+  mechanisms, proof search, information retrieval, error reporting,
+  and visualization (A, B, C, E).
+
 - **Community:** Meet us at the CoqPL, Coq Workshops, and CUDW
   meetings! We will also continue fostering a strong and collaborative
   community through initiatives like rocq/coq-community (all
@@ -107,21 +111,17 @@ key pillars:
 - **API Stability:** We ensure stable APIs for external tools like
   automation frameworks, interfaces, and plugins (C, D).
 
-### 4. Usable
+- **Library Integration:** Simplify collaboration and integration of
+  existing and future libraries from diverse contributors (C, E).
+
+### 4. Widely applicable
 
 - **Performance**: address performance limitations that impact
   projects that are widely used in industry and academia (C, D, E).
 
-- **AI-powered Features:** Leverage AI for improved suggestion
-  mechanisms, proof search, information retrieval, error reporting,
-  and visualization (A, B, C, E).
-
 - **Theory Transfer Support:** Develop tools for transferring proofs
   and concepts between different representations, *e.g.*,
   proof-oriented vs. computation-oriented structures (D, E).
-
-- **Library Integration:** Simplify collaboration and integration of
-  existing and future libraries from diverse contributors (C, E).
 
 - **Multi-theory and Logic Support:** Enable support for classical,
   exceptional, and observational logics within the same system (D, E).

@@ -51,7 +51,7 @@ key pillars:
 
 - **(C) Computer Engineering**: Software developers use the Rocq
   Prover for producing high-assurance code embedded in critical
-  components (*e.g,.* [BedRock System](https://bedrocksystems.com/)
+  components (*e.g,.* [BlueRock Security](https://www.bluerock.io/)
   and [Formal Vindication](https://formalv.com/)).
 
 - **(D) Interactive Theorem Proving Research**: Academics explore novel

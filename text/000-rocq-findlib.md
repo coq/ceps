@@ -121,7 +121,7 @@ A Rocq theory Findlib package contains the following information:
   from standard OCaml package (including Rocq plugins).
 - Standard field `directory`, indicating the directory under which the files
   for the package are expected to be found. Unlike OCaml packages, theories do
-  not generally have a flat directory structure. To guard against collosions
+  not generally have a flat directory structure. To guard against collisions
   between package names and Rocq path members, theory files should be stored
   under an additional `rocq.d` directory. Note that since `rocq.d` contains a
   dot, it does not constitute a valid package name, which should prevent name
@@ -253,7 +253,7 @@ to keep using the current installation scheme at the same time.
 
 # Alternatives
 
-All reasonable systems have a modular installation scheme. An alternatives
+All reasonable systems have a modular installation scheme. An alternative
 implementation would be to start from scratch and not reuse the Findlib file
 format, but given the close integration of Rocq in the OCaml ecosystem that
 probably would not make sense.
